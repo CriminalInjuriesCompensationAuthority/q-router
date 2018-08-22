@@ -1,0 +1,90 @@
+{
+    "$schema": "http://json-schema.org/draft-04/schema#",
+    "$id": "apply-for-something",
+    "title": "Apply for something",
+    "type": "object",
+    "required": ["pages"],
+    "additionalProperties": false,
+    "properties": {
+        "pages": {
+            "type": "array",
+            "additionalItems": false,
+            "minItems": 2,
+  			"maxItems": 2,
+            "items": [
+                {
+                    "$id": "/where-do-you-live",
+                    "title": "Where do you live?",
+                    "type": "object",
+                  	"additionalProperties": false,
+                    "required": ["where-do-you-live"],
+                    "properties": {
+                        "where-do-you-live": {
+                            "title": "Where do you live?",
+                            "type": "string",
+                            "oneOf": [
+                                {
+                                    "title": "England",
+                                    "enum": ["england"]
+                                },
+                                {
+                                    "title": "Scotland",
+                                    "enum": ["scotland"]
+                                },
+                                {
+                                    "title": "Wales",
+                                    "enum": ["wales"]
+                                },
+                                {
+                                    "title": "Northern Ireland",
+                                    "enum": ["northern-ireland"]
+                                }
+                            ],
+                            "rules": {
+                                "language": "JavaScript",
+                                "src": "/some-rules"
+                            }
+                        }
+                    }
+                },
+                {
+                    "$id": "/change-name",
+                    "title": "Form",
+                    "type": "object",
+                  	"additionalProperties": false,
+                    "required": ["changed-name"],
+                    "properties": {
+                        "changed-name": {
+                            "title": "Have you changed your name?",
+                            "description":
+                                "This includes changing your last name or spelling your name differently.",
+                            "type": "boolean"
+                        }
+                    }
+                }
+            ]
+        }
+    }
+}
+
+
+Questionnaire input for above schema:
+{
+    "pages": [
+      	{"where-do-you-live": "scotland"},
+      	{"changed-name": true}
+   	]
+}
+
+
+
+user-id-12345/apply-for-something-for-something-else/where-do-you-live
+
+
+user-id-12345/apply-for-something/where-do-you-live
+
+user-id-12345/apply-for-something/change-name
+
+
+
+{uid}/{questionnaire-id}/{page}

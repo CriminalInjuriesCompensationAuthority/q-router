@@ -1,0 +1,190 @@
+Perfect Eggs finder
+-------------------
+
+P1: Do you like eggs?
+Yes
+No
+
+P2: Do you have taste buds?
+Yes
+No
+
+P3: Why don't you like eggs?
+Textbox
+
+P4: Do you like to see the yolk as a whole?
+Yes
+No
+
+P5: Do you like fried food
+Yes
+No
+
+P6: You'll love fried eggs!
+
+P7: You'll love poached eggs!
+
+P8: You'll love scrambled eggs
+
+P9: Poor you.
+
+
+
+P1:
+    if Yes goto P4
+    if No goto P2
+
+P2:
+    if Yes goto P3
+    if No goto P9
+
+P3:
+    blocking
+
+P4:
+    if Yes goto P5
+    if No goto P8
+
+P5:
+    if Yes goto P6
+    if No goto P7
+
+
+-----------------------------
+
+
+P2:
+    Show if P1 == No
+
+P3:
+    Show P1 == No
+    Show P2 == Yes
+
+P4:
+    Show if P1 == Yes
+
+P5:
+    Show if P4 == Yes
+
+P6:
+    Show if P5 == Yes
+
+P7:
+    Show if P5 == No
+
+P8:
+    Show if P4 == No
+
+P9:
+    Show if P2 == No
+
+
+
+
+Dog finder
+-------------
+
+P10: What colour dog would you like?
+Black
+White
+
+P20: What size dog would you like?
+Small
+Large
+
+P30: What would you like to call your French Bulldog?
+Textbox
+
+P40: What would you like to call your Labrador?
+Textbox
+
+P50: What would you like to call your Bichon Frise?
+Textbox
+
+P60: What would you like to call your White Shepherd?
+Textbox
+
+
+
+
+P10:
+    if Black OR White goto P20
+
+P20:
+    if P10 == Black AND P20 == Small goto P30
+    if P10 == Black AND P20 == Large goto P40
+    if P10 == White AND P20 == Small goto P50
+    if P10 == White AND P20 == Large goto P60
+
+---------------------------------------
+
+P20:
+    Show if P10 == Black OR P10 == White
+
+P30:
+    Show if P10 == Black AND P20 == Small
+
+P40:
+    Show if P10 == Black AND P20 == Large
+
+P50:
+    Show if P10 == White AND P20 == Small
+
+P60:
+    Show if P10 == White AND P20 == Large
+
+
+
+{
+    p10: {
+        black: {
+            P20: {
+                small: {
+                    frenchBulldog
+                },
+                large: {
+                    labrador
+                }
+            }
+        },
+        white: {
+            p20: {
+                small: {
+                    bichonFrise
+                },
+                large: {
+                    whiteShepard
+                }
+            }
+        }
+    }
+}
+
+
+
+{
+    P1: {
+        Yes: {
+            P4: {
+                Yes: {
+
+                },
+                No: {
+                    P10: {
+                        P20: {
+                            blackSmall: {
+                                P30: {}
+                            },
+                            blackLarge: {
+                                P40: {}
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        No: {
+
+        }
+    }
+}

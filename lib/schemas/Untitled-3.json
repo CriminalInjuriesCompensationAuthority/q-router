@@ -1,0 +1,394 @@
+{
+  "id": "9be26e2e-fdf2-4830-b949-a3ea3587bcba",
+  "created": "2018-06-25T10:19:43Z",
+  "modified": "2018-06-25T10:19:57Z",
+  "form": {
+    "sections": [
+      {
+        "type": "section",
+        "id": "09888802-bcc7-4f2d-b105-54aaa8e6c1b4",
+        "pdfExclude": true,
+        "sequence": 0,
+        "required": true,
+        "title": "We've made a decision on your application for compensation",
+        "elements": [
+          {
+            "type": "richText",
+            "id": "24e27c29-cbf9-4cd7-b242-e638bff1f8f4",
+            "format": "prose",
+            "sequence": 0,
+            "required": true,
+            "content": "In the following pages you'll be able to: "
+          },
+          {
+            "type": "group",
+            "id": "c63029ba-cbbe-4951-8afd-ad70a27da35c",
+            "sequence": 1,
+            "required": true,
+            "elements": [
+              {
+                "type": "richText",
+                "id": "8a94b10b-f062-47f8-97fb-cd8a8e38df7e",
+                "format": "listItem",
+                "sequence": 0,
+                "required": true,
+                "content": "download the decision letter"
+              },
+              {
+                "type": "richText",
+                "id": "e1ff44d6-3b60-484f-aad8-a939ba475f13",
+                "format": "listItem",
+                "sequence": 1,
+                "required": true,
+                "content": "choose to accept your award online"
+              },
+              {
+                "type": "richText",
+                "id": "29b0fd4b-7249-494f-a484-8c6a65779f08",
+                "format": "listItem",
+                "sequence": 2,
+                "required": true,
+                "content": "find out what to do if you don't accept the decision"
+              }
+            ]
+          }
+        ],
+        "blocking": false,
+        "status": "COMPLETE"
+      },
+      {
+        "type": "section",
+        "id": "082c6e64-e483-4316-9798-430f3406c6c8",
+        "sequence": 1,
+        "required": true,
+        "title": "View our decision",
+        "elements": [
+          {
+            "type": "richText",
+            "id": "8af92836-ecd8-4e16-b592-916c8a6c566e",
+            "format": "prose",
+            "sequence": 0,
+            "required": true,
+            "content": "Select the link below to download and read our decision."
+          },
+          {
+            "type": "richText",
+            "id": "196179dc-8690-4bfc-bd5f-09541d7e77fe",
+            "format": "prose",
+            "sequence": 1,
+            "required": true,
+            "content": "This document may open in a new window or tab."
+          },
+          {
+            "type": "richText",
+            "id": "2abfa738-e660-4841-8903-0dc354e185bb",
+            "format": "prose",
+            "sequence": 2,
+            "required": true,
+            "content": "When you have finished reading this document you will need to return to this page and select Continue."
+          },
+          {
+            "type": "richText",
+            "id": "c63ede2c-1522-4878-99be-79efad6cda91",
+            "format": "legal",
+            "sequence": 3,
+            "required": true,
+            "content": "You must respond by 28 April 2018",
+            "templateContent": "You must respond by ((dueDate))",
+            "templateMetadataValueReference": true,
+            "templateMetadataValueReferenceIsDate": true
+          },
+          {
+            "type": "attachment",
+            "id": "86361a91-5797-4be6-a4c2-0c9bba84d4f1",
+            "sequence": 4,
+            "label": "Download Decision",
+            "attachmentId": "9467bf4d-3dc0-455c-b0f1-58a89402d692"
+          }
+        ],
+        "previousSectionId": "09888802-bcc7-4f2d-b105-54aaa8e6c1b4",
+        "blocking": false,
+        "status": "COMPLETE"
+      },
+      {
+        "type": "section",
+        "id": "8c297d27-4de8-4d41-967b-3760701b192a",
+        "sequence": 2,
+        "required": true,
+        "title": "Acceptance",
+        "elements": [
+          {
+            "type": "richText",
+            "id": "af12130c-826b-462f-83ac-994e185bf6d6",
+            "format": "prose",
+            "sequence": 0,
+            "required": true,
+            "content": "If you wish to accept this award you can do so here. You don’t need to post a signed copy of the acceptance to us."
+          },
+          {
+            "type": "richText",
+            "id": "aa22641a-fb6c-41cf-aba9-9d3e168cf346",
+            "format": "heading",
+            "sequence": 1,
+            "required": true,
+            "content": "Declaration"
+          },
+          {
+            "type": "richText",
+            "id": "60737ca6-399d-4a41-8dd9-1e8ad712926b",
+            "format": "prose",
+            "sequence": 2,
+            "required": true,
+            "templateContent": "((mainApplicant)) and I confirm that:",
+            "templateMetadataValueReference": true
+          },
+          {
+            "type": "group",
+            "id": "a101353b-366b-45a0-8257-e27fdc4e8aee",
+            "sequence": 3,
+            "required": true,
+            "elements": [
+              {
+                "type": "richText",
+                "id": "7e36cb5b-582d-4f98-9289-c0eb6814f655",
+                "format": "listItem",
+                "sequence": 0,
+                "required": true,
+                "content": "we have discussed this award with the applicant and we understand the decision"
+              },
+              {
+                "type": "richText",
+                "id": "4e012146-2865-4ee8-851b-8f2f072997d9",
+                "format": "listItem",
+                "sequence": 1,
+                "required": true,
+                "content": "we have the authority to accept this award on behalf of the applicant"
+              },
+              {
+                "type": "richText",
+                "id": "cb8a6a8f-8e6a-4d05-ae2b-042777982855",
+                "format": "listItem",
+                "sequence": 2,
+                "required": true,
+                "content": "we understand the award will be held in an interest earning bank account until the applicant is 18 years of age"
+              },
+              {
+                "type": "richText",
+                "id": "7f036b3d-a337-49d6-8454-b195e0b37554",
+                "format": "listItem",
+                "sequence": 3,
+                "required": true,
+                "templateContent": "((mainApplicant)) promises to advise and repay the Criminal Injuries Compensation Authority (CICA) from any damages, settlement or other compensation which may be received in respect of the injuries to which this application relates",
+                "templateMetadataValueReference": true
+              },
+              {
+                "type": "richText",
+                "id": "33301b51-c117-45b1-94bd-7b9f5e4110dc",
+                "format": "listItem",
+                "sequence": 4,
+                "required": true,
+                "templateContent": "((mainApplicant)) understands that if they don't advise and repay in full any such payment CICA will take court action to recover this",
+                "templateMetadataValueReference": true
+              }
+            ]
+          },
+          {
+            "type": "richText",
+            "id": "926d414d-b2d2-4e57-accb-9f6f27c80dc2",
+            "format": "prose",
+            "sequence": 4,
+            "required": true,
+            "templateContent": "I, ((representative)), on behalf of the applicant, accept this award from CICA in full and final settlement of an application for compensation.",
+            "templateMetadataValueReference": true
+          },
+          {
+            "type": "question",
+            "id": "ab36192f-0229-4467-b94f-a1f544bcbdc1",
+            "format": "enum",
+            "sequence": 5,
+            "required": true,
+            "label": "Do you accept this award?",
+            "options": [
+              {
+                "option": "I accept this award",
+                "value": "accept"
+              },
+              {
+                "option": "I don't accept this award",
+                "value": "notAccept"
+              }
+            ],
+            "mutuallyExclusive": true
+          }
+        ],
+        "blocking": false,
+        "status": "NOT_STARTED"
+      },
+      {
+        "type": "section",
+        "id": "ee8c6cab-23f5-4e0e-ad52-d14fa7b8eb91",
+        "sequence": 4,
+        "requiredIf": [
+          {
+            "dependentProperty": "ab36192f-0229-4467-b94f-a1f544bcbdc1",
+            "dependentValue": "notAccept",
+            "requiredIf": null,
+            "evaluateRequiredIfConditionsAsOr": false,
+            "evaluateRequiredIfConditionsAsNot": false,
+            "toggleMandatory": false
+          }
+        ],
+        "title": "If you don't accept this award",
+        "elements": [
+          {
+            "type": "richText",
+            "id": "3dd538ac-69e0-490d-88f8-cc2bc3b5e58c",
+            "format": "prose",
+            "sequence": 0,
+            "required": true,
+            "content": "You may apply for a review if you don't accept this award. You can’t currently do this online."
+          },
+          {
+            "type": "richText",
+            "id": "bf6b13df-e352-42fb-8191-9d11bb4a5fbb",
+            "format": "prose",
+            "sequence": 1,
+            "required": true,
+            "content": "To make an application for a review you should:"
+          },
+          {
+            "type": "group",
+            "id": "03eed174-2160-47e4-9bdc-c052189354ef",
+            "sequence": 2,
+            "required": true,
+            "elements": [
+              {
+                "type": "richText",
+                "id": "6e161eca-7164-470d-a181-ec44570fbe3e",
+                "format": "listItem",
+                "sequence": 0,
+                "required": true,
+                "content": "select the link below to download and print the decision letter"
+              },
+              {
+                "type": "richText",
+                "id": "6617ccbd-0015-43c5-b829-bdacee8c58b0",
+                "format": "listItem",
+                "sequence": 1,
+                "required": true,
+                "content": "read the whole document"
+              },
+              {
+                "type": "richText",
+                "id": "57d961f5-0bf2-4b0b-b9f4-d08cdccf4fa1",
+                "format": "listItem",
+                "sequence": 2,
+                "required": true,
+                "content": "complete and sign the review application form"
+              },
+              {
+                "type": "richText",
+                "id": "f47fe68a-0493-46ac-a107-cbdc3ca465da",
+                "format": "listItem",
+                "sequence": 3,
+                "required": true,
+                "content": "post the review form to us by the date stated in the decision letter"
+              }
+            ]
+          },
+          {
+            "type": "richText",
+            "id": "6d268f1d-6472-4bd6-b847-ed6c2c29e918",
+            "format": "prose",
+            "sequence": 3,
+            "required": true,
+            "content": "To learn how to apply for a review, read the decision letter by selecting the link below."
+          },
+          {
+            "type": "attachment",
+            "id": "2de5714d-68f3-4eab-b064-fb45df30623c",
+            "sequence": 4,
+            "label": "Download Decision",
+            "attachmentId": "9467bf4d-3dc0-455c-b0f1-58a89402d692"
+          },
+          {
+            "type": "richText",
+            "id": "81ff22bc-5ca6-406b-a81d-82deff99e028",
+            "format": "prose",
+            "sequence": 5,
+            "required": true,
+            "content": "There is nothing else to do online at this time. We’ll contact you again by post when we receive your application for a review."
+          }
+        ],
+        "blocking": true,
+        "status": "NOT_STARTED"
+      }
+    ],
+    "tailoredNotificationId": "7dce6aeb-a59c-430e-8efd-32f245ec5963",
+    "exitGuidance": [
+      {
+        "type": "richText",
+        "id": "ec311461-f0b7-42e3-909b-2ad686a85f3f",
+        "format": "prose",
+        "sequence": 0,
+        "required": true,
+        "content": "We’ll write to you with further information about how we’ll manage the award."
+      }
+    ],
+    "taskGroups": null,
+    "lastSectionModified": "082c6e64-e483-4316-9798-430f3406c6c8"
+  },
+  "status": "OPEN",
+  "metadata": [
+    {
+      "key": "recipient",
+      "value": "test1@test.com"
+    },
+    {
+      "key": "name",
+      "value": "Under12 Money"
+    },
+    {
+      "key": "representative",
+      "value": "SunnyREP"
+    },
+    {
+      "key": "mainApplicant",
+      "value": "Mr ParentofVictim"
+    },
+    {
+      "key": "caseReference",
+      "value": "X/18/712300-TM2A"
+    },
+    {
+      "key": "dueDate",
+      "value": "2018-04-28T08:42:42Z"
+    },
+    {
+      "key": "incidentDate",
+      "value": "2017-03-02T08:42:42Z"
+    },
+    {
+      "key": "caseStatus",
+      "value": "OPEN"
+    }
+  ],
+  "attachments": [
+    {
+      "id": "9467bf4d-3dc0-455c-b0f1-58a89402d692",
+      "name": "Decision.pdf",
+      "media": {
+        "type": "application/pdf",
+        "binaryEncoding": "base64"
+      },
+      "title": "Download Decision",
+      "content": "JVBERi0xLjcKCjEgMCBvYmogICUgZW50cnkgcG9pbnQKPDwKICAvVHlwZSAvQ2F0YWxvZwogIC9QYWdlcyAyIDAgUgo+PgplbmRvYmoKCjIgMCBvYmoKPDwKICAvVHlwZSAvUGFnZXMKICAvTWVkaWFCb3ggWyAwIDAgMjAwIDIwMCBdCiAgL0NvdW50IDEKICAvS2lkcyBbIDMgMCBSIF0KPj4KZW5kb2JqCgozIDAgb2JqCjw8CiAgL1R5cGUgL1BhZ2UKICAvUGFyZW50IDIgMCBSCiAgL1Jlc291cmNlcyA8PAogICAgL0ZvbnQgPDwKICAgICAgL0YxIDQgMCBSIAogICAgPj4KICA+PgogIC9Db250ZW50cyA1IDAgUgo+PgplbmRvYmoKCjQgMCBvYmoKPDwKICAvVHlwZSAvRm9udAogIC9TdWJ0eXBlIC9UeXBlMQogIC9CYXNlRm9udCAvVGltZXMtUm9tYW4KPj4KZW5kb2JqCgo1IDAgb2JqICAlIHBhZ2UgY29udGVudAo8PAogIC9MZW5ndGggNDQKPj4Kc3RyZWFtCkJUCjcwIDUwIFRECi9GMSAxMiBUZgooSGVsbG8sIHdvcmxkISkgVGoKRVQKZW5kc3RyZWFtCmVuZG9iagoKeHJlZgowIDYKMDAwMDAwMDAwMCA2NTUzNSBmIAowMDAwMDAwMDEwIDAwMDAwIG4gCjAwMDAwMDAwNzkgMDAwMDAgbiAKMDAwMDAwMDE3MyAwMDAwMCBuIAowMDAwMDAwMzAxIDAwMDAwIG4gCjAwMDAwMDAzODAgMDAwMDAgbiAKdHJhaWxlcgo8PAogIC9TaXplIDYKICAvUm9vdCAxIDAgUgo+PgpzdGFydHhyZWYKNDkyCiUlRU9G"
+    }
+  ],
+  "formTemplateId": "dfc06bff-24c8-4217-b20c-acea77ae85b0",
+  "applicationType": null,
+  "caseReference": null,
+  "victimName": null,
+  "isSpecialist": null,
+  "relatedApplicationId": null
+}

@@ -1,0 +1,66 @@
+{
+    "$schema": "http://json-schema.org/draft-06/schema#",
+    "$id": "#contact",
+    "title": "Form",
+    "type": "object",
+    "properties": {
+      	"stuff": {
+        	"title": "bla",
+            "description": "bla bla"
+        },
+        "how-contacted": {
+            "title": "How do you want to be contacted?",
+            "type": "string",
+            "enum": ["email", "phone", "text"]
+        },
+        "contact-by-email": {
+            "title": "Email address",
+            "type": "string",
+            "format": "email"
+        },
+        "contact-by-text": {
+            "title": "Phone number",
+            "type": "string"
+        },
+        "contact-by-phone": {
+            "title": "Mobile phone number",
+            "type": "string"
+        }
+    },
+    "anyOf": [
+        {
+            "properties": {
+                "how-contacted": {
+                    "enum": ["email"]
+                }
+            },
+            "required": ["contact-by-email"]
+        },
+        {
+            "properties": {
+                "how-contacted": {
+                    "enum": ["phone"]
+                }
+            },
+            "required": ["contact-by-phone"]
+        },
+        {
+            "properties": {
+                "how-contacted": {
+                    "enum": ["text"]
+                }
+            },
+            "required": ["contact-by-text"]
+        }
+    ],
+    "oneOf": [
+      {
+        "properties": {
+         	"how-contacted": {
+              "enum": ["email"]
+            }
+        } 
+      }        
+	],
+    "value": 2
+}

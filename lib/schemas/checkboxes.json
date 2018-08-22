@@ -1,0 +1,30 @@
+{
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "$id": "#nationality",
+    "title": "Form",
+    "type": "object",
+    "properties": {
+        "nationality": {
+            "title": "What is your nationality?",
+            "description":
+                "If you have dual nationality, select all options that are relevant to you.",
+            "type": "array",
+            "items": {
+                "oneOf": [
+                    {
+                        "title": "British",
+                        "const": "british"
+                    },
+                    {
+                        "title": "Irish",
+                        "const": "irish"
+                    },
+                    {
+                        "title": "Citizen of another country",
+                        "const": "other"
+                    }
+                ]
+            }
+        }
+    }
+}
