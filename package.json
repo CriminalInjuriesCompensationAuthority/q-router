@@ -78,6 +78,7 @@
         }
     },
     "dependencies": {
+        "@sindresorhus/is": "^0.11.0",
         "xstate": "^3.3.3"
     }
 }
