@@ -3,11 +3,7 @@
     "version": "0.1.0",
     "description": "Provides methods for navigating a questionnaire based on defined routing rules.",
     "homepage": "",
-    "author": {
-        "name": "Stephen S",
-        "email": "webstacker@outlook.com",
-        "url": ""
-    },
+    "author": "CICA",
     "files": [
         "lib"
     ],
@@ -33,7 +29,7 @@
     },
     "scripts": {
         "prepublishOnly": "nsp check",
-        "pretestzzz": "eslint .",
+        "pretest": "eslint .",
         "test": "jest",
         "coverage": "jest --coverage"
     },
