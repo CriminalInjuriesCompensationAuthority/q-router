@@ -78,6 +78,6 @@
         }
     },
     "dependencies": {
-        "json-rules": "file:../json-rules"
+        "json-rules": "git+https://github.com/webstacker/json-rules.git"
     }
 }
