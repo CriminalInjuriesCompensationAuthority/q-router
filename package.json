@@ -78,6 +78,7 @@
         }
     },
     "dependencies": {
-        "json-rules": "git+https://github.com/webstacker/json-rules.git"
+        "json-rules": "git+https://github.com/webstacker/json-rules.git",
+        "moment": "^2.24.0"
     }
 }
