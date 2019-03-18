@@ -1,4 +1,4 @@
-const qRouter = require('../index.js');
+const qRouter = require('../lib/index');
 
 // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Regular_Expressions
 function escapeRegExp(string) {
