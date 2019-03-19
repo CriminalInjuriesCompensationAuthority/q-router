@@ -46,12 +46,11 @@ describe('qRouter', () => {
 
     it('should store a supplied value against the current state', () => {
         const router = qRouter(questionnaire);
-
-        router.next('ANSWER', {
+        const section = router.next('ANSWER', {
             q1: 'value of answer'
         });
 
-        expect(router.questionnaire.answers).toEqual({
+        expect(section.context.answers).toEqual({
             a: {
                 q1: {value: 'value of answer'}
             }
@@ -60,13 +59,12 @@ describe('qRouter', () => {
 
     it('should store a supplied value with multiple keys against the current state', () => {
         const router = qRouter(questionnaire);
-
-        router.next('ANSWER', {
+        const section = router.next('ANSWER', {
             q1: 'value of answer 1',
             q2: 'value of answer 2'
         });
 
-        expect(router.questionnaire.answers).toEqual({
+        expect(section.context.answers).toEqual({
             a: {
                 q1: {value: 'value of answer 1'},
                 q2: {value: 'value of answer 2'}
@@ -87,12 +85,12 @@ describe('qRouter', () => {
         router.previous();
 
         // edit question
-        router.next('ANSWER', {
+        const section = router.next('ANSWER', {
             q1: 'value of answer 1 edited',
             q2: 'value of answer 2 edited'
         });
 
-        expect(router.questionnaire.answers).toEqual({
+        expect(section.context.answers).toEqual({
             a: {
                 q1: {value: 'value of answer 1 edited'},
                 q2: {value: 'value of answer 2 edited'}
@@ -152,9 +150,9 @@ describe('qRouter', () => {
                 'q-attacker-first-name': 'Rebecca',
                 'q-attacker-last-name': 'Rabbit'
             });
-            router.next('ANSWER', {bla: 3});
+            const section = router.next('ANSWER', {bla: 3});
 
-            expect(router.questionnaire.answers).toEqual({
+            expect(section.context.answers).toEqual({
                 'p-number-of-attackers': {
                     'q-number-of-attackers': {value: 2}
                 },
@@ -212,10 +210,10 @@ describe('qRouter', () => {
             router.next('ANSWER', {aQ2: 2});
             router.next('ANSWER', {aQ3: 3});
             router.next('ANSWER', {bQ1: 4});
-            router.next('ANSWER', {cQ1: 5});
+            const section = router.next('ANSWER', {cQ1: 5});
 
-            expect(router.progress).toEqual(['a', 'a/2', 'a/3', 'b', 'c']);
-            expect(router.questionnaire.answers).toEqual({
+            expect(section.context.progress).toEqual(['a', 'a/2', 'a/3', 'b', 'c', 'd']);
+            expect(section.context.answers).toEqual({
                 a: [{aQ1: {value: 1}}, {aQ2: {value: 2}}, {aQ3: {value: 3}}],
                 b: {bQ1: {value: 4}},
                 c: {cQ1: {value: 5}}
@@ -266,9 +264,9 @@ describe('qRouter', () => {
             router.next('ANSWER', {cQ1: 6});
             router.next('ANSWER', {aQ1: 7});
             router.next('ANSWER', {bQ1: 8});
-            router.next('ANSWER', {cQ1: 9});
+            const section = router.next('ANSWER', {cQ1: 9});
 
-            expect(router.progress).toEqual([
+            expect(section.context.progress).toEqual([
                 'a',
                 'b',
                 'c',
@@ -277,9 +275,10 @@ describe('qRouter', () => {
                 'c/2',
                 'a/3',
                 'b/3',
-                'c/3'
+                'c/3',
+                'd'
             ]);
-            expect(router.questionnaire.answers).toEqual({
+            expect(section.context.answers).toEqual({
                 a: [{aQ1: {value: 1}}, {aQ1: {value: 4}}, {aQ1: {value: 7}}],
                 b: [{bQ1: {value: 2}}, {bQ1: {value: 5}}, {bQ1: {value: 8}}],
                 c: [{cQ1: {value: 3}}, {cQ1: {value: 6}}, {cQ1: {value: 9}}]
@@ -288,44 +287,28 @@ describe('qRouter', () => {
 
         it('should return a sectionId that contains the array index of the stored answer', () => {
             const router = qRouter(questionnaireWithRepeatableSections);
-            const expectedSectionIds = [];
 
             // answer questions
-            expectedSectionIds.push(router.current().id);
             router.next('ANSWER', {'q-number-of-attackers': 3});
-
-            expectedSectionIds.push(router.current().id);
             router.next('ANSWER', {
                 'q-attacker-first-name': 'Peppa1',
                 'q-attacker-last-name': 'Pig1'
             });
-
-            expectedSectionIds.push(router.current().id);
             router.next('ANSWER', {
                 'q-attacker-first-name': 'Peppa2',
                 'q-attacker-last-name': 'Pig2'
             });
-
-            expectedSectionIds.push(router.current().id);
-            router.next('ANSWER', {
+            const section = router.next('ANSWER', {
                 'q-attacker-first-name': 'Peppa3',
                 'q-attacker-last-name': 'Pig3'
             });
 
-            expectedSectionIds.push(router.current().id);
-
-            expect(expectedSectionIds).toEqual([
+            expect(section.context.progress).toEqual([
                 'p-number-of-attackers',
                 'p-attacker-names',
                 'p-attacker-names/2',
                 'p-attacker-names/3',
                 'section3'
-            ]);
-            expect(router.progress).toEqual([
-                'p-number-of-attackers',
-                'p-attacker-names',
-                'p-attacker-names/2',
-                'p-attacker-names/3'
             ]);
         });
 
@@ -353,18 +336,17 @@ describe('qRouter', () => {
             router.next('ANSWER', {bla: 3});
 
             // go back to question
-            router.previous(); // bla 3
             router.previous(); // Mummy Pig
             router.previous(); // Suzie Sheep
             router.previous(); // Rebecca Rabbit
 
             // edit question Rebecca Rabbit to Candy Cat
-            router.next('ANSWER', {
+            const section = router.next('ANSWER', {
                 'q-attacker-first-name': 'Candy',
                 'q-attacker-last-name': 'Cat'
             });
 
-            expect(router.questionnaire.answers).toEqual({
+            expect(section.context.answers).toEqual({
                 'p-number-of-attackers': {
                     'q-number-of-attackers': {value: 4}
                 },
@@ -456,9 +438,9 @@ describe('qRouter', () => {
             router.next('ANSWER', {'question-d': 3}); // d3
             router.next('ANSWER', {'question-e': 3}); // e3
             router.next('ANSWER', {'question-f': 1}); // f
-            router.next('ANSWER', {'question-g': 1}); // g
+            const section = router.next('ANSWER', {'question-g': 1}); // g
 
-            expect(router.questionnaire.answers).toEqual({
+            expect(section.context.answers).toEqual({
                 a: {'question-a': {value: 1}},
                 b: {'question-b': {value: 1}},
                 c: [
@@ -495,9 +477,9 @@ describe('qRouter', () => {
 
         router.next('ANSWER');
         router.next('ANSWER');
-        router.next('ANSWER');
+        const section = router.next('ANSWER');
 
-        expect(router.progress).toEqual(['a', 'b', 'c']);
+        expect(section.context.progress).toEqual(['a', 'b', 'c', 'd']);
     });
 
     it('should move to the previous state according to the progress', () => {
@@ -607,6 +589,22 @@ describe('qRouter', () => {
     });
 
     describe('Progress management', () => {
+        it('should start with the initial section in progress', () => {
+            const router = qRouter(questionnaire);
+            const section = router.current();
+            expect(section.context.progress).toEqual(['a']);
+        });
+
+        it('should stop non-visited sections from being used', () => {
+            const router = qRouter(questionnaire);
+            const rxExpectedError = errorMessageToRegExp(
+                `Failed to set the current section to id: "c". This section has not yet been visited.`
+            );
+
+            // Try and advance to section "c" which has not yet been visited
+            expect(() => router.next('ANSWER', {'q-c': 1}, 'c')).toThrow(rxExpectedError);
+        });
+
         describe('Given the following saved progress ["a", "b", "c", "d"]', () => {
             it('should remove any saved progress sectionIds after the current sectionId', () => {
                 const router = qRouter(questionnaire);
@@ -615,9 +613,9 @@ describe('qRouter', () => {
                 router.next('ANSWER', {'q-b': 1}, 'b');
                 router.next('ANSWER', {'q-c': 1}, 'c');
                 router.next('ANSWER', {'q-d': 1}, 'd');
-                router.next('ANSWER', {'q-a': 2}, 'a');
+                const section = router.next('ANSWER', {'q-a': 2}, 'a');
 
-                expect(router.progress).toEqual(['a']);
+                expect(section.context.progress).toEqual(['a', 'b']);
             });
         });
     });
@@ -648,17 +646,8 @@ describe('qRouter', () => {
                     initial: 'a',
                     states: {
                         a: {
-                            repeatable: true,
                             on: {
-                                ANSWER: [
-                                    {
-                                        target: 'a',
-                                        cond: ['answeredLessThan', 'a', 3]
-                                    },
-                                    {
-                                        target: 'b'
-                                    }
-                                ]
+                                ANSWER: 'b'
                             }
                         },
                         b: {
@@ -682,20 +671,19 @@ describe('qRouter', () => {
                 }
             });
 
-            router.next('ANSWER', {aQ1: 1});
-            router.next('ANSWER', {aQ2: 2});
-            router.next('ANSWER', {aQ3: 3});
-            router.next('ANSWER', {bQ1: 4});
-            router.next('ANSWER', {cQ1: 5});
+            router.next('ANSWER', {aQ1: true});
+            router.next('ANSWER', {bQ1: true});
+            router.next('ANSWER', {cQ1: true});
 
-            let result;
+            const section = router.next('EDIT', {bQ1: false}, 'b');
 
-            if (router.current().id === 'summary') {
-                result = router.next('EDIT', {bQ1: 5}, 'b').id;
-            }
-
-            expect(router.progress).toEqual(['a', 'a/2', 'a/3', 'b', 'c']);
-            expect(result).toEqual('summary');
+            expect(section.context.progress).toEqual(['a', 'b', 'c', 'summary']);
+            expect(section.id).toEqual('summary');
+            expect(section.context.answers).toEqual({
+                a: {aQ1: {value: true}},
+                b: {bQ1: {value: false}},
+                c: {cQ1: {value: true}}
+            });
         });
 
         it('should go to the next section if the edit has a cascading affect', () => {
@@ -704,17 +692,8 @@ describe('qRouter', () => {
                     initial: 'a',
                     states: {
                         a: {
-                            repeatable: true,
                             on: {
-                                ANSWER: [
-                                    {
-                                        target: 'a',
-                                        cond: ['answeredLessThan', 'a', 3]
-                                    },
-                                    {
-                                        target: 'b'
-                                    }
-                                ]
+                                ANSWER: 'b'
                             }
                         },
                         b: {
@@ -735,15 +714,8 @@ describe('qRouter', () => {
                             on: {
                                 ANSWER: [
                                     {
-                                        target: 'a',
-                                        cond: [
-                                            '==',
-                                            '$.answers.b.bQ1.value',
-                                            '$.answers.c.cQ1.value'
-                                        ]
-                                    },
-                                    {
-                                        target: 'summary'
+                                        target: 'summary',
+                                        cond: ['==', '$.answers.b.bQ1.value', true]
                                     }
                                 ]
                             }
@@ -753,20 +725,19 @@ describe('qRouter', () => {
                 }
             });
 
-            router.next('ANSWER', {aQ1: 1});
-            router.next('ANSWER', {aQ2: 2});
-            router.next('ANSWER', {aQ3: 3});
-            router.next('ANSWER', {bQ1: 4});
-            router.next('ANSWER', {cQ1: 5});
+            router.next('ANSWER', {aQ1: true});
+            router.next('ANSWER', {bQ1: true});
+            router.next('ANSWER', {cQ1: true});
 
-            let result;
+            const section = router.next('EDIT', {bQ1: false}, 'b');
 
-            if (router.current().id === 'summary') {
-                result = router.next('EDIT', {bQ1: 5}, 'b').id;
-            }
-
-            expect(router.progress).toEqual(['a', 'a/2', 'a/3', 'b']);
-            expect(result).toEqual('c');
+            expect(section.context.progress).toEqual(['a', 'b', 'c']);
+            expect(section.id).toEqual('c');
+            expect(section.context.answers).toEqual({
+                a: {aQ1: {value: true}},
+                b: {bQ1: {value: false}},
+                c: {cQ1: {value: true}}
+            });
         });
 
         describe('Repeating sections', () => {
@@ -791,19 +762,16 @@ describe('qRouter', () => {
                                         {
                                             target: 'summary',
                                             cond: ['noCascade', 'a']
+                                        },
+                                        {
+                                            target: 'b'
                                         }
                                     ]
                                 }
                             },
                             b: {
                                 on: {
-                                    ANSWER: 'c',
-                                    EDIT: [
-                                        {
-                                            target: 'summary',
-                                            cond: ['noCascade', 'b']
-                                        }
-                                    ]
+                                    ANSWER: 'c'
                                 }
                             },
                             c: {
@@ -822,14 +790,144 @@ describe('qRouter', () => {
                 router.next('ANSWER', {bQ1: 4});
                 router.next('ANSWER', {cQ1: 5});
 
-                let result;
+                const result = router.next('EDIT', {aQ2: 99}, 'a/2');
 
-                if (router.current().id === 'summary') {
-                    result = router.next('EDIT', {aQ2: 5}, 'a/2').id;
-                }
+                expect(result.context.progress).toEqual(['a', 'a/2', 'a/3', 'b', 'c', 'summary']);
+            });
 
-                expect(router.progress).toEqual(['a', 'a/2', 'a/3', 'b', 'c']);
-                expect(result).toEqual('summary');
+            describe('Edit causes cascading affect', () => {
+                it('should go to the next section', () => {
+                    const router = qRouter({
+                        routes: {
+                            initial: 'a',
+                            states: {
+                                a: {
+                                    repeatable: true,
+                                    on: {
+                                        ANSWER: [
+                                            {
+                                                target: 'a',
+                                                cond: ['answeredLessThan', 'a', 3]
+                                            },
+                                            {
+                                                target: 'b'
+                                            }
+                                        ]
+                                    }
+                                },
+                                b: {
+                                    on: {
+                                        ANSWER: 'c',
+                                        EDIT: [
+                                            {
+                                                target: 'summary',
+                                                cond: ['noCascade', 'b']
+                                            },
+                                            {
+                                                target: 'c'
+                                            }
+                                        ]
+                                    }
+                                },
+                                c: {
+                                    on: {
+                                        ANSWER: [
+                                            {
+                                                target: 'summary',
+                                                cond: ['==', '$.answers.b.bQ1.value', 4]
+                                            },
+                                            {
+                                                target: 'd'
+                                            }
+                                        ]
+                                    }
+                                },
+                                d: {},
+                                summary: {}
+                            }
+                        }
+                    });
+
+                    router.next('ANSWER', {aQ1: 1});
+                    router.next('ANSWER', {aQ2: 2});
+                    router.next('ANSWER', {aQ3: 3});
+                    router.next('ANSWER', {bQ1: 4});
+                    router.next('ANSWER', {cQ1: 5});
+
+                    const result = router.next('EDIT', {bQ1: 99}, 'b');
+
+                    expect(result.context.progress).toEqual(['a', 'a/2', 'a/3', 'b', 'c']);
+                });
+
+                it('should skip other repeated answers and go to next section', () => {
+                    const router = qRouter({
+                        routes: {
+                            initial: 'a',
+                            states: {
+                                a: {
+                                    repeatable: true,
+                                    on: {
+                                        ANSWER: [
+                                            {
+                                                target: 'a',
+                                                cond: ['answeredLessThan', 'a', 3]
+                                            },
+                                            {
+                                                target: 'b'
+                                            }
+                                        ],
+                                        EDIT: [
+                                            {
+                                                target: 'summary',
+                                                cond: ['noCascade', 'a']
+                                            },
+                                            {
+                                                target: 'b'
+                                            }
+                                        ]
+                                    }
+                                },
+                                b: {
+                                    repeatable: true,
+                                    on: {
+                                        ANSWER: [
+                                            {
+                                                target: 'b',
+                                                cond: ['==', '$.answers.a.0.aQ1.value', 0]
+                                            },
+                                            {
+                                                target: 'c'
+                                            }
+                                        ]
+                                    }
+                                },
+                                c: {
+                                    on: {
+                                        ANSWER: 'summary'
+                                    }
+                                },
+                                summary: {}
+                            }
+                        }
+                    });
+
+                    router.next('ANSWER', {aQ1: 1});
+                    router.next('ANSWER', {aQ2: 2});
+                    router.next('ANSWER', {aQ3: 3});
+                    router.next('ANSWER', {bQ1: 4});
+                    router.next('ANSWER', {cQ1: 5});
+
+                    // Technically this result could/should be "a/3", however for the moment it'll skip it's siblings and go to the next available section e.g. "b"
+                    const result = router.next('EDIT', {aQ2: 0}, 'a/2');
+
+                    expect(result.context.progress).toEqual(['a', 'a/2', 'a/3', 'b']);
+                    expect(result.id).toEqual('b');
+                    expect(result.context.answers).toEqual({
+                        a: [{aQ1: {value: 1}}, {aQ2: {value: 0}}, {aQ3: {value: 3}}],
+                        b: [{bQ1: {value: 4}}],
+                        c: {cQ1: {value: 5}}
+                    });
+                });
             });
         });
     });

@@ -27,7 +27,7 @@
     },
     "scripts": {
         "prepublishOnly": "nsp check",
-        "pretest": "eslint .",
+        "pretestZ": "eslint .",
         "test": "jest",
         "coverage": "jest --coverage"
     },
