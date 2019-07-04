@@ -1,3 +1,5 @@
+'use strict';
+
 const qRouter = require('../lib/index');
 
 const createQRouter = qRouter;

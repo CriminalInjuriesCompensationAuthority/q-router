@@ -17,7 +17,7 @@
         "eslint-plugin-prettier": "^3.0.0",
         "fs-extra": "^7.0.0",
         "husky": "^1.3.1",
-        "jest": "^24.1.0",
+        "jest": "^24.8.0",
         "lint-staged": "^8.0.4",
         "prettier": "^1.14.3",
         "q-base-config": "github:CriminalInjuriesCompensationAuthority/q-base-config#semver:<1.0.0"
@@ -27,7 +27,7 @@
     },
     "scripts": {
         "prepublishOnly": "nsp check",
-        "pretestZ": "eslint .",
+        "pretest": "eslint .",
         "test": "jest",
         "coverage": "jest --coverage"
     },
@@ -46,18 +46,18 @@
             "eslint-plugin-prettier": "^3.0.0",
             "fs-extra": "^7.0.0",
             "husky": "^1.3.1",
-            "jest": "^24.1.0",
+            "jest": "^24.8.0",
             "lint-staged": "^8.0.4",
             "prettier": "^1.14.3"
         },
         "blocks": [
             ".eslintignore",
-            ".huskyrc.js",
-            ".prettierrc.js",
-            ".lintstagedrc.js",
             ".eslintrc.js",
-            "jest.config.js",
-            ".gitignore"
+            ".huskyrc.js",
+            ".lintstagedrc.js",
+            ".gitignore",
+            ".prettierrc.js",
+            "jest.config.js"
         ],
         "files": [
             ".editorconfig",
