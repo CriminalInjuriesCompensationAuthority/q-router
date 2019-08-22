@@ -32,6 +32,70 @@ describe('qRouter tests', () => {
             expect(section.context.progress).toEqual(['a']);
         });
 
+        it('should restart at the last saved state', () => {
+            let section;
+            const router = createQRouter({
+                currentSection: 'a',
+                routes: {
+                    initial: 'a',
+                    states: {
+                        a: {
+                            on: {
+                                ANSWER: 'b'
+                            }
+                        },
+                        b: {
+                            on: {
+                                ANSWER: 'c'
+                            }
+                        },
+                        c: {
+                            on: {
+                                ANSWER: 'd'
+                            }
+                        },
+                        d: {
+                            on: {
+                                ANSWER: 'e'
+                            }
+                        },
+                        e: {
+                            type: 'final'
+                        }
+                    }
+                }
+            });
+
+            router.next({
+                q1: 'answer a'
+            });
+            router.next({
+                q1: 'answer b'
+            });
+            router.next({
+                q1: 'answer c'
+            });
+            router.next({
+                q1: 'answer d'
+            });
+            // ^^ current section id now at 'e'
+
+            section = router.previous();
+            section = router.previous();
+            // ^^ current section id now at 'c'
+
+            expect(section.id).toEqual('c');
+            expect(section.context.progress).toEqual(['a', 'b', 'c', 'd', 'e']);
+
+            // Create a new router from the previous router's context and things should be the same
+            const router2 = createQRouter(section.context);
+
+            section = router2.current();
+
+            expect(section.id).toEqual('c');
+            expect(section.context.progress).toEqual(['a', 'b', 'c', 'd', 'e']);
+        });
+
         describe('Next', () => {
             it('should move to the next route', () => {
                 const router = createQRouter({
