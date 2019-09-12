@@ -766,6 +766,73 @@ describe('qRouter tests', () => {
             });
         });
 
+        describe('First', () => {
+            it('should get the first section from the progress', () => {
+                const router = createQRouter({
+                    routes: {
+                        initial: 'a',
+                        states: {
+                            a: {
+                                on: {
+                                    ANSWER: 'b'
+                                }
+                            },
+                            b: {
+                                on: {
+                                    ANSWER: 'c'
+                                }
+                            },
+                            c: {
+                                type: 'final'
+                            }
+                        }
+                    }
+                });
+
+                router.next(); // b
+                router.next(); // c
+
+                const section = router.first();
+
+                expect(section.id).toEqual('a');
+                expect(section.context.progress).toEqual(['a', 'b', 'c']);
+            });
+        });
+
+        describe('Last', () => {
+            it('should get the last section from the progress', () => {
+                const router = createQRouter({
+                    routes: {
+                        initial: 'a',
+                        states: {
+                            a: {
+                                on: {
+                                    ANSWER: 'b'
+                                }
+                            },
+                            b: {
+                                on: {
+                                    ANSWER: 'c'
+                                }
+                            },
+                            c: {
+                                type: 'final'
+                            }
+                        }
+                    }
+                });
+
+                router.next(); // b
+                router.next(); // c
+                router.next(null, 'a'); // b
+
+                const section = router.last();
+
+                expect(section.id).toEqual('c');
+                expect(section.context.progress).toEqual(['a', 'b', 'c']);
+            });
+        });
+
         describe('Operators', () => {
             it('should return true if dateExceedsTwoYearsFromToday', () => {
                 const router = qRouter({
