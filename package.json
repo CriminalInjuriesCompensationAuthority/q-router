@@ -19,7 +19,8 @@
         "husky": "^4.0.3",
         "jest": "^24.9.0",
         "lint-staged": "^9.5.0",
-        "prettier": "^1.19.1"
+        "prettier": "^1.19.1",
+        "q-base-config": "github:CriminalInjuriesCompensationAuthority/q-base-config#v0.9.0"
     },
     "engines": {
         "npm": ">= 4.0.0"
@@ -32,9 +33,8 @@
     },
     "license": "MIT",
     "dependencies": {
-        "json-rules": "git+https://github.com/webstacker/json-rules.git",
-        "moment": "^2.24.0",
-        "q-base-config": "github:CriminalInjuriesCompensationAuthority/q-base-config#v0.9.0"
+        "json-rules": "github:webstacker/json-rules#v0.3.0",
+        "moment": "^2.24.0"
     },
     "_m0": {
         "devDependencies": {
