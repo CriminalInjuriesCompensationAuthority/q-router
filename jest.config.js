@@ -1,6 +1,7 @@
+/*! m0-start */
+
 'use strict';
 
-/*! m0-start */
 const config = {
     testEnvironment: 'node'
 };
