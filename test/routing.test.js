@@ -549,6 +549,7 @@ describe('qRouter tests', () => {
                             expect(section.context.progress).toEqual(['a', 'b', 'c']);
                         });
 
+                        /* eslint-disable jest/no-commented-out-tests */
                         // Currently the router only detects cascade at the page level instead of the answers on the page.
                         // TODO: Get this test passing for question level detection
                         // it('should leave progress unaffected if a changed answer does not cause a cascade #2', () => {
@@ -600,6 +601,7 @@ describe('qRouter tests', () => {
                         //     expect(section.id).toEqual('d');
                         //     expect(section.context.progress).toEqual(['a', 'b', 'c', 'd']);
                         // });
+                        /* eslint-enable jest/no-commented-out-tests */
                     });
                 });
             });
@@ -1053,6 +1055,7 @@ describe('qRouter tests', () => {
     // #################################################################################################################################
     // #################################################################################################################################
 
+    /* eslint-disable jest/no-commented-out-tests */
     //     describe('qRouter', () => {
     //         let questionnaire;
 
@@ -2238,4 +2241,5 @@ describe('qRouter tests', () => {
     //             });
     //         });
     //     });
+    /* eslint-enable jest/no-commented-out-tests */
 });
