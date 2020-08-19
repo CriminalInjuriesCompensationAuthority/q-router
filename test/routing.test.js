@@ -674,6 +674,215 @@ describe('qRouter tests', () => {
             });
         });
 
+        describe('Conditional sections', () => {
+            it('should allow answers to be used as conditions when routing', () => {
+                const router = createQRouter({
+                    routes: {
+                        initial: 'a',
+                        states: {
+                            a: {
+                                on: {
+                                    ANSWER: [
+                                        {
+                                            target: 'b',
+                                            cond: ['==', '$.answers.a.q1', 'foo']
+                                        },
+                                        {
+                                            target: 'c'
+                                        }
+                                    ]
+                                }
+                            },
+                            b: {
+                                on: {
+                                    ANSWER: 'c'
+                                }
+                            },
+                            c: {
+                                type: 'final'
+                            }
+                        }
+                    }
+                });
+
+                let section = router.next({q1: 'foo'});
+                expect(section.id).toEqual('b');
+
+                // Navigate back to 'a'
+                router.previous();
+
+                // Answer with anything other than 'foo'
+                section = router.next({q1: 'bar'});
+                expect(section.id).toEqual('c');
+            });
+
+            it('should return the first section that has a condition that evaluates to true', () => {
+                const router = createQRouter({
+                    routes: {
+                        initial: 'a',
+                        states: {
+                            a: {
+                                on: {
+                                    ANSWER: [
+                                        {
+                                            target: 'b',
+                                            cond: ['==', '$.answers.a.q1', 'foo']
+                                        },
+                                        {
+                                            target: 'c',
+                                            cond: ['==', '$.answers.a.q1', 'bar']
+                                        },
+                                        {
+                                            target: 'd'
+                                        }
+                                    ]
+                                }
+                            },
+                            b: {
+                                on: {
+                                    ANSWER: 'c'
+                                }
+                            },
+                            c: {
+                                type: 'final'
+                            },
+                            d: {
+                                type: 'final'
+                            }
+                        }
+                    }
+                });
+
+                const section = router.next({q1: 'bar'});
+                expect(section.id).toEqual('c');
+            });
+
+            it('should default to true when no condition exists', () => {
+                const router = createQRouter({
+                    routes: {
+                        initial: 'a',
+                        states: {
+                            a: {
+                                on: {
+                                    ANSWER: [
+                                        {
+                                            target: 'b',
+                                            cond: ['==', '$.answers.a.q1', 'foo']
+                                        },
+                                        {
+                                            target: 'c',
+                                            cond: ['==', '$.answers.a.q1', 'bar']
+                                        },
+                                        {
+                                            target: 'd'
+                                        }
+                                    ]
+                                }
+                            },
+                            b: {
+                                on: {
+                                    ANSWER: 'c'
+                                }
+                            },
+                            c: {
+                                type: 'final'
+                            },
+                            d: {
+                                type: 'final'
+                            }
+                        }
+                    }
+                });
+
+                const section = router.next({q1: 'baz'});
+                expect(section.id).toEqual('d');
+            });
+
+            it("should return the successful section's index", () => {
+                const router = createQRouter({
+                    routes: {
+                        initial: 'a',
+                        states: {
+                            a: {
+                                on: {
+                                    ANSWER: [
+                                        {
+                                            target: 'b',
+                                            cond: ['==', '$.answers.a.q1', 'foo']
+                                        },
+                                        {
+                                            target: 'c',
+                                            cond: ['==', '$.answers.a.q1', 'bar']
+                                        },
+                                        {
+                                            target: 'd'
+                                        }
+                                    ]
+                                }
+                            },
+                            b: {
+                                on: {
+                                    ANSWER: 'c'
+                                }
+                            },
+                            c: {
+                                type: 'final'
+                            },
+                            d: {
+                                type: 'final'
+                            }
+                        }
+                    }
+                });
+
+                const section = router.next({q1: 'bar'});
+
+                expect(section.meta.fromTransition).toEqual(true);
+                expect(section.meta.transitionDefinition.index).toEqual(1);
+            });
+
+            it('should return the current section if no conditions evaluate to true', () => {
+                const router = createQRouter({
+                    routes: {
+                        initial: 'a',
+                        states: {
+                            a: {
+                                on: {
+                                    ANSWER: [
+                                        {
+                                            target: 'b',
+                                            cond: ['==', '$.answers.a.q1', 'foo']
+                                        },
+                                        {
+                                            target: 'c',
+                                            cond: ['==', '$.answers.a.q1', 'bar']
+                                        }
+                                    ]
+                                }
+                            },
+                            b: {
+                                on: {
+                                    ANSWER: 'c'
+                                }
+                            },
+                            c: {
+                                type: 'final'
+                            },
+                            d: {
+                                type: 'final'
+                            }
+                        }
+                    }
+                });
+
+                const section = router.next({q1: 'baz'});
+
+                expect(section.id).toEqual('a');
+                expect(section.meta.fromTransition).toEqual(false);
+                expect(section.meta.transitionDefinition.index).toEqual(-1);
+            });
+        });
+
         describe('Current', () => {
             it('should get the current section', () => {
                 const router = createQRouter({
