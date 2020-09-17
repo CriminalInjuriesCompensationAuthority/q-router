@@ -1044,6 +1044,282 @@ describe('qRouter tests', () => {
 
                 expect(nextSectionId).toEqual('section4');
             });
+
+            it('should return true if dateMoreThanEighteenYearsAgo and date entered is more than 18 years ago', () => {
+                const router = qRouter({
+                    routes: {
+                        initial: 'section1',
+                        states: {
+                            section1: {
+                                on: {
+                                    ANSWER: [
+                                        {
+                                            target: 'section2',
+                                            cond: [
+                                                'dateMoreThanEighteenYearsAgo',
+                                                '$.answers.section1.q1'
+                                            ]
+                                        },
+                                        {
+                                            target: 'section3'
+                                        }
+                                    ]
+                                }
+                            },
+                            section2: {},
+                            section3: {}
+                        }
+                    }
+                });
+
+                const nextSectionId = router.next({q1: '2000-02-01T00:00Z'}).id;
+
+                expect(nextSectionId).toEqual('section2');
+            });
+
+            it('should return false if dateMoreThanEighteenYearsAgo and date entered is less than 18 years ago', () => {
+                const router = qRouter({
+                    routes: {
+                        initial: 'section1',
+                        states: {
+                            section1: {
+                                on: {
+                                    ANSWER: [
+                                        {
+                                            target: 'section2',
+                                            cond: [
+                                                'dateLessThanEighteenYearsAgo',
+                                                '$.answers.section1.q1'
+                                            ]
+                                        },
+                                        {
+                                            target: 'section3'
+                                        }
+                                    ]
+                                }
+                            },
+                            section2: {},
+                            section3: {}
+                        }
+                    }
+                });
+                const nextSectionId = router.next({q1: '2015-02-01T00:00Z'}).id;
+
+                expect(nextSectionId).toEqual('section2');
+            });
+
+            it('should return true if noNullOr and any answer is true', () => {
+                const router = qRouter({
+                    routes: {
+                        initial: 'section1',
+                        states: {
+                            section1: {
+                                on: {
+                                    ANSWER: [
+                                        {
+                                            target: 'section2'
+                                        }
+                                    ]
+                                }
+                            },
+                            section2: {
+                                on: {
+                                    ANSWER: [
+                                        {
+                                            target: 'section3'
+                                        }
+                                    ]
+                                }
+                            },
+                            section3: {
+                                on: {
+                                    ANSWER: [
+                                        {
+                                            target: 'section4',
+                                            cond: [
+                                                'noNullOr',
+                                                '$.answers.section1.q1',
+                                                '$.answers.section2.q2',
+                                                '$.answers.section3.q3'
+                                            ]
+                                        },
+                                        {
+                                            target: 'section5'
+                                        }
+                                    ]
+                                }
+                            },
+                            section4: {},
+                            section5: {}
+                        }
+                    }
+                });
+                router.next({q1: false});
+                router.next({q2: false});
+                const nextSectionId = router.next({q3: true}).id;
+
+                expect(nextSectionId).toEqual('section4');
+            });
+
+            it('should return false if noNullOr all answers are false', () => {
+                const router = qRouter({
+                    routes: {
+                        initial: 'section1',
+                        states: {
+                            section1: {
+                                on: {
+                                    ANSWER: [
+                                        {
+                                            target: 'section2'
+                                        }
+                                    ]
+                                }
+                            },
+                            section2: {
+                                on: {
+                                    ANSWER: [
+                                        {
+                                            target: 'section3'
+                                        }
+                                    ]
+                                }
+                            },
+                            section3: {
+                                on: {
+                                    ANSWER: [
+                                        {
+                                            target: 'section4',
+                                            cond: [
+                                                'noNullOr',
+                                                '$.answers.section1.q1',
+                                                '$.answers.section2.q2',
+                                                '$.answers.section3.q3'
+                                            ]
+                                        },
+                                        {
+                                            target: 'section5'
+                                        }
+                                    ]
+                                }
+                            },
+                            section4: {},
+                            section5: {}
+                        }
+                    }
+                });
+                router.next({q1: false});
+                router.next({q2: false});
+                const nextSectionId = router.next({q3: false}).id;
+
+                expect(nextSectionId).toEqual('section5');
+            });
+
+            it('should return false if noNullOr all answers are false and some answers are null', () => {
+                const router = qRouter({
+                    routes: {
+                        initial: 'section1',
+                        states: {
+                            section1: {
+                                on: {
+                                    ANSWER: [
+                                        {
+                                            target: 'section2'
+                                        }
+                                    ]
+                                }
+                            },
+                            section2: {
+                                on: {
+                                    ANSWER: [
+                                        {
+                                            target: 'section3'
+                                        }
+                                    ]
+                                }
+                            },
+                            section3: {
+                                on: {
+                                    ANSWER: [
+                                        {
+                                            target: 'section4',
+                                            cond: [
+                                                'noNullOr',
+                                                '$.answers.section1.q1',
+                                                '$.answers.section2.q2',
+                                                '$.answers.nullSection.nullQuestion'
+                                            ]
+                                        },
+                                        {
+                                            target: 'section5'
+                                        }
+                                    ]
+                                }
+                            },
+                            section4: {},
+                            section5: {}
+                        }
+                    }
+                });
+                router.next({q1: false});
+                router.next({q2: false});
+                const nextSectionId = router.next({q3: false}).id;
+
+                expect(nextSectionId).toEqual('section5');
+            });
+
+            it('should return true if noNullOr any answer is true and some answers are null', () => {
+                const router = qRouter({
+                    routes: {
+                        initial: 'section1',
+                        states: {
+                            section1: {
+                                on: {
+                                    ANSWER: [
+                                        {
+                                            target: 'section2'
+                                        }
+                                    ]
+                                }
+                            },
+                            section2: {
+                                on: {
+                                    ANSWER: [
+                                        {
+                                            target: 'section3'
+                                        }
+                                    ]
+                                }
+                            },
+                            section3: {
+                                on: {
+                                    ANSWER: [
+                                        {
+                                            target: 'section4',
+                                            cond: [
+                                                'noNullOr',
+                                                '$.answers.nullSection.nullQuestion',
+                                                '$.answers.section1.q1',
+                                                '$.answers.section2.q2',
+                                                '$.answers.section2.q3'
+                                            ]
+                                        },
+                                        {
+                                            target: 'section5'
+                                        }
+                                    ]
+                                }
+                            },
+                            section4: {},
+                            section5: {}
+                        }
+                    }
+                });
+                router.next({q1: false});
+                router.next({q2: true});
+                const nextSectionId = router.next({q3: false}).id;
+
+                expect(nextSectionId).toEqual('section4');
+            });
         });
     });
 
