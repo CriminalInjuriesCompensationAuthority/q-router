@@ -1108,7 +1108,7 @@ describe('qRouter tests', () => {
                 expect(nextSectionId).toEqual('section2');
             });
 
-            it('should return true if noNullOr and any answer is true', () => {
+            it('should return true if orNullIsFalse and any answer is true', () => {
                 const router = qRouter({
                     routes: {
                         initial: 'section1',
@@ -1137,7 +1137,7 @@ describe('qRouter tests', () => {
                                         {
                                             target: 'section4',
                                             cond: [
-                                                'noNullOr',
+                                                'orNullIsFalse',
                                                 '$.answers.section1.q1',
                                                 '$.answers.section2.q2',
                                                 '$.answers.section3.q3'
@@ -1161,7 +1161,7 @@ describe('qRouter tests', () => {
                 expect(nextSectionId).toEqual('section4');
             });
 
-            it('should return false if noNullOr all answers are false', () => {
+            it('should return false if orNullIsFalse all answers are false', () => {
                 const router = qRouter({
                     routes: {
                         initial: 'section1',
@@ -1190,7 +1190,7 @@ describe('qRouter tests', () => {
                                         {
                                             target: 'section4',
                                             cond: [
-                                                'noNullOr',
+                                                'orNullIsFalse',
                                                 '$.answers.section1.q1',
                                                 '$.answers.section2.q2',
                                                 '$.answers.section3.q3'
@@ -1214,7 +1214,7 @@ describe('qRouter tests', () => {
                 expect(nextSectionId).toEqual('section5');
             });
 
-            it('should return false if noNullOr all answers are false and some answers are null', () => {
+            it('should return false if orNullIsFalse all answers are false and some answers are null', () => {
                 const router = qRouter({
                     routes: {
                         initial: 'section1',
@@ -1243,7 +1243,7 @@ describe('qRouter tests', () => {
                                         {
                                             target: 'section4',
                                             cond: [
-                                                'noNullOr',
+                                                'orNullIsFalse',
                                                 '$.answers.section1.q1',
                                                 '$.answers.section2.q2',
                                                 '$.answers.nullSection.nullQuestion'
@@ -1267,7 +1267,7 @@ describe('qRouter tests', () => {
                 expect(nextSectionId).toEqual('section5');
             });
 
-            it('should return true if noNullOr any answer is true and some answers are null', () => {
+            it('should return true if orNullIsFalse any answer is true and some answers are null', () => {
                 const router = qRouter({
                     routes: {
                         initial: 'section1',
@@ -1296,7 +1296,7 @@ describe('qRouter tests', () => {
                                         {
                                             target: 'section4',
                                             cond: [
-                                                'noNullOr',
+                                                'orNullIsFalse',
                                                 '$.answers.nullSection.nullQuestion',
                                                 '$.answers.section1.q1',
                                                 '$.answers.section2.q2',
@@ -1319,6 +1319,102 @@ describe('qRouter tests', () => {
                 const nextSectionId = router.next({q3: false}).id;
 
                 expect(nextSectionId).toEqual('section4');
+            });
+
+            it('should return true if includesNullIsFalse and the answer includes the search value', () => {
+                const router = qRouter({
+                    routes: {
+                        initial: 'section1',
+                        states: {
+                            section1: {
+                                on: {
+                                    ANSWER: [
+                                        {
+                                            target: 'section2',
+                                            cond: [
+                                                'includesNullIsFalse',
+                                                '$.answers.section1.q1',
+                                                'value-one'
+                                            ]
+                                        },
+                                        {
+                                            target: 'section3'
+                                        }
+                                    ]
+                                }
+                            },
+                            section2: {},
+                            section3: {}
+                        }
+                    }
+                });
+                const nextSectionId = router.next({q1: ['value-one', 'value-two']}).id;
+
+                expect(nextSectionId).toEqual('section2');
+            });
+
+            it('should return false if includesNullIsFalse and the answer does not include the search value', () => {
+                const router = qRouter({
+                    routes: {
+                        initial: 'section1',
+                        states: {
+                            section1: {
+                                on: {
+                                    ANSWER: [
+                                        {
+                                            target: 'section2',
+                                            cond: [
+                                                'includesNullIsFalse',
+                                                '$.answers.section1.q1',
+                                                'value-other'
+                                            ]
+                                        },
+                                        {
+                                            target: 'section3'
+                                        }
+                                    ]
+                                }
+                            },
+                            section2: {},
+                            section3: {}
+                        }
+                    }
+                });
+                const nextSectionId = router.next({q1: ['value-one', 'value-two']}).id;
+
+                expect(nextSectionId).toEqual('section3');
+            });
+
+            it('should return false if includesNullIsFalse and the answer being searched for is null', () => {
+                const router = qRouter({
+                    routes: {
+                        initial: 'section1',
+                        states: {
+                            section1: {
+                                on: {
+                                    ANSWER: [
+                                        {
+                                            target: 'section2',
+                                            cond: [
+                                                'includesNullIsFalse',
+                                                '$.answers.other-section.q-other',
+                                                'value-one'
+                                            ]
+                                        },
+                                        {
+                                            target: 'section3'
+                                        }
+                                    ]
+                                }
+                            },
+                            section2: {},
+                            section3: {}
+                        }
+                    }
+                });
+                const nextSectionId = router.next({q1: ['value-one', 'value-two']}).id;
+
+                expect(nextSectionId).toEqual('section3');
             });
         });
     });
