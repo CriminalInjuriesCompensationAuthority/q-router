@@ -1,6 +1,6 @@
 {
     "name": "q-router",
-    "version": "2.5.1",
+    "version": "2.5.2",
     "description": "Provides methods for navigating a questionnaire based on defined routing rules.",
     "homepage": "",
     "author": "CICA",
