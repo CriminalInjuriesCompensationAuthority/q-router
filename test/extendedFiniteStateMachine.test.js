@@ -237,6 +237,51 @@ describe('Extended finite state machine', () => {
                     }
                 });
             });
+
+            it('should ignore any transtion with a "_skip" property', () => {
+                const fsm = createMachine({
+                    initial: 'a',
+                    states: {
+                        a: {
+                            on: {
+                                ANSWER: [
+                                    {target: 'b', cond: ['==', 'foo', 'foo'], _skip: true},
+                                    {target: 'c', cond: ['==', 'foo', 'foo']},
+                                    {target: 'd', cond: ['==', 'foo', 'foo']}
+                                ]
+                            }
+                        },
+                        b: {
+                            type: 'final'
+                        },
+                        c: {
+                            type: 'final'
+                        },
+                        d: {
+                            type: 'final'
+                        }
+                    }
+                });
+
+                const state = fsm.transition({value: 'a'}, 'ANSWER', {});
+
+                expect(state).toEqual({
+                    value: 'c',
+                    context: {},
+                    meta: {
+                        fromTransition: true,
+                        transitionDefinition: {
+                            type: 'array',
+                            value: [
+                                {target: 'b', cond: ['==', 'foo', 'foo'], _skip: true},
+                                {target: 'c', cond: ['==', 'foo', 'foo']},
+                                {target: 'd', cond: ['==', 'foo', 'foo']}
+                            ],
+                            index: 1
+                        }
+                    }
+                });
+            });
         });
     });
 });
