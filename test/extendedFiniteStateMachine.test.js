@@ -53,6 +53,44 @@ describe('Extended finite state machine', () => {
             expect(() => fsm.transition({value: 'a'}, 'ANSWER', {})).toThrow(rxExpectedError);
         });
 
+        it('should indicate if the returned next state is final', () => {
+            const fsm = createMachine({
+                initial: 'a',
+                states: {
+                    a: {
+                        on: {
+                            ANSWER: 'b'
+                        }
+                    },
+                    b: {
+                        type: 'final'
+                    }
+                }
+            });
+
+            const state = fsm.transition({value: 'a'}, 'ANSWER', {});
+
+            expect(state).toEqual({
+                value: 'b',
+                context: {},
+                changed: true,
+                done: true,
+                meta: {
+                    previousState: {
+                        stateNode: {
+                            on: {
+                                ANSWER: 'b'
+                            }
+                        },
+                        evaluatedTransition: {
+                            type: 'string',
+                            value: 'b'
+                        }
+                    }
+                }
+            });
+        });
+
         describe("Given an event's transition definition is declared as a string ('on' property)", () => {
             it('should indicate that a transition took place', () => {
                 const fsm = createMachine({
@@ -75,6 +113,7 @@ describe('Extended finite state machine', () => {
                     value: 'b',
                     context: {},
                     changed: true,
+                    done: true,
                     meta: {
                         previousState: {
                             stateNode: {
@@ -114,6 +153,7 @@ describe('Extended finite state machine', () => {
                     value: 'b',
                     context: {},
                     changed: true,
+                    done: true,
                     meta: {
                         previousState: {
                             stateNode: {
@@ -151,6 +191,7 @@ describe('Extended finite state machine', () => {
                     value: 'a',
                     context: {},
                     changed: false,
+                    done: false,
                     meta: {
                         previousState: {
                             stateNode: {
@@ -200,6 +241,7 @@ describe('Extended finite state machine', () => {
                     value: 'c',
                     context: {},
                     changed: true,
+                    done: true,
                     meta: {
                         previousState: {
                             stateNode: {
@@ -256,6 +298,7 @@ describe('Extended finite state machine', () => {
                     value: 'a',
                     context: {},
                     changed: false,
+                    done: false,
                     meta: {
                         previousState: {
                             stateNode: {

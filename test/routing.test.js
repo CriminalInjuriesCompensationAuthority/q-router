@@ -535,12 +535,15 @@ describe('qRouter tests', () => {
                                                         cond: ['==', '$.answers.a.q1', 'scotland']
                                                     },
                                                     {
-                                                        type: 'final'
+                                                        target: 'd'
                                                     }
                                                 ]
                                             }
                                         },
                                         c: {
+                                            type: 'final'
+                                        },
+                                        d: {
                                             type: 'final'
                                         }
                                     }
@@ -585,12 +588,15 @@ describe('qRouter tests', () => {
                                                         ]
                                                     },
                                                     {
-                                                        type: 'final'
+                                                        target: 'e'
                                                     }
                                                 ]
                                             }
                                         },
                                         d: {
+                                            type: 'final'
+                                        },
+                                        e: {
                                             type: 'final'
                                         }
                                     }
