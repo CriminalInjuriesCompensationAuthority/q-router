@@ -91,6 +91,33 @@ describe('Extended finite state machine', () => {
             });
         });
 
+        it('should include metadata with the initial state', () => {
+            const fsm = createMachine({
+                initial: 'a',
+                context: {},
+                states: {
+                    a: {
+                        on: {
+                            ANSWER: 'b'
+                        }
+                    },
+                    b: {
+                        type: 'final'
+                    }
+                }
+            });
+
+            const {initialState} = fsm;
+
+            expect(initialState).toEqual({
+                value: 'a',
+                context: {},
+                changed: undefined,
+                done: false,
+                meta: {}
+            });
+        });
+
         describe("Given an event's transition definition is declared as a string ('on' property)", () => {
             it('should indicate that a transition took place', () => {
                 const fsm = createMachine({
