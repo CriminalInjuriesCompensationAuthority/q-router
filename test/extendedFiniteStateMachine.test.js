@@ -75,18 +75,8 @@ describe('Extended finite state machine', () => {
                 context: {},
                 changed: true,
                 done: true,
-                meta: {
-                    previousState: {
-                        stateNode: {
-                            on: {
-                                ANSWER: 'b'
-                            }
-                        },
-                        evaluatedTransition: {
-                            type: 'string',
-                            value: 'b'
-                        }
-                    }
+                history: {
+                    value: 'a'
                 }
             });
         });
@@ -114,7 +104,7 @@ describe('Extended finite state machine', () => {
                 context: {},
                 changed: undefined,
                 done: false,
-                meta: {}
+                history: undefined
             });
         });
 
@@ -141,18 +131,8 @@ describe('Extended finite state machine', () => {
                     context: {},
                     changed: true,
                     done: true,
-                    meta: {
-                        previousState: {
-                            stateNode: {
-                                on: {
-                                    ANSWER: 'b'
-                                }
-                            },
-                            evaluatedTransition: {
-                                type: 'string',
-                                value: 'b'
-                            }
-                        }
+                    history: {
+                        value: 'a'
                     }
                 });
             });
@@ -181,18 +161,8 @@ describe('Extended finite state machine', () => {
                     context: {},
                     changed: true,
                     done: true,
-                    meta: {
-                        previousState: {
-                            stateNode: {
-                                on: {
-                                    ANSWER: {target: 'b'}
-                                }
-                            },
-                            evaluatedTransition: {
-                                type: 'object',
-                                value: {target: 'b'}
-                            }
-                        }
+                    history: {
+                        value: 'a'
                     }
                 });
             });
@@ -219,19 +189,7 @@ describe('Extended finite state machine', () => {
                     context: {},
                     changed: false,
                     done: false,
-                    meta: {
-                        previousState: {
-                            stateNode: {
-                                on: {
-                                    ANSWER: {target: 'b', cond: ['==', 'foo', 'bar']}
-                                }
-                            },
-                            evaluatedTransition: {
-                                type: 'object',
-                                value: {target: 'b', cond: ['==', 'foo', 'bar']}
-                            }
-                        }
-                    }
+                    history: undefined
                 });
             });
         });
@@ -269,27 +227,9 @@ describe('Extended finite state machine', () => {
                     context: {},
                     changed: true,
                     done: true,
-                    meta: {
-                        previousState: {
-                            stateNode: {
-                                on: {
-                                    ANSWER: [
-                                        {target: 'b', cond: ['==', 'foo', 'bar']},
-                                        {target: 'c', cond: ['==', 'foo', 'foo']},
-                                        {target: 'd', cond: ['==', 'foo', 'baz']}
-                                    ]
-                                }
-                            },
-                            evaluatedTransition: {
-                                type: 'array',
-                                value: [
-                                    {target: 'b', cond: ['==', 'foo', 'bar']},
-                                    {target: 'c', cond: ['==', 'foo', 'foo']},
-                                    {target: 'd', cond: ['==', 'foo', 'baz']}
-                                ],
-                                successfulIndex: 1
-                            }
-                        }
+                    history: {
+                        value: 'a',
+                        successfulGuardIndex: 1
                     }
                 });
             });
@@ -326,27 +266,57 @@ describe('Extended finite state machine', () => {
                     context: {},
                     changed: false,
                     done: false,
-                    meta: {
-                        previousState: {
-                            stateNode: {
-                                on: {
-                                    ANSWER: [
-                                        {target: 'b', cond: ['==', 'foo', 'bar']},
-                                        {target: 'c', cond: ['==', 'foo', 'baz']},
-                                        {target: 'd', cond: ['==', 'foo', 'biz']}
-                                    ]
-                                }
-                            },
-                            evaluatedTransition: {
-                                type: 'array',
-                                value: [
-                                    {target: 'b', cond: ['==', 'foo', 'bar']},
-                                    {target: 'c', cond: ['==', 'foo', 'baz']},
+                    history: undefined
+                });
+            });
+
+            it('should indicate that no transition took place 2', () => {
+                const fsm = createMachine({
+                    initial: 'a',
+                    states: {
+                        a: {
+                            on: {
+                                ANSWER: [
+                                    {target: 'b', cond: ['==', 'foo', 'foo']},
+                                    {target: 'c', cond: ['==', 'foo', 'bar']},
                                     {target: 'd', cond: ['==', 'foo', 'biz']}
                                 ]
                             }
+                        },
+                        b: {
+                            on: {
+                                ANSWER: [
+                                    {target: 'c', cond: ['==', 'foo', 'bar']},
+                                    {target: 'd', cond: ['==', 'foo', 'biz']}
+                                ]
+                            }
+                        },
+                        c: {
+                            type: 'final'
+                        },
+                        d: {
+                            type: 'final'
                         }
                     }
+                });
+
+                const state1 = fsm.transition({value: 'a'}, 'ANSWER', {}); // transitions to "b"
+                const state2 = fsm.transition({value: 'b'}, 'ANSWER', {}); // no guard passes, remain on "b"
+
+                expect(state1).toEqual({
+                    value: 'b',
+                    context: {},
+                    changed: true,
+                    done: false,
+                    history: {value: 'a', successfulGuardIndex: 0}
+                });
+
+                expect(state2).toEqual({
+                    value: 'b',
+                    context: {},
+                    changed: false,
+                    done: false,
+                    history: undefined
                 });
             });
         });
