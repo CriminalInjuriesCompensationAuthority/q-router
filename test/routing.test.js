@@ -1343,6 +1343,185 @@ describe('qRouter tests', () => {
 
                 expect(nextSectionId).toEqual('section4');
             });
+
+            describe('operatorDateCompareToToday', () => {
+                describe('Given a less than operator', () => {
+                    it('should evaluate truthy parameters correctly', () => {
+                        const router = qRouter({
+                            routes: {
+                                initial: 'section1',
+                                states: {
+                                    section1: {
+                                        on: {
+                                            ANSWER: [
+                                                {
+                                                    target: 'section2'
+                                                }
+                                            ]
+                                        }
+                                    },
+                                    section2: {
+                                        on: {
+                                            ANSWER: [
+                                                {
+                                                    target: 'section3',
+                                                    cond: [
+                                                        'operatorDateCompareToToday',
+                                                        '<',
+                                                        '$.answers.section2.q1',
+                                                        2,
+                                                        'years'
+                                                    ]
+                                                },
+                                                {
+                                                    target: 'section4'
+                                                }
+                                            ]
+                                        }
+                                    },
+                                    section3: {},
+                                    section4: {}
+                                }
+                            }
+                        });
+                        router.next();
+                        const nextSectionId = router.next({q1: '2021-02-02T00:00Z'}).id;
+
+                        expect(nextSectionId).toEqual('section3');
+                    });
+                    it('should evaluate falsy parameters correctly', () => {
+                        const router = qRouter({
+                            routes: {
+                                initial: 'section1',
+                                states: {
+                                    section1: {
+                                        on: {
+                                            ANSWER: [
+                                                {
+                                                    target: 'section2'
+                                                }
+                                            ]
+                                        }
+                                    },
+                                    section2: {
+                                        on: {
+                                            ANSWER: [
+                                                {
+                                                    target: 'section3',
+                                                    cond: [
+                                                        'operatorDateCompareToToday',
+                                                        '<',
+                                                        '$.answers.section2.q1',
+                                                        2,
+                                                        'years'
+                                                    ]
+                                                },
+                                                {
+                                                    target: 'section4'
+                                                }
+                                            ]
+                                        }
+                                    },
+                                    section3: {},
+                                    section4: {}
+                                }
+                            }
+                        });
+                        router.next();
+                        const nextSectionId = router.next({q1: '2015-02-02T00:00Z'}).id;
+
+                        expect(nextSectionId).toEqual('section4');
+                    });
+                });
+                describe('Given a more than operator', () => {
+                    it('should evaluate truthy parameters correctly', () => {
+                        const router = qRouter({
+                            routes: {
+                                initial: 'section1',
+                                states: {
+                                    section1: {
+                                        on: {
+                                            ANSWER: [
+                                                {
+                                                    target: 'section2'
+                                                }
+                                            ]
+                                        }
+                                    },
+                                    section2: {
+                                        on: {
+                                            ANSWER: [
+                                                {
+                                                    target: 'section3',
+                                                    cond: [
+                                                        'operatorDateCompareToToday',
+                                                        '>',
+                                                        '$.answers.section2.q1',
+                                                        2,
+                                                        'years'
+                                                    ]
+                                                },
+                                                {
+                                                    target: 'section4'
+                                                }
+                                            ]
+                                        }
+                                    },
+                                    section3: {},
+                                    section4: {}
+                                }
+                            }
+                        });
+                        router.next();
+                        const nextSectionId = router.next({q1: '2029-02-02T00:00Z'}).id;
+
+                        expect(nextSectionId).toEqual('section3');
+                    });
+                    it('should evaluate falsy parameters correctly', () => {
+                        const router = qRouter({
+                            routes: {
+                                initial: 'section1',
+                                states: {
+                                    section1: {
+                                        on: {
+                                            ANSWER: [
+                                                {
+                                                    target: 'section2'
+                                                }
+                                            ]
+                                        }
+                                    },
+                                    section2: {
+                                        on: {
+                                            ANSWER: [
+                                                {
+                                                    target: 'section3',
+                                                    cond: [
+                                                        'operatorDateCompareToToday',
+                                                        '>',
+                                                        '$.answers.section2.q1',
+                                                        2,
+                                                        'years'
+                                                    ]
+                                                },
+                                                {
+                                                    target: 'section4'
+                                                }
+                                            ]
+                                        }
+                                    },
+                                    section3: {},
+                                    section4: {}
+                                }
+                            }
+                        });
+                        router.next();
+                        const nextSectionId = router.next({q1: '2021-02-02T00:00Z'}).id;
+
+                        expect(nextSectionId).toEqual('section4');
+                    });
+                });
+            });
         });
     });
 });
