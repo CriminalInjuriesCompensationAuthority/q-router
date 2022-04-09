@@ -34,7 +34,7 @@
     "license": "MIT",
     "dependencies": {
         "json-rules": "github:CriminalInjuriesCompensationAuthority/json-rules#v1.0.0",
-        "moment": "^2.24.0"
+        "moment": "^2.29.2"
     },
     "_m0": {
         "devDependencies": {
