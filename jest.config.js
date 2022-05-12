@@ -1,12 +1,8 @@
-/*! m0-start */
-
 'use strict';
 
 const config = {
-    testEnvironment: 'node'
+    testEnvironment: 'node',
+    setupFilesAfterEnv: ['./jest.setup.js']
 };
-/*! m0-end */
 
-/*! m0-start */
 module.exports = config;
-/*! m0-end */
