@@ -167,6 +167,22 @@ describe('qRouter tests', () => {
             });
 
             describe('Answers', () => {
+                it('should initialise with "NODE_ENV" value in the answers', () => {
+                    const router = createQRouter({
+                        routes: {
+                            initial: 'a',
+                            states: {
+                                a: {
+                                    type: 'final'
+                                }
+                            }
+                        }
+                    });
+
+                    const section = router.current();
+                    expect(section.context.answers.system.env).toEqual('test');
+                });
+
                 it('should store a supplied value against the current state', () => {
                     const router = createQRouter({
                         routes: {
@@ -188,10 +204,9 @@ describe('qRouter tests', () => {
                         q1: 'answer'
                     });
 
-                    expect(section.context.answers).toEqual({
-                        a: {
-                            q1: 'answer'
-                        }
+                    expect(section.context.answers).toHaveProperty('a');
+                    expect(section.context.answers.a).toEqual({
+                        q1: 'answer'
                     });
                 });
 
@@ -228,13 +243,14 @@ describe('qRouter tests', () => {
                         q1: 'edited answer b'
                     });
 
-                    expect(section.context.answers).toEqual({
-                        a: {
-                            q1: 'answer a'
-                        },
-                        b: {
-                            q1: 'edited answer b'
-                        }
+                    expect(section.context.answers).toHaveProperty('a');
+                    expect(section.context.answers.a).toEqual({
+                        q1: 'answer a'
+                    });
+
+                    expect(section.context.answers).toHaveProperty('b');
+                    expect(section.context.answers.b).toEqual({
+                        q1: 'edited answer b'
                     });
                 });
 
@@ -275,13 +291,14 @@ describe('qRouter tests', () => {
                         'b'
                     );
 
-                    expect(section.context.answers).toEqual({
-                        a: {
-                            q1: 'answer a'
-                        },
-                        b: {
-                            q1: 'edited answer b'
-                        }
+                    expect(section.context.answers).toHaveProperty('a');
+                    expect(section.context.answers.a).toEqual({
+                        q1: 'answer a'
+                    });
+
+                    expect(section.context.answers).toHaveProperty('b');
+                    expect(section.context.answers.b).toEqual({
+                        q1: 'edited answer b'
                     });
                 });
 
@@ -416,14 +433,16 @@ describe('qRouter tests', () => {
 
                         const questionnaire = router.current().context;
 
-                        expect(questionnaire.answers).toEqual({
-                            a: {
-                                q1: 'foo'
-                            },
-                            b: {
-                                q1: 1
-                            }
+                        expect(questionnaire.answers).toHaveProperty('a');
+                        expect(questionnaire.answers.a).toEqual({
+                            q1: 'foo'
                         });
+
+                        expect(questionnaire.answers).toHaveProperty('b');
+                        expect(questionnaire.answers.b).toEqual({
+                            q1: 1
+                        });
+
                         expect(questionnaire.retractedAnswers).toEqual({
                             c: {
                                 q1: 1
@@ -814,10 +833,9 @@ describe('qRouter tests', () => {
                             const questionnaire = router.current().context;
 
                             expect(questionnaire.progress).toEqual(['a', 'c']);
-                            expect(questionnaire.answers).toEqual({
-                                a: {
-                                    q1: 'bar'
-                                }
+                            expect(questionnaire.answers).toHaveProperty('a');
+                            expect(questionnaire.answers.a).toEqual({
+                                q1: 'bar'
                             });
                             expect(questionnaire.retractedAnswers).toEqual({
                                 b: {
@@ -886,16 +904,17 @@ describe('qRouter tests', () => {
                             const questionnaire = router.current().context;
 
                             expect(questionnaire.progress).toEqual(['a', 'c', 'd', 'f']);
-                            expect(questionnaire.answers).toEqual({
-                                a: {
-                                    q1: 'bar'
-                                },
-                                c: {
-                                    q1: 1
-                                },
-                                d: {
-                                    q1: 1
-                                }
+                            expect(questionnaire.answers).toHaveProperty('a');
+                            expect(questionnaire.answers).toHaveProperty('c');
+                            expect(questionnaire.answers).toHaveProperty('d');
+                            expect(questionnaire.answers.a).toEqual({
+                                q1: 'bar'
+                            });
+                            expect(questionnaire.answers.c).toEqual({
+                                q1: 1
+                            });
+                            expect(questionnaire.answers.d).toEqual({
+                                q1: 1
                             });
                             expect(questionnaire.retractedAnswers).toEqual({});
                         });
