@@ -1393,6 +1393,7 @@ describe('qRouter tests', () => {
 
                 expect(nextSectionId).toEqual('section4');
             });
+
             describe('dateCompare', () => {
                 it('should return true if far enough in the past (in years)', () => {
                     const router = qRouter({
@@ -2092,6 +2093,42 @@ describe('qRouter tests', () => {
                     expect(nextSectionId).toEqual('section2');
                 });
             });
+        });
+
+        it('should return the transition index', () => {
+            const router = createQRouter({
+                routes: {
+                    initial: 'a',
+                    states: {
+                        a: {
+                            on: {
+                                ANSWER: [
+                                    {
+                                        target: 'b',
+                                        cond: ['==', 'foo', 'bar']
+                                    },
+                                    {
+                                        target: 'c',
+                                        cond: ['==', 'foo', 'foo']
+                                    }
+                                ]
+                            }
+                        },
+                        b: {
+                            type: 'final'
+                        },
+                        c: {
+                            type: 'final'
+                        }
+                    }
+                }
+            });
+
+            const section = router.next();
+
+            expect(section.id).toEqual('c');
+            expect(section.context.progress).toEqual(['a', 'c']);
+            expect(section.transitionIndex).toEqual(1);
         });
     });
 });
