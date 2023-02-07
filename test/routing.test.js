@@ -951,6 +951,248 @@ describe('qRouter tests', () => {
                         });
                     });
                 });
+
+                describe('Cascade: updating answer removes subsequent progress for routes using roles', () => {
+                    describe('Section relies on its own answer for routing', () => {
+                        it('should clear affected progress using user roles.all in routing', () => {
+                            const router = createQRouter({
+                                attributes: {
+                                    q__roles: {
+                                        foo: {
+                                            schema: {
+                                                const: ['==', '$.answers.a.q1', 'scotland']
+                                            }
+                                        },
+                                        bar: {
+                                            schema: {
+                                                const: ['==', '$.answers.a.q1', 'england']
+                                            }
+                                        }
+                                    }
+                                },
+                                routes: {
+                                    initial: 'a',
+                                    states: {
+                                        a: {
+                                            on: {
+                                                ANSWER: [
+                                                    {
+                                                        target: 'b',
+                                                        cond: ['|role.all', 'foo']
+                                                    },
+                                                    {
+                                                        target: 'c',
+                                                        cond: ['|role.all', 'bar']
+                                                    }
+                                                ]
+                                            }
+                                        },
+                                        b: {
+                                            on: {
+                                                ANSWER: 'c'
+                                            }
+                                        },
+                                        c: {
+                                            type: 'final'
+                                        }
+                                    }
+                                }
+                            });
+
+                            router.next({q1: 'scotland'});
+                            router.next();
+                            const section = router.next({q1: 'england'}, 'a');
+
+                            expect(section.id).toEqual('c');
+                            expect(section.context.progress).toEqual(['a', 'c']);
+                        });
+
+                        it('should clear affected progress using user roles.all in routing #2', () => {
+                            const router = createQRouter({
+                                attributes: {
+                                    q__roles: {
+                                        foo: {
+                                            schema: {
+                                                const: ['==', '$.answers.b.q1', 'scotland']
+                                            }
+                                        },
+                                        bar: {
+                                            schema: {
+                                                const: ['==', '$.answers.b.q1', 'england']
+                                            }
+                                        }
+                                    }
+                                },
+                                routes: {
+                                    initial: 'a',
+                                    states: {
+                                        a: {
+                                            on: {
+                                                ANSWER: 'b'
+                                            }
+                                        },
+                                        b: {
+                                            on: {
+                                                ANSWER: [
+                                                    {
+                                                        target: 'c',
+                                                        cond: ['|role.all', 'foo']
+                                                    },
+                                                    {
+                                                        target: 'd',
+                                                        cond: ['|role.all', 'bar']
+                                                    }
+                                                ]
+                                            }
+                                        },
+                                        c: {
+                                            type: 'final'
+                                        },
+                                        d: {
+                                            type: 'final'
+                                        }
+                                    }
+                                }
+                            });
+
+                            router.next();
+                            router.next({q1: 'scotland'});
+                            const section = router.next({q1: 'england'}, 'b');
+
+                            expect(section.id).toEqual('d');
+                            expect(section.context.progress).toEqual(['a', 'b', 'd']);
+                        });
+
+                        it('should clear affected progress using user roles.any in routing', () => {
+                            const router = createQRouter({
+                                attributes: {
+                                    q__roles: {
+                                        foo: {
+                                            schema: {
+                                                const: ['==', '$.answers.a.q1', 'scotland']
+                                            }
+                                        },
+                                        bar: {
+                                            schema: {
+                                                const: ['==', '$.answers.a.q1', 'england']
+                                            }
+                                        },
+                                        baz: {
+                                            schema: {
+                                                const: ['==', '$.answers.a.q1', 'ireland']
+                                            }
+                                        },
+                                        quz: {
+                                            schema: {
+                                                const: ['==', '$.answers.a.q1', 'wales']
+                                            }
+                                        }
+                                    }
+                                },
+                                routes: {
+                                    initial: 'a',
+                                    states: {
+                                        a: {
+                                            on: {
+                                                ANSWER: [
+                                                    {
+                                                        target: 'b',
+                                                        cond: ['|role.any', 'foo', 'baz']
+                                                    },
+                                                    {
+                                                        target: 'c',
+                                                        cond: ['|role.any', 'bar', 'quz']
+                                                    }
+                                                ]
+                                            }
+                                        },
+                                        b: {
+                                            on: {
+                                                ANSWER: 'c'
+                                            }
+                                        },
+                                        c: {
+                                            type: 'final'
+                                        }
+                                    }
+                                }
+                            });
+
+                            router.next({q1: 'scotland'});
+                            router.next();
+                            const section = router.next({q1: 'england'}, 'a');
+
+                            expect(section.id).toEqual('c');
+                            expect(section.context.progress).toEqual(['a', 'c']);
+                        });
+
+                        it('should clear affected progress using user roles.any in routing #2', () => {
+                            const router = createQRouter({
+                                attributes: {
+                                    q__roles: {
+                                        foo: {
+                                            schema: {
+                                                const: ['==', '$.answers.b.q1', 'scotland']
+                                            }
+                                        },
+                                        bar: {
+                                            schema: {
+                                                const: ['==', '$.answers.b.q1', 'england']
+                                            }
+                                        },
+                                        baz: {
+                                            schema: {
+                                                const: ['==', '$.answers.a.q1', 'ireland']
+                                            }
+                                        },
+                                        quz: {
+                                            schema: {
+                                                const: ['==', '$.answers.a.q1', 'wales']
+                                            }
+                                        }
+                                    }
+                                },
+                                routes: {
+                                    initial: 'a',
+                                    states: {
+                                        a: {
+                                            on: {
+                                                ANSWER: 'b'
+                                            }
+                                        },
+                                        b: {
+                                            on: {
+                                                ANSWER: [
+                                                    {
+                                                        target: 'c',
+                                                        cond: ['|role.any', 'foo', 'baz']
+                                                    },
+                                                    {
+                                                        target: 'd',
+                                                        cond: ['|role.any', 'bar', 'quz']
+                                                    }
+                                                ]
+                                            }
+                                        },
+                                        c: {
+                                            type: 'final'
+                                        },
+                                        d: {
+                                            type: 'final'
+                                        }
+                                    }
+                                }
+                            });
+
+                            router.next();
+                            router.next({q1: 'scotland'});
+                            const section = router.next({q1: 'england'}, 'b');
+
+                            expect(section.id).toEqual('d');
+                            expect(section.context.progress).toEqual(['a', 'b', 'd']);
+                        });
+                    });
+                });
             });
         });
 
