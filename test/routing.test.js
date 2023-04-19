@@ -967,6 +967,16 @@ describe('qRouter tests', () => {
                                             schema: {
                                                 const: ['==', '$.answers.a.q1', 'england']
                                             }
+                                        },
+                                        baz: {
+                                            schema: {
+                                                const: ['==', '$.answers.a.q1', 'scotland']
+                                            }
+                                        },
+                                        qux: {
+                                            schema: {
+                                                const: ['==', '$.answers.a.q1', 'wales']
+                                            }
                                         }
                                     }
                                 },
@@ -978,11 +988,21 @@ describe('qRouter tests', () => {
                                                 ANSWER: [
                                                     {
                                                         target: 'b',
-                                                        cond: ['|role.all', 'foo']
+                                                        cond: [
+                                                            'or',
+                                                            ['|role.all', 'foo', 'baz'],
+                                                            ['|role.all', 'baz'],
+                                                            ['==', '$.answers.b.q9', true]
+                                                        ]
                                                     },
                                                     {
                                                         target: 'c',
-                                                        cond: ['|role.all', 'bar']
+                                                        cond: [
+                                                            'or',
+                                                            ['|role.all', 'bar'],
+                                                            ['|role.all', 'qux'],
+                                                            ['==', '$.answers.b.q9', true]
+                                                        ]
                                                     }
                                                 ]
                                             }
@@ -1020,6 +1040,16 @@ describe('qRouter tests', () => {
                                             schema: {
                                                 const: ['==', '$.answers.b.q1', 'england']
                                             }
+                                        },
+                                        baz: {
+                                            schema: {
+                                                const: ['==', '$.answers.a.q1', 'ireland']
+                                            }
+                                        },
+                                        qux: {
+                                            schema: {
+                                                const: ['==', '$.answers.a.q1', 'wales']
+                                            }
                                         }
                                     }
                                 },
@@ -1036,11 +1066,21 @@ describe('qRouter tests', () => {
                                                 ANSWER: [
                                                     {
                                                         target: 'c',
-                                                        cond: ['|role.all', 'foo']
+                                                        cond: [
+                                                            'or',
+                                                            ['|role.all', 'foo'],
+                                                            ['|role.all', 'baz'],
+                                                            ['==', '$.answers.b.q9', true]
+                                                        ]
                                                     },
                                                     {
                                                         target: 'd',
-                                                        cond: ['|role.all', 'bar']
+                                                        cond: [
+                                                            'or',
+                                                            ['|role.all', 'bar'],
+                                                            ['|role.all', 'qux'],
+                                                            ['==', '$.answers.b.q9', true]
+                                                        ]
                                                     }
                                                 ]
                                             }
@@ -1097,11 +1137,27 @@ describe('qRouter tests', () => {
                                                 ANSWER: [
                                                     {
                                                         target: 'b',
-                                                        cond: ['|role.any', 'foo', 'baz']
+                                                        cond: [
+                                                            'and',
+                                                            ['==', '$.answers.a.q1', 'scotland'],
+                                                            [
+                                                                'or',
+                                                                ['==', '$.answers.b.q10', true],
+                                                                ['|role.any', 'foo', 'baz']
+                                                            ]
+                                                        ]
                                                     },
                                                     {
                                                         target: 'c',
-                                                        cond: ['|role.any', 'bar', 'quz']
+                                                        cond: [
+                                                            'and',
+                                                            ['==', '$.answers.a.q1', 'england'],
+                                                            [
+                                                                'or',
+                                                                ['==', '$.answers.b.q9', true],
+                                                                ['|role.any', 'bar', 'quz']
+                                                            ]
+                                                        ]
                                                     }
                                                 ]
                                             }
