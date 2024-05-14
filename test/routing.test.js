@@ -344,11 +344,21 @@ describe('qRouter tests', () => {
                                         ANSWER: [
                                             {
                                                 target: 'b',
-                                                cond: ['==', '$.answers.a.q1', 'foo']
+                                                guard: {
+                                                    type: 'evaluateRoute',
+                                                    params: {
+                                                        cond: ['==', '$.answers.a.q1', 'foo']
+                                                    }
+                                                }
                                             },
                                             {
                                                 target: 'c',
-                                                cond: ['==', '$.answers.a.q1', 'bar']
+                                                guard: {
+                                                    type: 'evaluateRoute',
+                                                    params: {
+                                                        cond: ['==', '$.answers.a.q1', 'bar']
+                                                    }
+                                                }
                                             }
                                         ]
                                     }
@@ -368,11 +378,21 @@ describe('qRouter tests', () => {
                                         ANSWER: [
                                             {
                                                 target: 'e',
-                                                cond: ['==', '$.answers.b.q1', 1]
+                                                guard: {
+                                                    type: 'evaluateRoute',
+                                                    params: {
+                                                        cond: ['==', '$.answers.b.q1', 1]
+                                                    }
+                                                }
                                             },
                                             {
                                                 target: 'f',
-                                                cond: ['==', '$.answers.c.q1', 1]
+                                                guard: {
+                                                    type: 'evaluateRoute',
+                                                    params: {
+                                                        cond: ['==', '$.answers.c.q1', 1]
+                                                    }
+                                                }
                                             }
                                         ]
                                     }
@@ -408,11 +428,21 @@ describe('qRouter tests', () => {
                                             ANSWER: [
                                                 {
                                                     target: 'b',
-                                                    cond: ['==', '$.answers.a.q1', 'foo']
+                                                    guard: {
+                                                        type: 'evaluateRoute',
+                                                        params: {
+                                                            cond: ['==', '$.answers.a.q1', 'foo']
+                                                        }
+                                                    }
                                                 },
                                                 {
                                                     target: 'c',
-                                                    cond: ['==', '$.answers.a.q1', 'bar']
+                                                    guard: {
+                                                        type: 'evaluateRoute',
+                                                        params: {
+                                                            cond: ['==', '$.answers.a.q1', 'bar']
+                                                        }
+                                                    }
                                                 }
                                             ]
                                         }
@@ -432,11 +462,21 @@ describe('qRouter tests', () => {
                                             ANSWER: [
                                                 {
                                                     target: 'e',
-                                                    cond: ['==', '$.answers.b.q1', 1]
+                                                    guard: {
+                                                        type: 'evaluateRoute',
+                                                        params: {
+                                                            cond: ['==', '$.answers.b.q1', 1]
+                                                        }
+                                                    }
                                                 },
                                                 {
                                                     target: 'f',
-                                                    cond: ['==', '$.answers.c.q1', 1]
+                                                    guard: {
+                                                        type: 'evaluateRoute',
+                                                        params: {
+                                                            cond: ['==', '$.answers.c.q1', 1]
+                                                        }
+                                                    }
                                                 }
                                             ]
                                         }
@@ -494,11 +534,29 @@ describe('qRouter tests', () => {
                                                 ANSWER: [
                                                     {
                                                         target: 'b',
-                                                        cond: ['==', '$.answers.a.q1', 'scotland']
+                                                        guard: {
+                                                            type: 'evaluateRoute',
+                                                            params: {
+                                                                cond: [
+                                                                    '==',
+                                                                    '$.answers.a.q1',
+                                                                    'scotland'
+                                                                ]
+                                                            }
+                                                        }
                                                     },
                                                     {
                                                         target: 'c',
-                                                        cond: ['==', '$.answers.a.q1', 'england']
+                                                        guard: {
+                                                            type: 'evaluateRoute',
+                                                            params: {
+                                                                cond: [
+                                                                    '==',
+                                                                    '$.answers.a.q1',
+                                                                    'england'
+                                                                ]
+                                                            }
+                                                        }
                                                     }
                                                 ]
                                             }
@@ -538,11 +596,29 @@ describe('qRouter tests', () => {
                                                 ANSWER: [
                                                     {
                                                         target: 'c',
-                                                        cond: ['==', '$.answers.b.q1', 'scotland']
+                                                        guard: {
+                                                            type: 'evaluateRoute',
+                                                            params: {
+                                                                cond: [
+                                                                    '==',
+                                                                    '$.answers.b.q1',
+                                                                    'scotland'
+                                                                ]
+                                                            }
+                                                        }
                                                     },
                                                     {
                                                         target: 'd',
-                                                        cond: ['==', '$.answers.b.q1', 'england']
+                                                        guard: {
+                                                            type: 'evaluateRoute',
+                                                            params: {
+                                                                cond: [
+                                                                    '==',
+                                                                    '$.answers.b.q1',
+                                                                    'england'
+                                                                ]
+                                                            }
+                                                        }
                                                     }
                                                 ]
                                             }
@@ -582,7 +658,16 @@ describe('qRouter tests', () => {
                                                 ANSWER: [
                                                     {
                                                         target: 'c',
-                                                        cond: ['==', '$.answers.a.q1', 'scotland']
+                                                        guard: {
+                                                            type: 'evaluateRoute',
+                                                            params: {
+                                                                cond: [
+                                                                    '==',
+                                                                    '$.answers.a.q1',
+                                                                    'scotland'
+                                                                ]
+                                                            }
+                                                        }
                                                     },
                                                     {
                                                         type: 'final'
@@ -627,12 +712,17 @@ describe('qRouter tests', () => {
                                                 ANSWER: [
                                                     {
                                                         target: 'd',
-                                                        cond: [
-                                                            '==',
-                                                            '$.answers.a.q1',
-                                                            '$.answers.b.q1',
-                                                            1
-                                                        ]
+                                                        guard: {
+                                                            type: 'evaluateRoute',
+                                                            params: {
+                                                                cond: [
+                                                                    '==',
+                                                                    '$.answers.a.q1',
+                                                                    '$.answers.b.q1',
+                                                                    1
+                                                                ]
+                                                            }
+                                                        }
                                                     },
                                                     {
                                                         type: 'final'
@@ -673,11 +763,29 @@ describe('qRouter tests', () => {
                                                 ANSWER: [
                                                     {
                                                         target: 'c',
-                                                        cond: ['==', '$.answers.b.q1', 'scotland']
+                                                        guard: {
+                                                            type: 'evaluateRoute',
+                                                            params: {
+                                                                cond: [
+                                                                    '==',
+                                                                    '$.answers.b.q1',
+                                                                    'scotland'
+                                                                ]
+                                                            }
+                                                        }
                                                     },
                                                     {
                                                         target: 'd',
-                                                        cond: ['==', '$.answers.b.q1', 'england']
+                                                        guard: {
+                                                            type: 'evaluateRoute',
+                                                            params: {
+                                                                cond: [
+                                                                    '==',
+                                                                    '$.answers.b.q1',
+                                                                    'england'
+                                                                ]
+                                                            }
+                                                        }
                                                     }
                                                 ]
                                             }
@@ -715,11 +823,29 @@ describe('qRouter tests', () => {
                                                 ANSWER: [
                                                     {
                                                         target: 'c',
-                                                        cond: ['==', '$.answers.b.q1', 'scotland']
+                                                        guard: {
+                                                            type: 'evaluateRoute',
+                                                            params: {
+                                                                cond: [
+                                                                    '==',
+                                                                    '$.answers.b.q1',
+                                                                    'scotland'
+                                                                ]
+                                                            }
+                                                        }
                                                     },
                                                     {
                                                         target: 'd',
-                                                        cond: ['==', '$.answers.b.q1', 'england']
+                                                        guard: {
+                                                            type: 'evaluateRoute',
+                                                            params: {
+                                                                cond: [
+                                                                    '==',
+                                                                    '$.answers.b.q1',
+                                                                    'england'
+                                                                ]
+                                                            }
+                                                        }
                                                     }
                                                 ]
                                             }
@@ -769,12 +895,17 @@ describe('qRouter tests', () => {
                         //                         ANSWER: [
                         //                             {
                         //                                 target: 'd',
-                        //                                 cond: [
+                        //                                 guard: {
+                        // type: 'evaluateRoute',
+                        // params: {
+                        //            cond: [
                         //                                     '==',
                         //                                     '$.answers.a.q1',
                         //                                     '$.answers.b.q1',
                         //                                     1
                         //                                 ]
+                        // }
+                        // }
                         //                             },
                         //                             {
                         //                                 type: 'final'
@@ -811,11 +942,29 @@ describe('qRouter tests', () => {
                                                 ANSWER: [
                                                     {
                                                         target: 'b',
-                                                        cond: ['==', '$.answers.a.q1', 'foo']
+                                                        guard: {
+                                                            type: 'evaluateRoute',
+                                                            params: {
+                                                                cond: [
+                                                                    '==',
+                                                                    '$.answers.a.q1',
+                                                                    'foo'
+                                                                ]
+                                                            }
+                                                        }
                                                     },
                                                     {
                                                         target: 'c',
-                                                        cond: ['==', '$.answers.a.q1', 'bar']
+                                                        guard: {
+                                                            type: 'evaluateRoute',
+                                                            params: {
+                                                                cond: [
+                                                                    '==',
+                                                                    '$.answers.a.q1',
+                                                                    'bar'
+                                                                ]
+                                                            }
+                                                        }
                                                     }
                                                 ]
                                             }
@@ -835,11 +984,21 @@ describe('qRouter tests', () => {
                                                 ANSWER: [
                                                     {
                                                         target: 'e',
-                                                        cond: ['==', '$.answers.b.q1', 1]
+                                                        guard: {
+                                                            type: 'evaluateRoute',
+                                                            params: {
+                                                                cond: ['==', '$.answers.b.q1', 1]
+                                                            }
+                                                        }
                                                     },
                                                     {
                                                         target: 'f',
-                                                        cond: ['==', '$.answers.c.q1', 1]
+                                                        guard: {
+                                                            type: 'evaluateRoute',
+                                                            params: {
+                                                                cond: ['==', '$.answers.c.q1', 1]
+                                                            }
+                                                        }
                                                     }
                                                 ]
                                             }
@@ -888,11 +1047,29 @@ describe('qRouter tests', () => {
                                                 ANSWER: [
                                                     {
                                                         target: 'b',
-                                                        cond: ['==', '$.answers.a.q1', 'foo']
+                                                        guard: {
+                                                            type: 'evaluateRoute',
+                                                            params: {
+                                                                cond: [
+                                                                    '==',
+                                                                    '$.answers.a.q1',
+                                                                    'foo'
+                                                                ]
+                                                            }
+                                                        }
                                                     },
                                                     {
                                                         target: 'c',
-                                                        cond: ['==', '$.answers.a.q1', 'bar']
+                                                        guard: {
+                                                            type: 'evaluateRoute',
+                                                            params: {
+                                                                cond: [
+                                                                    '==',
+                                                                    '$.answers.a.q1',
+                                                                    'bar'
+                                                                ]
+                                                            }
+                                                        }
                                                     }
                                                 ]
                                             }
@@ -912,11 +1089,21 @@ describe('qRouter tests', () => {
                                                 ANSWER: [
                                                     {
                                                         target: 'e',
-                                                        cond: ['==', '$.answers.b.q1', 1]
+                                                        guard: {
+                                                            type: 'evaluateRoute',
+                                                            params: {
+                                                                cond: ['==', '$.answers.b.q1', 1]
+                                                            }
+                                                        }
                                                     },
                                                     {
                                                         target: 'f',
-                                                        cond: ['==', '$.answers.c.q1', 1]
+                                                        guard: {
+                                                            type: 'evaluateRoute',
+                                                            params: {
+                                                                cond: ['==', '$.answers.c.q1', 1]
+                                                            }
+                                                        }
                                                     }
                                                 ]
                                             }
@@ -988,21 +1175,31 @@ describe('qRouter tests', () => {
                                                 ANSWER: [
                                                     {
                                                         target: 'b',
-                                                        cond: [
-                                                            'or',
-                                                            ['|role.all', 'foo', 'baz'],
-                                                            ['|role.all', 'baz'],
-                                                            ['==', '$.answers.b.q9', true]
-                                                        ]
+                                                        guard: {
+                                                            type: 'evaluateRoute',
+                                                            params: {
+                                                                cond: [
+                                                                    'or',
+                                                                    ['|role.all', 'foo', 'baz'],
+                                                                    ['|role.all', 'baz'],
+                                                                    ['==', '$.answers.b.q9', true]
+                                                                ]
+                                                            }
+                                                        }
                                                     },
                                                     {
                                                         target: 'c',
-                                                        cond: [
-                                                            'or',
-                                                            ['|role.all', 'bar'],
-                                                            ['|role.all', 'qux'],
-                                                            ['==', '$.answers.b.q9', true]
-                                                        ]
+                                                        guard: {
+                                                            type: 'evaluateRoute',
+                                                            params: {
+                                                                cond: [
+                                                                    'or',
+                                                                    ['|role.all', 'bar'],
+                                                                    ['|role.all', 'qux'],
+                                                                    ['==', '$.answers.b.q9', true]
+                                                                ]
+                                                            }
+                                                        }
                                                     }
                                                 ]
                                             }
@@ -1066,21 +1263,31 @@ describe('qRouter tests', () => {
                                                 ANSWER: [
                                                     {
                                                         target: 'c',
-                                                        cond: [
-                                                            'or',
-                                                            ['|role.all', 'foo'],
-                                                            ['|role.all', 'baz'],
-                                                            ['==', '$.answers.b.q9', true]
-                                                        ]
+                                                        guard: {
+                                                            type: 'evaluateRoute',
+                                                            params: {
+                                                                cond: [
+                                                                    'or',
+                                                                    ['|role.all', 'foo'],
+                                                                    ['|role.all', 'baz'],
+                                                                    ['==', '$.answers.b.q9', true]
+                                                                ]
+                                                            }
+                                                        }
                                                     },
                                                     {
                                                         target: 'd',
-                                                        cond: [
-                                                            'or',
-                                                            ['|role.all', 'bar'],
-                                                            ['|role.all', 'qux'],
-                                                            ['==', '$.answers.b.q9', true]
-                                                        ]
+                                                        guard: {
+                                                            type: 'evaluateRoute',
+                                                            params: {
+                                                                cond: [
+                                                                    'or',
+                                                                    ['|role.all', 'bar'],
+                                                                    ['|role.all', 'qux'],
+                                                                    ['==', '$.answers.b.q9', true]
+                                                                ]
+                                                            }
+                                                        }
                                                     }
                                                 ]
                                             }
@@ -1137,27 +1344,53 @@ describe('qRouter tests', () => {
                                                 ANSWER: [
                                                     {
                                                         target: 'b',
-                                                        cond: [
-                                                            'and',
-                                                            ['==', '$.answers.a.q1', 'scotland'],
-                                                            [
-                                                                'or',
-                                                                ['==', '$.answers.b.q10', true],
-                                                                ['|role.any', 'foo', 'baz']
-                                                            ]
-                                                        ]
+                                                        guard: {
+                                                            type: 'evaluateRoute',
+                                                            params: {
+                                                                cond: [
+                                                                    'and',
+                                                                    [
+                                                                        '==',
+                                                                        '$.answers.a.q1',
+                                                                        'scotland'
+                                                                    ],
+                                                                    [
+                                                                        'or',
+                                                                        [
+                                                                            '==',
+                                                                            '$.answers.b.q10',
+                                                                            true
+                                                                        ],
+                                                                        ['|role.any', 'foo', 'baz']
+                                                                    ]
+                                                                ]
+                                                            }
+                                                        }
                                                     },
                                                     {
                                                         target: 'c',
-                                                        cond: [
-                                                            'and',
-                                                            ['==', '$.answers.a.q1', 'england'],
-                                                            [
-                                                                'or',
-                                                                ['==', '$.answers.b.q9', true],
-                                                                ['|role.any', 'bar', 'quz']
-                                                            ]
-                                                        ]
+                                                        guard: {
+                                                            type: 'evaluateRoute',
+                                                            params: {
+                                                                cond: [
+                                                                    'and',
+                                                                    [
+                                                                        '==',
+                                                                        '$.answers.a.q1',
+                                                                        'england'
+                                                                    ],
+                                                                    [
+                                                                        'or',
+                                                                        [
+                                                                            '==',
+                                                                            '$.answers.b.q9',
+                                                                            true
+                                                                        ],
+                                                                        ['|role.any', 'bar', 'quz']
+                                                                    ]
+                                                                ]
+                                                            }
+                                                        }
                                                     }
                                                 ]
                                             }
@@ -1221,11 +1454,21 @@ describe('qRouter tests', () => {
                                                 ANSWER: [
                                                     {
                                                         target: 'c',
-                                                        cond: ['|role.any', 'foo', 'baz']
+                                                        guard: {
+                                                            type: 'evaluateRoute',
+                                                            params: {
+                                                                cond: ['|role.any', 'foo', 'baz']
+                                                            }
+                                                        }
                                                     },
                                                     {
                                                         target: 'd',
-                                                        cond: ['|role.any', 'bar', 'quz']
+                                                        guard: {
+                                                            type: 'evaluateRoute',
+                                                            params: {
+                                                                cond: ['|role.any', 'bar', 'quz']
+                                                            }
+                                                        }
                                                     }
                                                 ]
                                             }
@@ -1491,10 +1734,15 @@ describe('qRouter tests', () => {
                                     ANSWER: [
                                         {
                                             target: 'section2',
-                                            cond: [
-                                                'dateExceedsTwoYearsFromNow',
-                                                '$.answers.section1.q1'
-                                            ]
+                                            guard: {
+                                                type: 'evaluateRoute',
+                                                params: {
+                                                    cond: [
+                                                        'dateExceedsTwoYearsFromNow',
+                                                        '$.answers.section1.q1'
+                                                    ]
+                                                }
+                                            }
                                         },
                                         {
                                             target: 'section3'
@@ -1523,10 +1771,15 @@ describe('qRouter tests', () => {
                                     ANSWER: [
                                         {
                                             target: 'section2',
-                                            cond: [
-                                                'dateExceedsTwoYearsFromNow',
-                                                '$.answers.section1.q1'
-                                            ]
+                                            guard: {
+                                                type: 'evaluateRoute',
+                                                params: {
+                                                    cond: [
+                                                        'dateExceedsTwoYearsFromNow',
+                                                        '$.answers.section1.q1'
+                                                    ]
+                                                }
+                                            }
                                         },
                                         {
                                             target: 'section3'
@@ -1555,10 +1808,15 @@ describe('qRouter tests', () => {
                                     ANSWER: [
                                         {
                                             target: 'section2',
-                                            cond: [
-                                                'dateLessThanEighteenYearsAgo',
-                                                '$.answers.section1.q1'
-                                            ]
+                                            guard: {
+                                                type: 'evaluateRoute',
+                                                params: {
+                                                    cond: [
+                                                        'dateLessThanEighteenYearsAgo',
+                                                        '$.answers.section1.q1'
+                                                    ]
+                                                }
+                                            }
                                         },
                                         {
                                             target: 'section3'
@@ -1587,10 +1845,15 @@ describe('qRouter tests', () => {
                                     ANSWER: [
                                         {
                                             target: 'section2',
-                                            cond: [
-                                                'dateLessThanEighteenYearsAgo',
-                                                '$.answers.section1.q1'
-                                            ]
+                                            guard: {
+                                                type: 'evaluateRoute',
+                                                params: {
+                                                    cond: [
+                                                        'dateLessThanEighteenYearsAgo',
+                                                        '$.answers.section1.q1'
+                                                    ]
+                                                }
+                                            }
                                         },
                                         {
                                             target: 'section3'
@@ -1627,11 +1890,16 @@ describe('qRouter tests', () => {
                                     ANSWER: [
                                         {
                                             target: 'section3',
-                                            cond: [
-                                                'dateDifferenceGreaterThanTwoDays',
-                                                '$.answers.section1.q1',
-                                                '$.answers.section2.q2'
-                                            ]
+                                            guard: {
+                                                type: 'evaluateRoute',
+                                                params: {
+                                                    cond: [
+                                                        'dateDifferenceGreaterThanTwoDays',
+                                                        '$.answers.section1.q1',
+                                                        '$.answers.section2.q2'
+                                                    ]
+                                                }
+                                            }
                                         },
                                         {
                                             target: 'section4'
@@ -1669,11 +1937,16 @@ describe('qRouter tests', () => {
                                     ANSWER: [
                                         {
                                             target: 'section3',
-                                            cond: [
-                                                'dateDifferenceGreaterThanTwoDays',
-                                                '$.answers.section1.q1',
-                                                '$.answers.section2.q1'
-                                            ]
+                                            guard: {
+                                                type: 'evaluateRoute',
+                                                params: {
+                                                    cond: [
+                                                        'dateDifferenceGreaterThanTwoDays',
+                                                        '$.answers.section1.q1',
+                                                        '$.answers.section2.q1'
+                                                    ]
+                                                }
+                                            }
                                         },
                                         {
                                             target: 'section4'
@@ -1702,14 +1975,19 @@ describe('qRouter tests', () => {
                                         ANSWER: [
                                             {
                                                 target: 'section2',
-                                                cond: [
-                                                    'dateCompare',
-                                                    '$.answers.section1.q1', // this date ...
-                                                    '>', // is more than ...
-                                                    '-12', // 12 ...
-                                                    'years' // years (before, due to the negative (-12) ...
-                                                    // today's date (no second date given. defaults to today's date).
-                                                ]
+                                                guard: {
+                                                    type: 'evaluateRoute',
+                                                    params: {
+                                                        cond: [
+                                                            'dateCompare',
+                                                            '$.answers.section1.q1', // this date ...
+                                                            '>', // is more than ...
+                                                            '-12', // 12 ...
+                                                            'years' // years (before, due to the negative (-12) ...
+                                                            // today's date (no second date given. defaults to today's date).
+                                                        ]
+                                                    }
+                                                }
                                             },
                                             {
                                                 target: 'section3'
@@ -1738,14 +2016,19 @@ describe('qRouter tests', () => {
                                         ANSWER: [
                                             {
                                                 target: 'section2',
-                                                cond: [
-                                                    'dateCompare',
-                                                    '$.answers.section1.q1', // this date ...
-                                                    '>', // is more than ...
-                                                    '-12', // 12 ...
-                                                    'years' // years (before, due to the negative (-12) ...
-                                                    // today's date (no second date given. defaults to today's date).
-                                                ]
+                                                guard: {
+                                                    type: 'evaluateRoute',
+                                                    params: {
+                                                        cond: [
+                                                            'dateCompare',
+                                                            '$.answers.section1.q1', // this date ...
+                                                            '>', // is more than ...
+                                                            '-12', // 12 ...
+                                                            'years' // years (before, due to the negative (-12) ...
+                                                            // today's date (no second date given. defaults to today's date).
+                                                        ]
+                                                    }
+                                                }
                                             },
                                             {
                                                 target: 'section3'
@@ -1776,14 +2059,19 @@ describe('qRouter tests', () => {
                                         ANSWER: [
                                             {
                                                 target: 'section2',
-                                                cond: [
-                                                    'dateCompare',
-                                                    '$.answers.section1.q1', // this date ...
-                                                    '<', // is less than...
-                                                    '-2', // 2 ...
-                                                    'days', // days (before, due to the negative (-2) ...
-                                                    '$.answers.section1.q2' // this date.
-                                                ]
+                                                guard: {
+                                                    type: 'evaluateRoute',
+                                                    params: {
+                                                        cond: [
+                                                            'dateCompare',
+                                                            '$.answers.section1.q1', // this date ...
+                                                            '<', // is less than...
+                                                            '-2', // 2 ...
+                                                            'days', // days (before, due to the negative (-2) ...
+                                                            '$.answers.section1.q2' // this date.
+                                                        ]
+                                                    }
+                                                }
                                             },
                                             {
                                                 target: 'section3'
@@ -1815,14 +2103,19 @@ describe('qRouter tests', () => {
                                         ANSWER: [
                                             {
                                                 target: 'section2',
-                                                cond: [
-                                                    'dateCompare',
-                                                    '$.answers.section1.q1', // this date ...
-                                                    '<', // is less than...
-                                                    '-2', // 2 ...
-                                                    'days', // days (before, due to the negative (-2) ...
-                                                    '$.answers.section1.q2' // this date.
-                                                ]
+                                                guard: {
+                                                    type: 'evaluateRoute',
+                                                    params: {
+                                                        cond: [
+                                                            'dateCompare',
+                                                            '$.answers.section1.q1', // this date ...
+                                                            '<', // is less than...
+                                                            '-2', // 2 ...
+                                                            'days', // days (before, due to the negative (-2) ...
+                                                            '$.answers.section1.q2' // this date.
+                                                        ]
+                                                    }
+                                                }
                                             },
                                             {
                                                 target: 'section3'
@@ -1854,14 +2147,19 @@ describe('qRouter tests', () => {
                                         ANSWER: [
                                             {
                                                 target: 'section2',
-                                                cond: [
-                                                    'dateCompare',
-                                                    '$.answers.section1.q1', // this date ...
-                                                    '==', // is equal to ...
-                                                    '-14', // 14 ...
-                                                    'days', // days (before, due to the negative (-14) ...
-                                                    '$.answers.section1.q2' // this date.
-                                                ]
+                                                guard: {
+                                                    type: 'evaluateRoute',
+                                                    params: {
+                                                        cond: [
+                                                            'dateCompare',
+                                                            '$.answers.section1.q1', // this date ...
+                                                            '==', // is equal to ...
+                                                            '-14', // 14 ...
+                                                            'days', // days (before, due to the negative (-14) ...
+                                                            '$.answers.section1.q2' // this date.
+                                                        ]
+                                                    }
+                                                }
                                             },
                                             {
                                                 target: 'section3'
@@ -1893,14 +2191,19 @@ describe('qRouter tests', () => {
                                         ANSWER: [
                                             {
                                                 target: 'section2',
-                                                cond: [
-                                                    'dateCompare',
-                                                    '$.answers.section1.q1', // this date ...
-                                                    '==', // is equal to ...
-                                                    '10', // 10 ...
-                                                    'days', // days (after, due to the positve (10) ...
-                                                    '$.answers.section1.q2' // this date.
-                                                ]
+                                                guard: {
+                                                    type: 'evaluateRoute',
+                                                    params: {
+                                                        cond: [
+                                                            'dateCompare',
+                                                            '$.answers.section1.q1', // this date ...
+                                                            '==', // is equal to ...
+                                                            '10', // 10 ...
+                                                            'days', // days (after, due to the positve (10) ...
+                                                            '$.answers.section1.q2' // this date.
+                                                        ]
+                                                    }
+                                                }
                                             },
                                             {
                                                 target: 'section3'
@@ -1932,14 +2235,19 @@ describe('qRouter tests', () => {
                                         ANSWER: [
                                             {
                                                 target: 'section2',
-                                                cond: [
-                                                    'dateCompare',
-                                                    '$.answers.section1.q1', // this date ...
-                                                    '==', // is equal to ...
-                                                    '0', // 0 ...
-                                                    'days', // days (after, due to the positive (0) ...
-                                                    '$.answers.section1.q2' // this date.
-                                                ]
+                                                guard: {
+                                                    type: 'evaluateRoute',
+                                                    params: {
+                                                        cond: [
+                                                            'dateCompare',
+                                                            '$.answers.section1.q1', // this date ...
+                                                            '==', // is equal to ...
+                                                            '0', // 0 ...
+                                                            'days', // days (after, due to the positive (0) ...
+                                                            '$.answers.section1.q2' // this date.
+                                                        ]
+                                                    }
+                                                }
                                             },
                                             {
                                                 target: 'section3'
@@ -1971,14 +2279,19 @@ describe('qRouter tests', () => {
                                         ANSWER: [
                                             {
                                                 target: 'section2',
-                                                cond: [
-                                                    'dateCompare',
-                                                    '$.answers.section1.q1', // this date ...
-                                                    '==', // is equal to ...
-                                                    '0', // 0 ...
-                                                    'days', // days (after, due to the positive (0) ...
-                                                    '$.answers.section1.q2' // this date.
-                                                ]
+                                                guard: {
+                                                    type: 'evaluateRoute',
+                                                    params: {
+                                                        cond: [
+                                                            'dateCompare',
+                                                            '$.answers.section1.q1', // this date ...
+                                                            '==', // is equal to ...
+                                                            '0', // 0 ...
+                                                            'days', // days (after, due to the positive (0) ...
+                                                            '$.answers.section1.q2' // this date.
+                                                        ]
+                                                    }
+                                                }
                                             },
                                             {
                                                 target: 'section3'
@@ -2010,14 +2323,19 @@ describe('qRouter tests', () => {
                                         ANSWER: [
                                             {
                                                 target: 'section2',
-                                                cond: [
-                                                    'dateCompare',
-                                                    '$.answers.section1.q1', // this date ...
-                                                    '==', // is equal to ...
-                                                    '0', // 0 ...
-                                                    'days', // days (after, due to the positive (0) ...
-                                                    '$.answers.section1.q2' // this date.
-                                                ]
+                                                guard: {
+                                                    type: 'evaluateRoute',
+                                                    params: {
+                                                        cond: [
+                                                            'dateCompare',
+                                                            '$.answers.section1.q1', // this date ...
+                                                            '==', // is equal to ...
+                                                            '0', // 0 ...
+                                                            'days', // days (after, due to the positive (0) ...
+                                                            '$.answers.section1.q2' // this date.
+                                                        ]
+                                                    }
+                                                }
                                             },
                                             {
                                                 target: 'section3'
@@ -2049,14 +2367,19 @@ describe('qRouter tests', () => {
                                         ANSWER: [
                                             {
                                                 target: 'section2',
-                                                cond: [
-                                                    'dateCompare',
-                                                    '$.answers.section1.q1', // this date ...
-                                                    '==', // is equal to ...
-                                                    '2', // 0 ...
-                                                    'days', // days (after, due to the positive (0) ...
-                                                    '$.answers.section1.q2' // this date.
-                                                ]
+                                                guard: {
+                                                    type: 'evaluateRoute',
+                                                    params: {
+                                                        cond: [
+                                                            'dateCompare',
+                                                            '$.answers.section1.q1', // this date ...
+                                                            '==', // is equal to ...
+                                                            '2', // 0 ...
+                                                            'days', // days (after, due to the positive (0) ...
+                                                            '$.answers.section1.q2' // this date.
+                                                        ]
+                                                    }
+                                                }
                                             },
                                             {
                                                 target: 'section3'
@@ -2088,14 +2411,19 @@ describe('qRouter tests', () => {
                                         ANSWER: [
                                             {
                                                 target: 'section2',
-                                                cond: [
-                                                    'dateCompare',
-                                                    '$.answers.section1.q1', // this date ...
-                                                    '==', // is equal to ...
-                                                    '-2', // 0 ...
-                                                    'days', // days (after, due to the positive (0) ...
-                                                    '$.answers.section1.q2' // this date.
-                                                ]
+                                                guard: {
+                                                    type: 'evaluateRoute',
+                                                    params: {
+                                                        cond: [
+                                                            'dateCompare',
+                                                            '$.answers.section1.q1', // this date ...
+                                                            '==', // is equal to ...
+                                                            '-2', // 0 ...
+                                                            'days', // days (after, due to the positive (0) ...
+                                                            '$.answers.section1.q2' // this date.
+                                                        ]
+                                                    }
+                                                }
                                             },
                                             {
                                                 target: 'section3'
@@ -2127,14 +2455,19 @@ describe('qRouter tests', () => {
                                         ANSWER: [
                                             {
                                                 target: 'section2',
-                                                cond: [
-                                                    'dateCompare',
-                                                    '$.answers.section1.q1', // this date ...
-                                                    '>=', // is more than or equal to ...
-                                                    '2', // 2 ...
-                                                    'days', // days (after, due to the positive (2) ...
-                                                    '$.answers.section1.q2' // this date.
-                                                ]
+                                                guard: {
+                                                    type: 'evaluateRoute',
+                                                    params: {
+                                                        cond: [
+                                                            'dateCompare',
+                                                            '$.answers.section1.q1', // this date ...
+                                                            '>=', // is more than or equal to ...
+                                                            '2', // 2 ...
+                                                            'days', // days (after, due to the positive (2) ...
+                                                            '$.answers.section1.q2' // this date.
+                                                        ]
+                                                    }
+                                                }
                                             },
                                             {
                                                 target: 'section3'
@@ -2166,14 +2499,19 @@ describe('qRouter tests', () => {
                                         ANSWER: [
                                             {
                                                 target: 'section2',
-                                                cond: [
-                                                    'dateCompare',
-                                                    '$.answers.section1.q1', // this date ...
-                                                    '>=', // is more than or equal to ...
-                                                    '2', // 2 ...
-                                                    'days', // days (after, due to the positive (2) ...
-                                                    '$.answers.section1.q2' // this date.
-                                                ]
+                                                guard: {
+                                                    type: 'evaluateRoute',
+                                                    params: {
+                                                        cond: [
+                                                            'dateCompare',
+                                                            '$.answers.section1.q1', // this date ...
+                                                            '>=', // is more than or equal to ...
+                                                            '2', // 2 ...
+                                                            'days', // days (after, due to the positive (2) ...
+                                                            '$.answers.section1.q2' // this date.
+                                                        ]
+                                                    }
+                                                }
                                             },
                                             {
                                                 target: 'section3'
@@ -2205,14 +2543,19 @@ describe('qRouter tests', () => {
                                         ANSWER: [
                                             {
                                                 target: 'section2',
-                                                cond: [
-                                                    'dateCompare',
-                                                    '$.answers.section1.q1', // this date ...
-                                                    '<=', // is less than or equal to ...
-                                                    '4', // 4 ...
-                                                    'days', // days (after, due to the positive (4) ...
-                                                    '$.answers.section1.q2' // this date.
-                                                ]
+                                                guard: {
+                                                    type: 'evaluateRoute',
+                                                    params: {
+                                                        cond: [
+                                                            'dateCompare',
+                                                            '$.answers.section1.q1', // this date ...
+                                                            '<=', // is less than or equal to ...
+                                                            '4', // 4 ...
+                                                            'days', // days (after, due to the positive (4) ...
+                                                            '$.answers.section1.q2' // this date.
+                                                        ]
+                                                    }
+                                                }
                                             },
                                             {
                                                 target: 'section3'
@@ -2244,14 +2587,19 @@ describe('qRouter tests', () => {
                                         ANSWER: [
                                             {
                                                 target: 'section2',
-                                                cond: [
-                                                    'dateCompare',
-                                                    '$.answers.section1.q1', // this date ...
-                                                    '<=', // is less than or equal to ...
-                                                    '4', // 4 ...
-                                                    'days', // days (after, due to the positive (4) ...
-                                                    '$.answers.section1.q2' // this date.
-                                                ]
+                                                guard: {
+                                                    type: 'evaluateRoute',
+                                                    params: {
+                                                        cond: [
+                                                            'dateCompare',
+                                                            '$.answers.section1.q1', // this date ...
+                                                            '<=', // is less than or equal to ...
+                                                            '4', // 4 ...
+                                                            'days', // days (after, due to the positive (4) ...
+                                                            '$.answers.section1.q2' // this date.
+                                                        ]
+                                                    }
+                                                }
                                             },
                                             {
                                                 target: 'section3'
@@ -2283,14 +2631,19 @@ describe('qRouter tests', () => {
                                         ANSWER: [
                                             {
                                                 target: 'section2',
-                                                cond: [
-                                                    'dateCompare',
-                                                    '$.answers.section1.q1', // this date ...
-                                                    '<', // is less than...
-                                                    '8', // 8 ...
-                                                    'days', // days (after, due to the positive (8) ...
-                                                    '$.answers.section1.q2' // this date.
-                                                ]
+                                                guard: {
+                                                    type: 'evaluateRoute',
+                                                    params: {
+                                                        cond: [
+                                                            'dateCompare',
+                                                            '$.answers.section1.q1', // this date ...
+                                                            '<', // is less than...
+                                                            '8', // 8 ...
+                                                            'days', // days (after, due to the positive (8) ...
+                                                            '$.answers.section1.q2' // this date.
+                                                        ]
+                                                    }
+                                                }
                                             },
                                             {
                                                 target: 'section3'
@@ -2322,14 +2675,19 @@ describe('qRouter tests', () => {
                                         ANSWER: [
                                             {
                                                 target: 'section2',
-                                                cond: [
-                                                    'dateCompare',
-                                                    '$.answers.section1.q1', // this date ...
-                                                    '<>', // unsupported. non-js syntax for "not equal to"...
-                                                    '2', // 2 ...
-                                                    'days', // days (after, due to the positive (2) ...
-                                                    '$.answers.section1.q2' // this date.
-                                                ]
+                                                guard: {
+                                                    type: 'evaluateRoute',
+                                                    params: {
+                                                        cond: [
+                                                            'dateCompare',
+                                                            '$.answers.section1.q1', // this date ...
+                                                            '<>', // unsupported. non-js syntax for "not equal to"...
+                                                            '2', // 2 ...
+                                                            'days', // days (after, due to the positive (2) ...
+                                                            '$.answers.section1.q2' // this date.
+                                                        ]
+                                                    }
+                                                }
                                             },
                                             {
                                                 target: 'section3'
@@ -2361,14 +2719,19 @@ describe('qRouter tests', () => {
                                         ANSWER: [
                                             {
                                                 target: 'section2',
-                                                cond: [
-                                                    'dateCompare',
-                                                    '$.answers.section1.q1', // this date ...
-                                                    '>', // more than ...
-                                                    '2', // 2 ...
-                                                    'decades', // decades (after, due to the positive (2) ...
-                                                    '$.answers.section1.q2' // this date.
-                                                ]
+                                                guard: {
+                                                    type: 'evaluateRoute',
+                                                    params: {
+                                                        cond: [
+                                                            'dateCompare',
+                                                            '$.answers.section1.q1', // this date ...
+                                                            '>', // more than ...
+                                                            '2', // 2 ...
+                                                            'decades', // decades (after, due to the positive (2) ...
+                                                            '$.answers.section1.q2' // this date.
+                                                        ]
+                                                    }
+                                                }
                                             },
                                             {
                                                 target: 'section3'
