@@ -7,7 +7,7 @@
     "files": [
         "lib"
     ],
-    "main": "lib/index.js",
+    "main": "lib/main.js",
     "devDependencies": {
         "eslint": "^7.32.0",
         "eslint-config-airbnb-base": "^14.2.1",
@@ -27,8 +27,8 @@
     },
     "scripts": {
         "prepublishOnly": "nsp check",
-        "pretest": "npm run lint",
         "test": "jest",
+        "pretest": "npm run lint",
         "coverage": "jest --coverage",
         "lint": "eslint ."
     },

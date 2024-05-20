@@ -653,7 +653,7 @@ describe('qRouter tests', () => {
                             const section = router.next({q1: 1}, 'a');
 
                             expect(section.id).toEqual('b');
-                            expect(section.context.progress).toEqual(['a', 'b']);
+                            expect(section.context.progress).toEqual(['a', 'b', 'c']);
                         });
                     });
 
