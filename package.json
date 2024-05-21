@@ -36,6 +36,6 @@
     "dependencies": {
         "moment": "^2.24.0",
         "q-expressions": "github:CriminalInjuriesCompensationAuthority/q-expressions",
-        "xstate": "^5.13.0"
+        "xstate": "^4.38.3"
     }
 }

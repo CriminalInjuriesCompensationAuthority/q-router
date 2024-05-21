@@ -165,70 +165,40 @@ log('t3', t3.current());
 t3.next();
 log('t3', t3.next());
 
-const {createMachine} = require('xstate');
 
-const toggleMachine = createMachine(
-    {
-        predictableActionArguments: true,
-        id: 'toggle',
-        initial: 'Inactive',
-        on: {
-            toggle: {
-                actions: 'qux'
-            }
-        },
-        states: {
-            Inactive: {
-                on: {toggle: 'Active'},
-                entry: 'baz',
-                exit: 'bar'
-            },
-            Active: {
-                entry: 'foo',
-                on: {toggle: 'Inactive'}
-            }
-        }
-    },
-    {
-        actions: {
-            foo: () => {
-                console.log('foo');
-            }
-        }
-    }
-);
 
-const {initialState} = toggleMachine;
 
-console.log(initialState.actions);
+// const {createMachine} = require('xstate');
 
-const nextState = toggleMachine.transition(initialState, {type: 'toggle'});
+// const toggleMachine = createMachine(
+//     {
+//         id: 'toggle',
+//         initial: 'Inactive',
+//         states: {
+//             Inactive: {
+//                 on: {toggle: 'Active'},
+//                 entry: 'baz',
+//                 exit: 'bar'
+//             },
+//             Active: {
+//                 entry: 'foo',
+//                 on: {toggle: 'Inactive'}
+//             }
+//         }
+//     },
+//     {
+//         actions: {
+//             foo: () => {
+//                 console.log('foo');
+//             }
+//         }
+//     }
+// );
 
-console.log(nextState.actions);
+// const {initialState} = toggleMachine;
 
-const mouseMachine = createMachine({
-    predictableActionArguments: true,
-    on: {
-        mousemove: {
-            actions: 'qux'
-        }
-    },
-    initial: 'a',
-    states: {
-        a: {
-            on: {
-                mousemove2: {
-                    target: 'b'
-                }
-            }
-        },
-        b: {
-            type: 'final'
-        }
-    }
-});
+// console.log(initialState.actions);
 
-const is = mouseMachine.initialState;
-const ns = mouseMachine.transition(is, {type: 'mousemove'});
-console.log('~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#');
-console.log(ns.actions)
+// const nextState = toggleMachine.transition(initialState, {type: 'toggle'});
+
+// console.log(nextState.actions);
