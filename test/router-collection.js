@@ -1,5 +1,6 @@
 'use strict';
 
+const { createWriteStream } = require('fs-extra');
 const qRouter = require('../lib/index');
 
 const createQRouter = qRouter;
@@ -17,11 +18,95 @@ function log(taskId, state) {
     console.log(`${taskId}: `, state.context.progress, state.context.answers[`${taskId}-status`]);
 }
 
+function processEvents(thingWithEvents, machines) {
+    const newEvents = [];
+
+    if ('events' in thingWithEvents) {
+        thingWithEvents.events.forEach(event => {
+            const machinesToTarget = machines.slice(
+                machines.findIndex(machine => machine.id === event.source) + 1
+            );
+
+            machinesToTarget.forEach(machine => {
+                const cascadeIndex = machine.findCascadeIndex2(event.type);
+
+                if (cascadeIndex > -1) {
+                    const removedIds = machine.removeProgress(cascadeIndex);
+                    const implicitEvents = removedIds.map(removedId => ({
+                        type: removedId,
+                        source: machine.id
+                    }));
+                    newEvents.push(...implicitEvents);
+                }
+            });
+        });
+    }
+
+    if (newEvents.length >= 1) {
+        processEvents({events: newEvents}, machines);
+    }
+}
+
+function tasklist(machines) {
+    const statuses = machines.map((machine, i) => {
+        const state = machine.first();
+
+        return {
+            id: state.id,
+            status: state.context.answers[`t${i + 1}-status`]
+        };
+    });
+
+    console.log(statuses);
+}
+
+function progress(machines) {
+    const statuses = machines.map((machine, i) => {
+        const state = machine.current();
+
+        return state.context.progress;
+    });
+
+    console.log(statuses.flat());
+}
+
 const sharedContext = {
+    's1-status': 'incomplete',
     't1-status': 'incomplete',
     't2-status': 'incomplete',
-    't3-status': 'incomplete'
+    't3-status': 'incomplete',
+    't4-status': 'incomplete'
 };
+
+const s1 = createQRouter({
+    answers: sharedContext,
+    routes: {
+        id: 's1',
+        initial: 'incomplete',
+        states: {
+            incomplete: {
+                on: {
+                    T1_COMPLETE: [
+                        {
+                            target: 'complete',
+                            cond: ['|allTasksComplete', ['t1', 't2', 't3', 't4'], true]
+                        }
+                    ]
+                }
+            },
+            complete: {
+                on: {
+                    T1_INCOMPLETE: [
+                        {
+                            target: 'incomplete',
+                            cond: ['|allTasksComplete', ['t1', 't2', 't3', 't4'], false]
+                        }
+                    ]
+                }
+            }
+        }
+    }
+});
 
 const t1 = createQRouter({
     answers: sharedContext,
@@ -65,7 +150,8 @@ const t1 = createQRouter({
                         {
                             target: 'e',
                             cond: ['==', true, true],
-                            actions: ['raise:d2']
+                            actions: ['raise:d2'],
+                            hasDependants: true
                         }
                     ]
                 }
@@ -146,37 +232,36 @@ const t3 = createQRouter({
             },
             m: {
                 entry: 'complete',
-                type: 'final'
+                type: 'final',
+                exit: 'goto:t4' // ?? how to go stright to the next task and not tasklist
             }
         }
     }
 });
 
-// const t4 = createQRouter({
-//     answers: sharedContext,
-//     routes: {
-//         id: 't4',
-//         initial: 'j',
-//         states: {
-//             j: {
-//                 on: {
-//                     ANSWER: 'k'
-//                 }
-//             },
-//             k: {
-//                 on: {
-//                     ANSWER: 'l'
-//                 }
-//             },
-//             l: {
-//                 entry: 'complete',
-//                 type: 'final'
-//             }
-//         }
-//     }
-// });
-
-const machines = [t1, t2, t3];
+const t4 = createQRouter({
+    answers: sharedContext,
+    routes: {
+        id: 't4',
+        initial: 'n',
+        states: {
+            n: {
+                on: {
+                    ANSWER: 'o'
+                }
+            },
+            o: {
+                on: {
+                    ANSWER: 'p'
+                }
+            },
+            p: {
+                entry: 'complete',
+                type: 'final'
+            }
+        }
+    }
+});
 
 // complete t1
 log('t1', t1.current());
@@ -194,66 +279,25 @@ log('t3', t3.current());
 t3.next();
 log('t3', t3.next());
 
+// complete t4
+log('t4', t4.current());
+t4.next();
+log('t4', t4.next());
+
 log('t1', t1.next({q: false}, 'b'));
 log('t1', t1.next());
 console.log('BREAKING CHANGE: ANSWERING D2 HAS IMPLICATIONS ON t2 WHICH HAS IMPLICATIONS ON t3');
 const d2AnswerResult = t1.next();
 
-processEvents(d2AnswerResult);
-
-// automate this >>>> t2.removeProgress(t2.findCascadeIndex2('d2'));
-// const newEvents = [];
-// if ('events' in d2AnswerResult) {
-//     d2AnswerResult.events.forEach(event => {
-//         const machinesToTarget = machines.filter(machine => machine.id !== event.source);
-
-//         machinesToTarget.forEach(machine => {
-//             const cascadeIndex = machine.findCascadeIndex2(event.type);
-
-//             if (cascadeIndex > -1) {
-//                 const removedIds = machine.removeProgress(cascadeIndex);
-//                 const events = removedIds.map(removedId => ({
-//                     type: removedId,
-//                     source: machine.id
-//                 }));
-//                 newEvents.push(...events);
-//             }
-//         });
-//     });
-// }
-
-function processEvents(thingWithEvents) {
-    const newEvents = [];
-
-    if ('events' in thingWithEvents) {
-        thingWithEvents.events.forEach(event => {
-            const machinesToTarget = machines.slice(
-                machines.findIndex(machine => machine.id === event.source) + 1
-            );
-
-            machinesToTarget.forEach(machine => {
-                const cascadeIndex = machine.findCascadeIndex2(event.type);
-
-                if (cascadeIndex > -1) {
-                    const removedIds = machine.removeProgress(cascadeIndex);
-                    const implicitEvents = removedIds.map(removedId => ({
-                        type: removedId,
-                        source: machine.id
-                    }));
-                    newEvents.push(...implicitEvents);
-                }
-            });
-        });
-    }
-
-    if (newEvents.length >= 1) {
-        processEvents({events: newEvents});
-    }
-}
+processEvents(d2AnswerResult, [t1, t2, t3, t4]);
 
 log('t1', d2AnswerResult); // d2 answer should raise an event
 log('t2', t2.current());
 log('t3', t3.current());
+log('t4', t4.current());
+
+tasklist([t1, t2, t3, t4]);
+progress([t1, t2, t3, t4]);
 
 /*
 log('t1', t1.next());
@@ -395,3 +439,22 @@ const failureTimeoutState = fetchMachine.transition('loading', {
 
 console.log(failureTimeoutState);
 */
+
+
+/*
+* Model a single task
+* Model multiple tasks
+* Implement cross task communication
+* Task status changes
+    * cannot_start
+    * incomplete
+    * complete
+* Task applicability
+* Section status changes
+* Section applicability
+* Cascades (undo previous things, not just answers)
+* Dynamic tasklist view
+* Addressibility from CW
+* CYA compatability
+*/
+
