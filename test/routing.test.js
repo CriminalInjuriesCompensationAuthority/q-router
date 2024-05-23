@@ -2391,5 +2391,191 @@ describe('qRouter tests', () => {
                 });
             });
         });
+
+        describe('can', () => {
+            it('should return an array of available targets', () => {
+                const router = createQRouter({
+                    routes: {
+                        'p-applicant-A': {
+                            on: {
+                                ANSWER: [
+                                    {
+                                        target: 'p-applicant-B',
+                                        cond: [
+                                            '==',
+                                            '$.answers.p-applicant-answer.q-applicant-answer',
+                                            'B'
+                                        ]
+                                    },
+                                    {
+                                        target: 'p-applicant-C',
+                                        cond: [
+                                            '==',
+                                            '$.answers.p-applicant-answer.q-applicant-answer',
+                                            'C'
+                                        ]
+                                    },
+                                    {
+                                        target: 'p-applicant-D',
+                                        cond: [
+                                            '==',
+                                            '$.answers.p-applicant-answer.q-applicant-answer',
+                                            'D'
+                                        ]
+                                    },
+                                    {target: 'p-applicant-E'}
+                                ]
+                            }
+                        }
+                    },
+                    answers: {
+                        'p-applicant-answer': {
+                            'q-applicant-answer': 'B'
+                        }
+                    }
+                });
+
+                const availableRoutes = router.can('p-applicant-A');
+
+                expect(availableRoutes).toEqual(['p-applicant-B', 'p-applicant-E']);
+            });
+
+            it('should return only the default target if no conditions evaluate to true', () => {
+                const router = createQRouter({
+                    routes: {
+                        'p-applicant-A': {
+                            on: {
+                                ANSWER: [
+                                    {
+                                        target: 'p-applicant-B',
+                                        cond: [
+                                            '==',
+                                            '$.answers.p-applicant-answer.q-applicant-answer',
+                                            'B'
+                                        ]
+                                    },
+                                    {
+                                        target: 'p-applicant-C',
+                                        cond: [
+                                            '==',
+                                            '$.answers.p-applicant-answer.q-applicant-answer',
+                                            'C'
+                                        ]
+                                    },
+                                    {
+                                        target: 'p-applicant-D',
+                                        cond: [
+                                            '==',
+                                            '$.answers.p-applicant-answer.q-applicant-answer',
+                                            'D'
+                                        ]
+                                    },
+                                    {target: 'p-applicant-E'}
+                                ]
+                            }
+                        }
+                    },
+                    answers: {
+                        'p-applicant-answer': {
+                            'q-applicant-answer': 'F'
+                        }
+                    }
+                });
+
+                const availableRoutes = router.can('p-applicant-A');
+
+                expect(availableRoutes).toEqual(['p-applicant-E']);
+            });
+
+            it('should NOT return a target if the answer does not exist', () => {
+                const router = createQRouter({
+                    routes: {
+                        'p-applicant-A': {
+                            on: {
+                                ANSWER: [
+                                    {
+                                        target: 'p-applicant-B',
+                                        cond: [
+                                            '==',
+                                            '$.answers.p-applicant-not-an-answer.q-applicant-not-an-answer',
+                                            'B'
+                                        ]
+                                    },
+                                    {target: 'p-applicant-E'}
+                                ]
+                            }
+                        }
+                    },
+                    answers: {
+                        'p-applicant-answer': {
+                            'q-applicant-answer': 'B'
+                        }
+                    }
+                });
+
+                const availableRoutes = router.can('p-applicant-A');
+
+                expect(availableRoutes).toEqual(['p-applicant-E']);
+            });
+
+            it('should return an empty array if no valid targets exist', () => {
+                const router = createQRouter({
+                    routes: {
+                        'p-applicant-A': {
+                            on: {
+                                ANSWER: [
+                                    {
+                                        target: 'p-applicant-B',
+                                        cond: [
+                                            '==',
+                                            '$.answers.p-applicant-answer.q-applicant-answer',
+                                            'B'
+                                        ]
+                                    }
+                                ]
+                            }
+                        }
+                    },
+                    answers: {
+                        'p-applicant-answer': {
+                            'q-applicant-answer': 'C'
+                        }
+                    }
+                });
+
+                const availableRoutes = router.can('p-applicant-A');
+
+                expect(availableRoutes).toEqual([]);
+            });
+
+            it('should error if a route with no target is found', () => {
+                const router = createQRouter({
+                    routes: {
+                        'p-applicant-A': {
+                            on: {
+                                ANSWER: [
+                                    {
+                                        cond: [
+                                            '==',
+                                            '$.answers.p-applicant-answer.q-applicant-answer',
+                                            'B'
+                                        ]
+                                    }
+                                ]
+                            }
+                        }
+                    },
+                    answers: {
+                        'p-applicant-answer': {
+                            'q-applicant-answer': 'B'
+                        }
+                    }
+                });
+
+                expect(() => {
+                    router.can('p-applicant-A');
+                }).toThrow();
+            });
+        });
     });
 });
