@@ -299,7 +299,6 @@ module.exports = {
                             }
                         },
                         e: {
-                            // entry: 'COMPLETE',
                             entry: [
                                 {
                                     type: 'COMPLETE'
@@ -359,7 +358,6 @@ module.exports = {
                             }
                         },
                         i: {
-                            // entry: 'COMPLETE',
                             entry: [
                                 {
                                     type: 'COMPLETE'
@@ -404,7 +402,6 @@ module.exports = {
                             }
                         },
                         l: {
-                            // entry: 'COMPLETE',
                             entry: [
                                 {
                                     type: 'COMPLETE'
@@ -417,7 +414,6 @@ module.exports = {
                             type: 'final'
                         },
                         m: {
-                            // entry: 'COMPLETE',
                             entry: [
                                 {
                                     type: 'COMPLETE'

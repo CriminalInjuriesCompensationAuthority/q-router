@@ -6,18 +6,18 @@ const spec = require('./template');
 const parallelRouter = createParallelRouter({spec});
 
 function log(state) {
-    console.log({
-        taskId: state.context.id,
-        progress: state.context.progress.join(', '),
-        answers: state.context.answers,
-        status: state.context.status
-    });
+    console.log(
+        `taskId: ${state.context.id}; progress: ${state.context.progress.join(
+            ', '
+        )}; answers: ${JSON.stringify(state.context.answers)}; status: ${JSON.stringify(
+            state.context.status
+        )}`
+    );
 }
 
 log(parallelRouter.current());
 log(parallelRouter.next());
-log(parallelRouter.next());
-log(parallelRouter.next());
+log(parallelRouter.next({q: true}));
 log(parallelRouter.next());
 log(parallelRouter.next());
 log(parallelRouter.next());
@@ -26,7 +26,7 @@ log(parallelRouter.next());
 log(parallelRouter.next());
 log(parallelRouter.next());
 log(parallelRouter.next({q: false}, 'b'));
-log(parallelRouter.next());
+// log(parallelRouter.next());
 
 // // complete t1
 // log('t1', t1.current());
