@@ -1,6 +1,8 @@
 'use strict';
 
-const qRouter = require('../lib/index');
+const qRouter = require('../lib/router');
+const superRouter = require('../lib/index');
+const parallelTemplate = require('./fixtures/parallel_template');
 
 const createQRouter = qRouter;
 
@@ -13,7 +15,7 @@ function errorMessageToRegExp(errorMessage) {
     return new RegExp(`^${escapeRegExp(errorMessage)}$`);
 }
 describe('qRouter tests', () => {
-    describe('q router', () => {
+    describe('router', () => {
         it('should start at the initial route', () => {
             const router = createQRouter({
                 routes: {
@@ -2389,6 +2391,119 @@ describe('qRouter tests', () => {
 
                     expect(nextSectionId).toEqual('section2');
                 });
+            });
+        });
+    });
+    describe('index', () => {
+        const route = superRouter(parallelTemplate);
+        describe('Next', () => {
+            it('Should go forward', () => {
+                const questionId = 'p-applicant-who-are-you-applying-for';
+                const answers = {'q-applicant-who-are-you-applying-for': 'Myself'};
+
+                const result = route.next(answers, questionId);
+
+                expect(result.id).toEqual('p-applicant-are-you-18-or-over');
+            });
+        });
+
+        describe('Previous', () => {
+            it('Should go back', () => {
+                route.next(
+                    {'q-applicant-who-are-you-applying-for': 'Myself'},
+                    'p-applicant-who-are-you-applying-for'
+                );
+                route.next(
+                    {'q-applicant-are-you-18-or-over': true},
+                    'p-applicant-are-you-18-or-over'
+                );
+                route.next(
+                    {'q--was-the-crime-reported-to-police': false},
+                    'p--was-the-crime-reported-to-police'
+                );
+                const result = route.previous('p--was-the-crime-reported-to-police');
+
+                expect(result.id).toEqual('p-applicant-are-you-18-or-over');
+            });
+        });
+
+        describe('First', () => {
+            it('Should go to the first page', () => {
+                route.next(
+                    {'q-applicant-who-are-you-applying-for': 'Myself'},
+                    'p-applicant-who-are-you-applying-for'
+                );
+                route.next(
+                    {'q-applicant-are-you-18-or-over': true},
+                    'p-applicant-are-you-18-or-over'
+                );
+                route.next(
+                    {'q--was-the-crime-reported-to-police': false},
+                    'p--was-the-crime-reported-to-police'
+                );
+                const result = route.first();
+
+                expect(result.id).toEqual('p-applicant-who-are-you-applying-for');
+            });
+        });
+
+        describe('Last', () => {
+            it('Should go to the most recent page in the progress', () => {
+                route.next(
+                    {'q-applicant-who-are-you-applying-for': 'Myself'},
+                    'p-applicant-who-are-you-applying-for'
+                );
+                route.next(
+                    {'q-applicant-are-you-18-or-over': true},
+                    'p-applicant-are-you-18-or-over'
+                );
+                route.next(
+                    {'q--was-the-crime-reported-to-police': false},
+                    'p--was-the-crime-reported-to-police'
+                );
+                const result = route.last();
+
+                expect(result.id).toEqual('p--context-crime-ref-no');
+            });
+        });
+
+        describe('Current', () => {
+            it('Should go to a specific route', () => {
+                route.next(
+                    {'q-applicant-who-are-you-applying-for': 'Myself'},
+                    'p-applicant-who-are-you-applying-for'
+                );
+                route.next(
+                    {'q-applicant-are-you-18-or-over': true},
+                    'p-applicant-are-you-18-or-over'
+                );
+                route.next(
+                    {'q--was-the-crime-reported-to-police': false},
+                    'p--was-the-crime-reported-to-police'
+                );
+                const result = route.current('p-applicant-are-you-18-or-over');
+
+                expect(result.id).toEqual('p-applicant-are-you-18-or-over');
+            });
+        });
+
+        describe('available', () => {
+            it('Should return true if a page is available in the progress', () => {
+                route.next(
+                    {'q-applicant-who-are-you-applying-for': 'Myself'},
+                    'p-applicant-who-are-you-applying-for'
+                );
+                route.next(
+                    {'q-applicant-are-you-18-or-over': true},
+                    'p-applicant-are-you-18-or-over'
+                );
+                route.next(
+                    {'q--was-the-crime-reported-to-police': false},
+                    'p--was-the-crime-reported-to-police'
+                );
+                const result = route.available('p-applicant-who-are-you-applying-for');
+
+                expect(result).toEqual(true);
             });
         });
     });
