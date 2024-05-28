@@ -26,7 +26,8 @@ log(parallelRouter.next());
 log(parallelRouter.next());
 log(parallelRouter.next());
 log(parallelRouter.next({q: false}, 'b'));
-// log(parallelRouter.next());
+log(parallelRouter.next());
+log(parallelRouter.next());
 
 // // complete t1
 // log('t1', t1.current());
