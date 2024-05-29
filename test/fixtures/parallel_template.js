@@ -159,12 +159,30 @@ module.exports = {
                         on: {
                             ANSWER: [
                                 {
-                                    target: 'p-applicant-british-citizen'
+                                    target: 'p-applicant-british-citizen',
+                                    cond: [
+                                        '==',
+                                        '$.answers.p-applicant-are-you-18-or-over.q-applicant-are-you-18-or-over',
+                                        true
+                                    ]
+                                },
+                                {
+                                    target: 'p-applicant-other-question'
                                 }
                             ]
                         }
                     },
                     'p-applicant-british-citizen': {
+                        on: {
+                            ANSWER: [
+                                {
+                                    target: 'p-task-list',
+                                    type: 'final'
+                                }
+                            ]
+                        }
+                    },
+                    'p-applicant-other-question': {
                         on: {
                             ANSWER: [
                                 {
@@ -1415,8 +1433,8 @@ module.exports = {
                     type: 'boolean',
                     // prettier-ignore
                     const: ['==',
-                    '$.answers.p-applicant-are-you-18-or-over.q-applicant-are-you-18-or-over',
-                    false
+                        '$.answers.p-applicant-are-you-18-or-over.q-applicant-are-you-18-or-over',
+                        false
                     ],
                     examples: [{}],
                     invalidExamples: [{}]
@@ -1429,8 +1447,8 @@ module.exports = {
                     type: 'boolean',
                     // prettier-ignore
                     const: ['==',
-                    '$.answers.p-applicant-are-you-18-or-over.q-applicant-are-you-18-or-over',
-                    true
+                        '$.answers.p-applicant-are-you-18-or-over.q-applicant-are-you-18-or-over',
+                        true
                     ],
                     examples: [{}],
                     invalidExamples: [{}]
