@@ -221,7 +221,7 @@ module.exports = {
             }
         }
     },
-    tasklistv2: {
+    routes: {
         sharedContext: {
             answers: {},
             retractedAnswers: {},

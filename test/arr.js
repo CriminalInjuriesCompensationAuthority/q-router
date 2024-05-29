@@ -3,9 +3,11 @@
 const createParallelRouter = require('../lib/index');
 const spec = require('./template');
 
-const parallelRouter = createParallelRouter({spec});
+const parallelRouter = createParallelRouter(spec);
+const output = [];
 
-function log(state) {
+function log(state, routerAction) {
+    // eslint-disable-next-line no-console
     console.log(
         `taskId: ${state.context.id}; progress: ${state.context.progress.join(
             ', '
@@ -13,21 +15,39 @@ function log(state) {
             state.context.status
         )}`
     );
+
+    output.push({
+        taskId: state.context.id,
+        routerAction,
+        currentSectionId: state.context.currentSectionId,
+        progress: state.context.progress.join(', '),
+        answer: JSON.stringify(state.context.answers),
+        status: JSON.stringify(state.context.status)
+    });
 }
 
-log(parallelRouter.current());
-log(parallelRouter.next());
-log(parallelRouter.next({q: true}));
-log(parallelRouter.next());
-log(parallelRouter.next());
-log(parallelRouter.next());
-log(parallelRouter.next());
-log(parallelRouter.next());
-log(parallelRouter.next());
-log(parallelRouter.next());
-log(parallelRouter.next({q: false}, 'b'));
-log(parallelRouter.next());
-log(parallelRouter.next());
+// implementation of sjs-router
+log(parallelRouter.current(), 'current');
+log(parallelRouter.next(), 'next');
+log(parallelRouter.next({q: true}), 'next');
+log(parallelRouter.next(), 'next');
+log(parallelRouter.next(), 'next');
+log(parallelRouter.next(), 'next');
+log(parallelRouter.next(), 'next');
+log(parallelRouter.next(), 'next');
+log(parallelRouter.next(), 'next');
+log(parallelRouter.next(), 'next');
+log(parallelRouter.next({q: false}, 'b'), 'next');
+log(parallelRouter.next(), 'next');
+log(parallelRouter.next(), 'next');
+
+log(parallelRouter.previous(), 'previous');
+log(parallelRouter.previous(), 'previous');
+log(parallelRouter.previous(), 'previous');
+log(parallelRouter.previous(), 'previous');
+
+// eslint-disable-next-line no-console
+console.table(output);
 
 // // complete t1
 // log('t1', t1.current());
