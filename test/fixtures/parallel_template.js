@@ -195,69 +195,17 @@ module.exports = {
                 }
             }
         },
-        on: {
-            'NEXT-TASK': [
-                {
-                    target: 't-about-application'
-                },
-                {
-                    target: 't_applicant_details',
-                    cond: [
-                        '==',
-                        '$.answers.p-applicant-are-you-18-or-over.q-applicant-are-you-18-or-over',
-                        true
-                    ]
-                },
-                {
-                    target: 't_applicant_residency'
-                }
-            ]
+        guards: {
+            t_applicant_details: {
+                cond: [
+                    '==',
+                    '$.answers.p-applicant-are-you-18-or-over.q-applicant-are-you-18-or-over',
+                    true
+                ]
+            }
         }
     },
     answers: {},
-    onSubmit: {
-        id: 'task0',
-        type: 'sequential',
-        retries: 0,
-        data: [
-            {
-                id: 'task1',
-                type: 'generateReferenceNumber',
-                retries: 0,
-                data: {
-                    questionnaire: '$.questionnaireDef',
-                    logger: '$.logger'
-                }
-            },
-            {
-                id: 'task2',
-                type: 'transformAndUpload',
-                retries: 0,
-                data: {
-                    questionnaireDef: '$.questionnaireDef',
-                    logger: '$.logger'
-                }
-            },
-            {
-                id: 'task3',
-                type: 'sendSubmissionMessageToSQS',
-                retries: 0,
-                data: {
-                    questionnaire: '$.questionnaireDef',
-                    logger: '$.logger'
-                }
-            },
-            {
-                id: 'task4',
-                type: 'sendNotifyMessageToSQS',
-                retries: 0,
-                data: {
-                    questionnaire: '$.questionnaireDef',
-                    logger: '$.logger'
-                }
-            }
-        ]
-    },
     progress: [],
     taxonomies: {
         theme: {
