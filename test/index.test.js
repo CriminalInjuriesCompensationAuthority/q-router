@@ -2395,9 +2395,9 @@ describe('qRouter tests', () => {
         });
     });
     describe('index', () => {
-        const route = superRouter(parallelTemplate);
         describe('Next', () => {
             it('Should go forward', () => {
+                const route = superRouter(parallelTemplate);
                 const questionId = 'p-applicant-who-are-you-applying-for';
                 const answers = {'q-applicant-who-are-you-applying-for': 'Myself'};
 
@@ -2405,10 +2405,89 @@ describe('qRouter tests', () => {
 
                 expect(result.id).toEqual('p-applicant-are-you-18-or-over');
             });
+            it('Should go to the task list at the end of a task', () => {
+                const route = superRouter(parallelTemplate);
+                route.next(
+                    {'q-applicant-who-are-you-applying-for': 'Myself'},
+                    'p-applicant-who-are-you-applying-for'
+                );
+                route.next(
+                    {'q-applicant-are-you-18-or-over': true},
+                    'p-applicant-are-you-18-or-over'
+                );
+                route.next(
+                    {'q--was-the-crime-reported-to-police': false},
+                    'p--was-the-crime-reported-to-police'
+                );
+                route.next({}, 'p--context-crime-ref-no');
+                route.next({'q-applicant-fatal-claim': true}, 'p-applicant-fatal-claim');
+                const result = route.next(
+                    {'q-applicant-claim-type': 'full'},
+                    'p-applicant-claim-type'
+                );
+
+                expect(result.id).toEqual('p-task-list');
+            });
+            it('Should add cascade events to the events queue', () => {
+                const route = superRouter(parallelTemplate);
+                route.next({}, 'p--context-applicant-details');
+                route.next(
+                    {'q-applicant-confirmation-method': 'email'},
+                    'p-applicant-confirmation-method'
+                );
+                route.next(
+                    {'q-forename': 'Barry', 'q-surname': 'Piccinni', 'q-title': 'Esquire'},
+                    'p-applicant-enter-your-name'
+                );
+                route.next(
+                    {'q-applicant-have-you-been-known-by-any-other-names': false},
+                    'p-applicant-have-you-been-known-by-any-other-names'
+                );
+                route.next(
+                    {'q-applicant-enter-your-date-of-birth': '01-01-2000'},
+                    'p-applicant-enter-your-date-of-birth'
+                );
+                route.next(
+                    {'q-applicant-enter-your-address': 'Foo Street, Bar town, AB99 9CD'},
+                    'p-applicant-enter-your-address'
+                );
+                route.next(
+                    {'q-applicant-enter-your-email-address': 'foo@bar.com'},
+                    'p-applicant-enter-your-email-address'
+                );
+                route.next({}, 'p--context-applicant-details');
+                const result = route.next(
+                    {'q-applicant-confirmation-method': 'phone'},
+                    'p-applicant-confirmation-method'
+                );
+
+                expect(Array.isArray(result.context.events)).toEqual(true);
+                expect(result.context.events.length).toEqual(1);
+                expect(result.context.events[0].type).toEqual('cascade');
+                expect(result.context.events[0].value).toEqual('p-applicant-confirmation-method');
+                expect(result.context.events[0].origin).toEqual('t_applicant_details');
+            });
+            it('Should not allow answers to be recorded if the state is unavailable', () => {
+                const route = superRouter(parallelTemplate);
+                route.next({}, 'p--context-applicant-details');
+                expect(() =>
+                    route.next(
+                        {'q-applicant-enter-your-date-of-birth': '01-01-2000'},
+                        'p-applicant-enter-your-date-of-birth'
+                    )
+                ).toThrow('The state "p-applicant-enter-your-date-of-birth" is not available');
+            });
+            it('Should not allow answers to be sent to a machine that is marked "notApplicable"', () => {
+                const route = superRouter(parallelTemplate);
+                expect(() => route.next({}, 'p--context-residency-and-nationality')).toThrow(
+                    'The state "p--context-residency-and-nationality" is not available'
+                );
+            });
         });
 
         describe('Previous', () => {
             it('Should go back', () => {
+                const route = superRouter(parallelTemplate);
                 route.next(
                     {'q-applicant-who-are-you-applying-for': 'Myself'},
                     'p-applicant-who-are-you-applying-for'
@@ -2429,6 +2508,7 @@ describe('qRouter tests', () => {
 
         describe('First', () => {
             it('Should go to the first page', () => {
+                const route = superRouter(parallelTemplate);
                 route.next(
                     {'q-applicant-who-are-you-applying-for': 'Myself'},
                     'p-applicant-who-are-you-applying-for'
@@ -2449,6 +2529,7 @@ describe('qRouter tests', () => {
 
         describe('Last', () => {
             it('Should go to the most recent page in the progress', () => {
+                const route = superRouter(parallelTemplate);
                 route.next(
                     {'q-applicant-who-are-you-applying-for': 'Myself'},
                     'p-applicant-who-are-you-applying-for'
@@ -2469,6 +2550,7 @@ describe('qRouter tests', () => {
 
         describe('Current', () => {
             it('Should go to a specific route', () => {
+                const route = superRouter(parallelTemplate);
                 route.next(
                     {'q-applicant-who-are-you-applying-for': 'Myself'},
                     'p-applicant-who-are-you-applying-for'
@@ -2485,10 +2567,29 @@ describe('qRouter tests', () => {
 
                 expect(result.id).toEqual('p-applicant-are-you-18-or-over');
             });
+            it('Should throw an error if the state is unavailable', () => {
+                const route = superRouter(parallelTemplate);
+                route.next(
+                    {'q-applicant-who-are-you-applying-for': 'Myself'},
+                    'p-applicant-who-are-you-applying-for'
+                );
+                route.next(
+                    {'q-applicant-are-you-18-or-over': true},
+                    'p-applicant-are-you-18-or-over'
+                );
+                route.next(
+                    {'q--was-the-crime-reported-to-police': false},
+                    'p--was-the-crime-reported-to-police'
+                );
+                expect(() => route.current('p-applicant-claim-type')).toThrow(
+                    'The state "p-applicant-claim-type" is not available'
+                );
+            });
         });
 
         describe('available', () => {
             it('Should return true if a page is available in the progress', () => {
+                const route = superRouter(parallelTemplate);
                 route.next(
                     {'q-applicant-who-are-you-applying-for': 'Myself'},
                     'p-applicant-who-are-you-applying-for'

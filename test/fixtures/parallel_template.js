@@ -134,7 +134,16 @@ module.exports = {
                         on: {
                             ANSWER: [
                                 {
-                                    target: 'p-applicant-enter-your-email-address'
+                                    target: 'p-applicant-enter-your-email-address',
+                                    cond: [
+                                        '==',
+                                        '$.answers.p-applicant-confirmation-method.q-applicant-confirmation-method',
+                                        'email'
+                                    ]
+                                },
+                                {
+                                    target: 'p-task-list',
+                                    type: 'final'
                                 }
                             ]
                         }
@@ -196,7 +205,7 @@ module.exports = {
             }
         },
         guards: {
-            t_applicant_details: {
+            t_applicant_residency: {
                 cond: [
                     '==',
                     '$.answers.p-applicant-are-you-18-or-over.q-applicant-are-you-18-or-over',
