@@ -28,8 +28,6 @@ function log(state, routerAction) {
 
 log(parallelRouter.next({}, 'p-applicant-who-are-you-applying-for'), 'next');
 
-
-
 // implementation of sjs-router
 // log(parallelRouter.current(), 'current');
 // log(parallelRouter.next(), 'next');
