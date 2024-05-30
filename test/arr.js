@@ -26,25 +26,29 @@ function log(state, routerAction) {
     });
 }
 
-// implementation of sjs-router
-log(parallelRouter.current(), 'current');
-log(parallelRouter.next(), 'next');
-log(parallelRouter.next({q: true}), 'next');
-log(parallelRouter.next(), 'next');
-log(parallelRouter.next(), 'next');
-log(parallelRouter.next(), 'next');
-log(parallelRouter.next(), 'next');
-log(parallelRouter.next(), 'next');
-log(parallelRouter.next(), 'next');
-log(parallelRouter.next(), 'next');
-log(parallelRouter.next({q: false}, 'b'), 'next');
-log(parallelRouter.next(), 'next');
-log(parallelRouter.next(), 'next');
+log(parallelRouter.next({}, 'p-applicant-who-are-you-applying-for'), 'next');
 
-log(parallelRouter.previous(), 'previous');
-log(parallelRouter.previous(), 'previous');
-log(parallelRouter.previous(), 'previous');
-log(parallelRouter.previous(), 'previous');
+
+
+// implementation of sjs-router
+// log(parallelRouter.current(), 'current');
+// log(parallelRouter.next(), 'next');
+// log(parallelRouter.next({q: true}), 'next');
+// log(parallelRouter.next(), 'next');
+// log(parallelRouter.next(), 'next');
+// log(parallelRouter.next(), 'next');
+// log(parallelRouter.next(), 'next');
+// log(parallelRouter.next(), 'next');
+// log(parallelRouter.next(), 'next');
+// log(parallelRouter.next(), 'next');
+// log(parallelRouter.next({q: false}, 'b'), 'next');
+// log(parallelRouter.next(), 'next');
+// log(parallelRouter.next(), 'next');
+
+// log(parallelRouter.previous(), 'previous');
+// log(parallelRouter.previous(), 'previous');
+// log(parallelRouter.previous(), 'previous');
+// log(parallelRouter.previous(), 'previous');
 
 // eslint-disable-next-line no-console
 console.table(output);

@@ -224,446 +224,250 @@ module.exports = {
     routes: {
         sharedContext: {
             answers: {},
-            retractedAnswers: {}
+            retractedAnswers: {},
+            status: {
+                t1: 'incomplete',
+                t2: 'cannotStartYet',
+                t3: 'cannotStartYet',
+                t4: 'cannotStartYet'
+            }
         },
         machines: [
             {
-                id: 't-about-application',
-                type: 'routing',
+                id: 't1',
                 routes: {
-                    initial: 'p-applicant-who-are-you-applying-for',
-                    progress: ['p-applicant-who-are-you-applying-for'],
-                    currentSectionId: 'p-applicant-who-are-you-applying-for',
+                    initial: 'a',
+                    status: 'incomplete',
+                    progress: ['a'],
+                    currentSectionId: 'a',
                     states: {
-                        'p-applicant-who-are-you-applying-for': {
+                        a: {
+                            foo: 'foo',
                             on: {
                                 ANSWER: [
                                     {
-                                        target: 'p-applicant-are-you-18-or-over'
+                                        target: 'b'
                                     }
                                 ]
                             }
                         },
-                        'p-applicant-are-you-18-or-over': {
+                        b: {
                             on: {
                                 ANSWER: [
                                     {
-                                        target: 'p--was-the-crime-reported-to-police',
-                                        cond: [
-                                            'or',
-                                            ['|role.all', 'proxy'],
-                                            ['|role.all', 'adult', 'capable']
-                                        ]
+                                        target: 'c',
+                                        cond: ['==', '$.answers.b.q', true]
                                     },
                                     {
-                                        target: 'p-applicant-under-18'
+                                        target: 'd',
+                                        cond: ['==', '$.answers.b.q', false]
                                     }
                                 ]
                             }
                         },
-                        'p--was-the-crime-reported-to-police': {
+                        c: {
                             on: {
                                 ANSWER: [
                                     {
-                                        target: 'p-applicant-you-cannot-get-compensation',
-                                        cond: [
-                                            '==',
-                                            '$.answers.p--was-the-crime-reported-to-police.q--was-the-crime-reported-to-police',
-                                            false
+                                        target: 'e'
+                                    }
+                                ]
+                            }
+                        },
+                        d: {
+                            on: {
+                                ANSWER: [
+                                    {
+                                        target: 'd2'
+                                    }
+                                ]
+                            }
+                        },
+                        d2: {
+                            on: {
+                                ANSWER: [
+                                    {
+                                        target: 'e',
+                                        actions: [
+                                            {
+                                                type: '|checkCascade',
+                                                value: 'd2'
+                                            }
                                         ]
-                                    },
-                                    {
-                                        target: 'p--context-crime-ref-no',
-                                        cond: [
-                                            '==',
-                                            '$.answers.p--was-the-crime-reported-to-police.q--was-the-crime-reported-to-police',
-                                            true
-                                        ]
+                                        // hasDependants: true
                                     }
                                 ]
                             }
                         },
-                        'p-applicant-you-cannot-get-compensation': {
-                            on: {
-                                ANSWER: [
-                                    {
-                                        target: 'p-applicant-fatal-claim'
-                                    }
-                                ]
-                            }
-                        },
-                        'p--context-crime-ref-no': {
-                            on: {
-                                ANSWER: [
-                                    {
-                                        target: 'p-applicant-fatal-claim'
-                                    }
-                                ]
-                            }
-                        },
-                        'p-applicant-fatal-claim': {
-                            on: {
-                                ANSWER: [
-                                    {
-                                        target: 'p-applicant-claim-type',
-                                        cond: ['|role.all', 'deceased']
-                                    },
-                                    {
-                                        target: '#task-list.p-task-list',
-                                        cond: ['|role.all', 'nonDeceased']
-                                    }
-                                ]
-                            }
-                        },
-                        'p-applicant-claim-type': {
-                            on: {
-                                // ON p-applicant-claim-type_ANSWER = mark `t-about-application` as completed
-                                ANSWER: [
-                                    {
-                                        target: '#task-list.p-task-list'
-                                    }
-                                ]
-                            }
-                        } // ,
-                        // 'p-task-list': {
-                        //     entry: [
-                        //         {
-                        //             type: 'COMPLETE'
-                        //         } // ,
-                        //         // {
-                        //         //     type: '|updateStatus',
-                        //         //     value: 't2'
-                        //         // }
-                        //     ],
-                        //     type: 'final'
-                        // }
+                        e: {
+                            // this would go to the #tasklist machine
+                            entry: [
+                                {
+                                    type: 'COMPLETE'
+                                },
+                                {
+                                    type: '|updateStatus',
+                                    value: 't2'
+                                }
+                            ],
+                            type: 'final'
+                        }
                     }
                 }
             },
             {
-                id: 't-about-application__status',
-                type: 'status',
+                id: 't2',
                 routes: {
-                    initial: 'incomplete',
-                    states: {
-                        incomplete: {
-                            on: {
-                                'ANSWER__p-applicant-who-are-you-applying-for': 'completed',
-                                'ANSWER__p-applicant-claim-type': 'completed'
-                            }
-                        },
-                        completed: {}
-                    }
-                }
-            },
-            {
-                id: 't_applicant_details',
-                type: 'routing',
-                routes: {
-                    initial: 'p--context-applicant-details',
+                    initial: 'f',
+                    status: 'cannotStartYet',
                     progress: [],
                     currentSectionId: undefined,
                     states: {
-                        'p--context-applicant-details': {
+                        f: {
                             on: {
                                 ANSWER: [
                                     {
-                                        target: 'p-applicant-enter-your-name',
-                                        cond: ['|role.all', 'proxy']
+                                        target: 'h',
+                                        cond: ['==', '$.answers.d2.q', true]
                                     },
                                     {
-                                        target: 'p-applicant-confirmation-method'
+                                        target: 'g'
                                     }
                                 ]
                             }
                         },
-                        'p-applicant-confirmation-method': {
+                        g: {
                             on: {
                                 ANSWER: [
                                     {
-                                        target: 'p-applicant-enter-your-name'
-                                    }
-                                ]
-                            }
-                        },
-                        'p-applicant-enter-your-name': {
-                            on: {
-                                ANSWER: [
-                                    {
-                                        target: 'p-applicant-have-you-been-known-by-any-other-names'
-                                    }
-                                ]
-                            }
-                        },
-                        'p-applicant-have-you-been-known-by-any-other-names': {
-                            on: {
-                                ANSWER: [
-                                    {
-                                        target: 'p-applicant-enter-your-date-of-birth',
-                                        cond: [
-                                            '==',
-                                            '$.answers.p-applicant-have-you-been-known-by-any-other-names.q-applicant-have-you-been-known-by-any-other-names',
-                                            false
-                                        ]
-                                    },
-                                    {
-                                        target: 'p-applicant-what-other-names-have-you-used',
-                                        cond: [
-                                            '==',
-                                            '$.answers.p-applicant-have-you-been-known-by-any-other-names.q-applicant-have-you-been-known-by-any-other-names',
-                                            true
-                                        ]
-                                    }
-                                ]
-                            }
-                        },
-                        'p-applicant-what-other-names-have-you-used': {
-                            on: {
-                                ANSWER: [
-                                    {
-                                        target: 'p-applicant-enter-your-date-of-birth'
-                                    }
-                                ]
-                            }
-                        },
-                        'p-applicant-enter-your-date-of-birth': {
-                            on: {
-                                ANSWER: [
-                                    {
-                                        target: 'p-applicant-can-handle-affairs',
-                                        cond: [
-                                            'and',
-                                            [
-                                                'dateCompare',
-                                                '$.answers.p-applicant-enter-your-date-of-birth.q-applicant-enter-your-date-of-birth', // this date ...
-                                                '>=',
-                                                '-18',
-                                                'years'
-                                            ],
-                                            ['|role.all', 'proxy']
-                                        ]
-                                    },
-                                    {
-                                        target: 'p-applicant-enter-your-address'
-                                    }
-                                ]
-                            }
-                        },
-                        'p-applicant-can-handle-affairs': {
-                            on: {
-                                ANSWER: [
-                                    {
-                                        target: 'p-applicant-enter-your-address'
-                                    }
-                                ]
-                            }
-                        },
-                        'p-applicant-enter-your-address': {
-                            on: {
-                                ANSWER: [
-                                    {
-                                        target: 'p-applicant-enter-your-telephone-number',
-                                        cond: [
-                                            'or',
-                                            [
-                                                '==',
-                                                '$.answers.p-applicant-confirmation-method.q-applicant-confirmation-method',
-                                                'email'
-                                            ],
-                                            [
-                                                'and',
-                                                [
-                                                    'dateCompare',
-                                                    '$.answers.p-applicant-enter-your-date-of-birth.q-applicant-enter-your-date-of-birth', // this date ...
-                                                    '>=',
-                                                    '-18',
-                                                    'years'
-                                                ],
-                                                [
-                                                    '==',
-                                                    '$.answers.p-applicant-can-handle-affairs.q-applicant-capable',
-                                                    true
-                                                ]
-                                            ]
-                                        ]
-                                    },
-                                    {
-                                        target: 'p-applicant-enter-your-email-address',
-                                        cond: [
-                                            '==',
-                                            '$.answers.p-applicant-confirmation-method.q-applicant-confirmation-method',
-                                            'text'
-                                        ]
-                                    },
-                                    {
-                                        target: '#task-list.p-task-list',
-                                        cond: [
-                                            'or',
-                                            [
-                                                'dateCompare',
-                                                '$.answers.p-applicant-enter-your-date-of-birth.q-applicant-enter-your-date-of-birth',
-                                                '<',
-                                                '-18',
-                                                'years'
-                                            ],
-                                            ['|role.all', 'incapable'],
-                                            ['|role.all', 'noContactMethod']
-                                        ]
-                                    } // ,
-                                    // {
-                                    //     target: 'p--before-you-continue'
-                                    // }
-                                ]
-                            }
-                        },
-                        'p-applicant-enter-your-telephone-number': {
-                            on: {
-                                ANSWER: [
-                                    {
-                                        target: '#task-list.p-task-list'
-                                    }
-                                ]
-                            }
-                        },
-                        'p-applicant-enter-your-email-address': {
-                            on: {
-                                ANSWER: [
-                                    {
-                                        target: '#task-list.p-task-list',
+                                        target: 'i',
                                         actions: [
                                             {
-                                                type: 'complete__t_applicant_details'
+                                                type: '|checkCascade',
+                                                value: 'g'
                                             }
                                         ]
                                     }
                                 ]
                             }
-                        } // ,
-                        // 'p-task-list': {
-                        //     entry: [
-                        //         {
-                        //             type: 'COMPLETE'
-                        //         }
-                        //     ],
-                        //     type: 'final'
-                        // }
-                    }
-                }
-            },
-            {
-                id: 't_applicant_details__status',
-                type: 'status',
-                routes: {
-                    initial: 'cannotStartYet',
-                    states: {
-                        cannotStartYet: {
+                        },
+                        h: {
                             on: {
-                                'COMPLETED__t-about-application': {
-                                    target: 'incomplete'
-                                }
+                                ANSWER: [
+                                    {
+                                        target: 'i'
+                                    }
+                                ]
                             }
                         },
-                        incomplete: {
-                            on: {
-                                'ANSWER__p-applicant-enter-your-address': {
-                                    target: 'completed',
-                                    cond: [
-                                        'or',
-                                        [
-                                            'dateCompare',
-                                            '$.answers.p-applicant-enter-your-date-of-birth.q-applicant-enter-your-date-of-birth',
-                                            '<',
-                                            '-18',
-                                            'years'
-                                        ],
-                                        ['|role.all', 'incapable'],
-                                        ['|role.all', 'noContactMethod']
-                                    ]
+                        i: {
+                            entry: [
+                                {
+                                    type: 'COMPLETE'
                                 },
-                                'ANSWER__p-applicant-enter-your-telephone-number': {
-                                    target: 'completed'
-                                },
-                                'ANSWER__p-applicant-enter-your-email-address': {
-                                    target: 'completed'
+                                {
+                                    type: '|updateStatus',
+                                    value: 't3'
                                 }
-                            }
-                        },
-                        completed: {
-                            on: {
-                                'INCOMPLETE__t-about-application': {
-                                    target: 'cannotStartYet'
-                                }
-                            }
+                            ],
+                            type: 'final'
                         }
                     }
                 }
             },
             {
-                id: 't_applicant_residency',
-                type: 'routing',
+                id: 't3',
                 routes: {
-                    initial: 'p--context-residency-and-nationality',
+                    initial: 'j',
+                    status: 'cannotStartYet',
                     progress: [],
                     currentSectionId: undefined,
                     states: {
-                        'p--context-residency-and-nationality': {
+                        j: {
                             on: {
                                 ANSWER: [
                                     {
-                                        target: 'p-applicant-british-citizen'
+                                        target: 'k'
                                     }
                                 ]
                             }
                         },
-                        'p-applicant-british-citizen': {
+                        k: {
                             on: {
                                 ANSWER: [
                                     {
-                                        target: '#task-list.p-task-list'
+                                        target: 'l',
+                                        cond: ['==', '$.answers.g.q', true]
+                                    },
+                                    {
+                                        target: 'm'
                                     }
                                 ]
                             }
+                        },
+                        l: {
+                            entry: [
+                                {
+                                    type: 'COMPLETE'
+                                },
+                                {
+                                    type: '|updateStatus',
+                                    value: 't4'
+                                }
+                            ],
+                            type: 'final'
+                        },
+                        m: {
+                            entry: [
+                                {
+                                    type: 'COMPLETE'
+                                },
+                                {
+                                    type: '|updateStatus',
+                                    value: 't4'
+                                }
+                            ],
+                            type: 'final'
+                            // exit: 'goto:t4' // ?? how to go stright to the next task and not tasklist
                         }
                     }
                 }
             },
             {
-                id: 't_applicant_residency__status',
-                type: 'status',
+                id: 't4',
                 routes: {
-                    initial: 'cannotStartYet',
-                    states: {
-                        cannotStartYet: {
-                            on: {
-                                COMPLETED__t_applicant_details: {
-                                    target: 'incomplete'
-                                }
-                            }
-                        },
-                        incomplete: {
-                            on: {
-                                'ANSWER__p-applicant-british-citizen': {
-                                    target: 'completed'
-                                }
-                            }
-                        },
-                        completed: {
-                            on: {
-                                INCOMPLETE__t_applicant_residency: {
-                                    target: 'cannotStartYet'
-                                }
-                            }
-                        }
-                    }
-                }
-            },
-            {
-                id: 'task-list',
-                type: 'routing',
-                routes: {
-                    initial: 'p-task-list',
+                    initial: 'n',
+                    status: 'cannotStartYet',
+                    progress: [],
                     currentSectionId: undefined,
-                    states: {}
+                    states: {
+                        n: {
+                            on: {
+                                ANSWER: [
+                                    {
+                                        target: 'o'
+                                    }
+                                ]
+                            }
+                        },
+                        o: {
+                            on: {
+                                ANSWER: [
+                                    {
+                                        target: 'p'
+                                    }
+                                ]
+                            }
+                        },
+                        p: {
+                            entry: [
+                                {
+                                    type: 'COMPLETE'
+                                }
+                            ],
+                            type: 'final'
+                        }
+                    }
                 }
             }
         ]
