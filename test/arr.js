@@ -8,25 +8,36 @@ const output = [];
 
 function log(state, routerAction) {
     // eslint-disable-next-line no-console
-    console.log(
-        `taskId: ${state.context.id}; progress: ${state.context.progress.join(
-            ', '
-        )}; answers: ${JSON.stringify(state.context.answers)}; status: ${JSON.stringify(
-            state.context.status
-        )}`
-    );
+    // console.log(
+    //     `taskId: ${state.context.id}; progress: ${state.context.progress.join(
+    //         ', '
+    //     )}; answers: ${JSON.stringify(state.context.answers)}; status: ${JSON.stringify(
+    //         state.context.status
+    //     )}`
+    // );
 
     output.push({
         taskId: state.context.id,
         routerAction,
         currentSectionId: state.context.currentSectionId,
         progress: state.context.progress.join(', '),
-        answer: JSON.stringify(state.context.answers),
-        status: JSON.stringify(state.context.status)
+        answer: JSON.stringify(state.context.answers) // ,
+        // status: JSON.stringify(state.context.status)
     });
 }
 
 log(parallelRouter.next({}, 'p-applicant-who-are-you-applying-for'), 'next');
+log(parallelRouter.next({}, 'p-applicant-are-you-18-or-over'), 'next');
+log(
+    parallelRouter.next(
+        {'q--was-the-crime-reported-to-police': true},
+        'p--was-the-crime-reported-to-police'
+    ),
+    'next'
+);
+log(parallelRouter.next({}, 'p--context-crime-ref-no'), 'next');
+// log(parallelRouter.next({}, 'p-applicant-fatal-claim'), 'next');
+// log(parallelRouter.next({}, 'p-applicant-claim-type'), 'next');
 
 // implementation of sjs-router
 // log(parallelRouter.current(), 'current');
