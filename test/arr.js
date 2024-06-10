@@ -3,7 +3,8 @@
 const createParallelRouter = require('../lib/index');
 const spec = require('./template');
 
-const parallelRouter = createParallelRouter(spec);
+let parallelRouter;
+let updatedSpec;
 const output = [];
 
 function log(state, routerAction) {
@@ -25,17 +26,39 @@ function log(state, routerAction) {
         // status: JSON.stringify(state.context.status)
     });
 }
+parallelRouter = createParallelRouter(spec);
+updatedSpec = parallelRouter.next({}, 'p-applicant-who-are-you-applying-for');
 
-log(parallelRouter.next({}, 'p-applicant-who-are-you-applying-for'), 'next');
-log(parallelRouter.next({}, 'p-applicant-are-you-18-or-over'), 'next');
-log(
-    parallelRouter.next(
-        {'q--was-the-crime-reported-to-police': true},
-        'p--was-the-crime-reported-to-police'
-    ),
-    'next'
+parallelRouter = createParallelRouter(updatedSpec.context);
+updatedSpec = parallelRouter.next({}, 'p-applicant-are-you-18-or-over');
+
+parallelRouter = createParallelRouter(updatedSpec.context);
+updatedSpec = parallelRouter.next(
+    {'q--was-the-crime-reported-to-police': true},
+    'p--was-the-crime-reported-to-police'
 );
-log(parallelRouter.next({}, 'p--context-crime-ref-no'), 'next');
+
+parallelRouter = createParallelRouter(updatedSpec.context);
+updatedSpec = parallelRouter.next({}, 'p--context-crime-ref-no');
+
+parallelRouter = createParallelRouter(updatedSpec.context);
+updatedSpec = parallelRouter.next({}, 'p-applicant-fatal-claim');
+
+// parallelRouter = createParallelRouter(updatedSpec.context);
+// updatedSpec = parallelRouter.next({}, 'p-applicant-claim-type');
+
+console.log({updatedSpec: JSON.stringify(updatedSpec.context.statuses, null, 4)});
+
+// log(parallelRouter.next({}, 'p-applicant-who-are-you-applying-for'), 'next');
+// log(parallelRouter.next({}, 'p-applicant-are-you-18-or-over'), 'next');
+// log(
+//     parallelRouter.next(
+//         {'q--was-the-crime-reported-to-police': true},
+//         'p--was-the-crime-reported-to-police'
+//     ),
+//     'next'
+// );
+// log(parallelRouter.next({}, 'p--context-crime-ref-no'), 'next');
 // log(parallelRouter.next({}, 'p-applicant-fatal-claim'), 'next');
 // log(parallelRouter.next({}, 'p-applicant-claim-type'), 'next');
 

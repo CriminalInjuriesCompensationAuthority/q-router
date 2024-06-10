@@ -235,27 +235,20 @@ module.exports = {
             'p-rep-declaration-12-and-over-deceased'
         ],
         confirmation: 'p--confirmation',
-        sharedContext: {
-            answers: {}
-        },
+        initial: 't-about-application',
         states: [
             {
                 id: 't-about-application',
+                progress: ['p-applicant-who-are-you-applying-for'],
+                retractedAnswers: {},
                 routes: {
                     initial: 'p-applicant-who-are-you-applying-for',
-                    progress: ['p-applicant-who-are-you-applying-for'],
-                    retractedAnswers: {},
                     states: {
                         'p-applicant-who-are-you-applying-for': {
                             on: {
                                 ANSWER: [
                                     {
-                                        target: 'p-applicant-are-you-18-or-over',
-                                        actions: [
-                                            {
-                                                type: 'completed__t_applicant_details'
-                                            }
-                                        ]
+                                        target: 'p-applicant-are-you-18-or-over'
                                     }
                                 ]
                             }
@@ -321,13 +314,22 @@ module.exports = {
                             on: {
                                 ANSWER: [
                                     {
-                                        target: 'p-applicant-claim-type',
-                                        cond: ['|role.all', 'deceased']
-                                    },
-                                    {
-                                        target: '#task-list.p-task-list',
-                                        cond: ['|role.all', 'nonDeceased']
-                                    }
+                                        target: 'p-task-list'
+                                    } // ,
+                                    // {
+                                    //     target: 'p-applicant-claim-type',
+                                    //     cond: ['|role.all', 'deceased']
+                                    // },
+                                    // {
+                                    //     // target: '#task-list.p-task-list',
+                                    //     target: 'p-task-list',
+                                    //     cond: ['|role.all', 'nonDeceased'],
+                                    //     actions: [
+                                    //         {
+                                    //             type: 'completed__t-about-application'
+                                    //         }
+                                    //     ]
+                                    // }
                                 ]
                             }
                         },
@@ -336,7 +338,8 @@ module.exports = {
                                 // ON p-applicant-claim-type_ANSWER = mark `t-about-application` as completed
                                 ANSWER: [
                                     {
-                                        target: '#task-list.p-task-list',
+                                        // target: '#task-list.p-task-list',
+                                        target: 'p-task-list',
                                         actions: [
                                             {
                                                 type: 'completed__t-about-application'
@@ -351,9 +354,9 @@ module.exports = {
             },
             {
                 id: 't_applicant_details',
+                progress: [],
                 routes: {
                     initial: 'p--context-applicant-details',
-                    progress: [],
                     states: {
                         'p--context-applicant-details': {
                             on: {
@@ -487,7 +490,8 @@ module.exports = {
                                         ]
                                     },
                                     {
-                                        target: '#task-list.p-task-list',
+                                        // target: '#task-list.p-task-list',
+                                        target: 'p-task-list',
                                         cond: [
                                             'or',
                                             [
@@ -511,7 +515,8 @@ module.exports = {
                             on: {
                                 ANSWER: [
                                     {
-                                        target: '#task-list.p-task-list'
+                                        // target: '#task-list.p-task-list'
+                                        target: 'p-task-list'
                                     }
                                 ]
                             }
@@ -520,7 +525,8 @@ module.exports = {
                             on: {
                                 ANSWER: [
                                     {
-                                        target: '#task-list.p-task-list',
+                                        // target: '#task-list.p-task-list',
+                                        target: 'p-task-list',
                                         actions: [
                                             {
                                                 type: 'completed__t_applicant_details'
@@ -535,9 +541,10 @@ module.exports = {
             },
             {
                 id: 't_applicant_residency',
+                progress: [],
+                retractedAnswers: {},
                 routes: {
                     initial: 'p--context-residency-and-nationality',
-                    progress: [],
                     states: {
                         'p--context-residency-and-nationality': {
                             on: {
@@ -552,7 +559,8 @@ module.exports = {
                             on: {
                                 ANSWER: [
                                     {
-                                        target: '#task-list.p-task-list',
+                                        // target: '#task-list.p-task-list',
+                                        target: 'p-task-list',
                                         actions: [
                                             {
                                                 type: 'completed__t_applicant_residency'
@@ -564,189 +572,189 @@ module.exports = {
                         }
                     }
                 }
-            },
-            {
-                id: 'task-list',
-                type: 'routing',
-                routes: {
-                    initial: 'p-task-list',
-                    currentSectionId: undefined,
-                    states: {}
-                }
-            },
-            {
-                id: 't-about-application__machine-status',
-                type: 'status',
-                routes: {
-                    initial: 'incomplete',
-                    states: {
-                        incomplete: {
-                            on: {
-                                // 'ANSWER__p-applicant-who-are-you-applying-for': 'completed',
-                                // 'ANSWER__p-applicant-claim-type': 'completed',
-                                'completed__t-about-application': [
-                                    {
-                                        target: 'completed',
-                                        actions: [
-                                            {
-                                                type: 'APPLICABLE__t_applicant_details'
-                                            }
-                                        ]
-                                    }
-                                ]
-                            }
-                        },
-                        completed: {
-                            on: {
-                                'incomplete__t-about-application': [
-                                    {
-                                        target: 'incomplete',
-                                        actions: [
-                                            {
-                                                type: 'INAPPLICABLE__t_applicant_details'
-                                            }
-                                        ]
-                                    }
-                                ]
-                            }
-                        }
-                    }
-                }
-            },
-            {
-                id: 't_applicant_details__machine-status',
-                type: 'status',
-                routes: {
-                    initial: 'incomplete',
-                    states: {
-                        incomplete: {
-                            on: {
-                                completed__t_applicant_details: [
-                                    {
-                                        target: 'completed'
-                                    }
-                                ]
-                            }
-                        },
-                        completed: {
-                            on: {
-                                'incomplete__t-about-application': [
-                                    {
-                                        target: 'incomplete'
-                                    }
-                                ]
-                            }
-                        }
-                    }
-                }
-            },
-            {
-                id: 't_applicant_residency__machine-status',
-                type: 'status',
-                routes: {
-                    initial: 'incomplete',
-                    states: {
-                        incomplete: {
-                            on: {
-                                completed__t_applicant_residency: [
-                                    {
-                                        target: 'completed'
-                                    }
-                                ]
-                            }
-                        },
-                        completed: {
-                            on: {
-                                incomplete__t_applicant_residency: [
-                                    {
-                                        target: 'incomplete'
-                                    }
-                                ]
-                            }
-                        }
-                    }
-                }
-            },
-            {
-                id: 't-about-application__task-status',
-                type: 'status',
-                routes: {
-                    initial: 'incomplete',
-                    states: {}
-                }
-            },
-            {
-                id: 't_applicant_details__task-status',
-                type: 'status',
-                routes: {
-                    initial: 'cannotStartYet',
-                    states: {
-                        cannotStartYet: {
-                            on: {
-                                'completed__t-about-application': [
-                                    {
-                                        target: 'incomplete'
-                                    }
-                                ]
-                            }
-                        },
-                        inapplicable: {
-                            on: {
-                                APPLICABLE__t_applicant_details: [
-                                    {
-                                        target: 'applicable'
-                                    }
-                                ]
-                            }
-                        },
-                        applicable: {
-                            on: {
-                                INAPPLICABLE__t_applicant_details: [
-                                    {
-                                        target: 'inapplicable'
-                                    }
-                                ]
-                            }
-                        }
-                    }
-                }
-            },
-            {
-                id: 't_applicant_residency__task-status',
-                type: 'status',
-                routes: {
-                    initial: 'cannotStartYet',
-                    states: {
-                        inapplicable: {
-                            on: {
-                                APPLICABLE__t_applicant_residency: [
-                                    {
-                                        target: 'applicable'
-                                    }
-                                ]
-                            }
-                        },
-                        applicable: {
-                            on: {
-                                INAPPLICABLE__t_applicant_residency: [
-                                    {
-                                        target: 'inapplicable'
-                                    }
-                                ]
-                            }
-                        },
-                        cannotStartYet: {
-                            on: {
-                                completed__t_applicant_details: [
-                                    {
-                                        target: 'incomplete'
-                                    }
-                                ]
-                            }
-                        }
-                    }
-                }
-            }
+            } // ,
+            // {
+            //     id: 'task-list',
+            //     type: 'routing',
+            //     routes: {
+            //         initial: 'p-task-list',
+            //         currentSectionId: undefined,
+            //         states: {}
+            //     }
+            // },
+            // {
+            //     id: 't-about-application__machine-status',
+            //     type: 'status',
+            //     routes: {
+            //         initial: 'incomplete',
+            //         states: {
+            //             incomplete: {
+            //                 on: {
+            //                     // 'ANSWER__p-applicant-who-are-you-applying-for': 'completed',
+            //                     // 'ANSWER__p-applicant-claim-type': 'completed',
+            //                     'completed__t-about-application': [
+            //                         {
+            //                             target: 'completed',
+            //                             actions: [
+            //                                 {
+            //                                     type: 'APPLICABLE__t_applicant_details'
+            //                                 }
+            //                             ]
+            //                         }
+            //                     ]
+            //                 }
+            //             },
+            //             completed: {
+            //                 on: {
+            //                     'incomplete__t-about-application': [
+            //                         {
+            //                             target: 'incomplete',
+            //                             actions: [
+            //                                 {
+            //                                     type: 'INAPPLICABLE__t_applicant_details'
+            //                                 }
+            //                             ]
+            //                         }
+            //                     ]
+            //                 }
+            //             }
+            //         }
+            //     }
+            // },
+            // {
+            //     id: 't_applicant_details__machine-status',
+            //     type: 'status',
+            //     routes: {
+            //         initial: 'incomplete',
+            //         states: {
+            //             incomplete: {
+            //                 on: {
+            //                     completed__t_applicant_details: [
+            //                         {
+            //                             target: 'completed'
+            //                         }
+            //                     ]
+            //                 }
+            //             },
+            //             completed: {
+            //                 on: {
+            //                     'incomplete__t-about-application': [
+            //                         {
+            //                             target: 'incomplete'
+            //                         }
+            //                     ]
+            //                 }
+            //             }
+            //         }
+            //     }
+            // },
+            // {
+            //     id: 't_applicant_residency__machine-status',
+            //     type: 'status',
+            //     routes: {
+            //         initial: 'incomplete',
+            //         states: {
+            //             incomplete: {
+            //                 on: {
+            //                     completed__t_applicant_residency: [
+            //                         {
+            //                             target: 'completed'
+            //                         }
+            //                     ]
+            //                 }
+            //             },
+            //             completed: {
+            //                 on: {
+            //                     incomplete__t_applicant_residency: [
+            //                         {
+            //                             target: 'incomplete'
+            //                         }
+            //                     ]
+            //                 }
+            //             }
+            //         }
+            //     }
+            // },
+            // {
+            //     id: 't-about-application__task-status',
+            //     type: 'status',
+            //     routes: {
+            //         initial: 'incomplete',
+            //         states: {}
+            //     }
+            // },
+            // {
+            //     id: 't_applicant_details__task-status',
+            //     type: 'status',
+            //     routes: {
+            //         initial: 'cannotStartYet',
+            //         states: {
+            //             cannotStartYet: {
+            //                 on: {
+            //                     'completed__t-about-application': [
+            //                         {
+            //                             target: 'incomplete'
+            //                         }
+            //                     ]
+            //                 }
+            //             },
+            //             inapplicable: {
+            //                 on: {
+            //                     APPLICABLE__t_applicant_details: [
+            //                         {
+            //                             target: 'applicable'
+            //                         }
+            //                     ]
+            //                 }
+            //             },
+            //             applicable: {
+            //                 on: {
+            //                     INAPPLICABLE__t_applicant_details: [
+            //                         {
+            //                             target: 'inapplicable'
+            //                         }
+            //                     ]
+            //                 }
+            //             }
+            //         }
+            //     }
+            // },
+            // {
+            //     id: 't_applicant_residency__task-status',
+            //     type: 'status',
+            //     routes: {
+            //         initial: 'cannotStartYet',
+            //         states: {
+            //             inapplicable: {
+            //                 on: {
+            //                     APPLICABLE__t_applicant_residency: [
+            //                         {
+            //                             target: 'applicable'
+            //                         }
+            //                     ]
+            //                 }
+            //             },
+            //             applicable: {
+            //                 on: {
+            //                     INAPPLICABLE__t_applicant_residency: [
+            //                         {
+            //                             target: 'inapplicable'
+            //                         }
+            //                     ]
+            //                 }
+            //             },
+            //             cannotStartYet: {
+            //                 on: {
+            //                     completed__t_applicant_details: [
+            //                         {
+            //                             target: 'incomplete'
+            //                         }
+            //                     ]
+            //                 }
+            //             }
+            //         }
+            //     }
+            // }
         ]
     },
     'task-list': {
