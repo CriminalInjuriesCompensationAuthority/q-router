@@ -35,7 +35,6 @@
     "license": "MIT",
     "dependencies": {
         "moment": "^2.24.0",
-        "q-expressions": "github:CriminalInjuriesCompensationAuthority/q-expressions",
-        "semver": "^7.6.2"
+        "q-expressions": "github:CriminalInjuriesCompensationAuthority/q-expressions"
     }
 }

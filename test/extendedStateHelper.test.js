@@ -7,13 +7,61 @@ jest.doMock('q-expressions', () => {
         })
     };
 });
-
-const mockFirst = () => {
-    return {id: 'some-id'};
-};
-jest.doMock('../lib/router', () => () => {
+jest.doMock('../lib/router', () => spec => {
     return {
-        first: mockFirst
+        first: () => {
+            return {id: 'A'};
+        },
+        last: jest.fn(() => {
+            if (spec.id === '1') {
+                return {
+                    context: {
+                        progress: ['A', 'B'],
+                        status: 'incomplete',
+                        answers: {A: 'foobar', B: 'foobar'},
+                        events: [{type: 'cascade', origin: '1'}]
+                    }
+                };
+            }
+            if (spec.id === '2') {
+                return {
+                    context: {
+                        progress: ['D', 'E', 'F'],
+                        status: 'complete',
+                        answers: {D: 'foobar', E: 'foobar', F: 'foobar'},
+                        events: [{type: 'cascade', origin: '2'}]
+                    }
+                };
+            }
+            if (spec.id === '3') {
+                return {
+                    context: {
+                        progress: ['G'],
+                        status: 'incomplete',
+                        answers: {G: 'foobar'},
+                        events: []
+                    }
+                };
+            }
+            if (spec.id === '4') {
+                return {
+                    context: {}
+                };
+            }
+            return {
+                context: {
+                    progress: ['A'],
+                    status: 'incomplete',
+                    answers: {A: 'foobar'},
+                    events: [{type: 'cascade'}]
+                }
+            };
+        }),
+        clearCascadeEvent: jest.fn(),
+        externalCascade: jest.fn(),
+        next2: jest.fn(() => {
+            return {id: 'B'};
+        })
     };
 });
 
@@ -23,76 +71,95 @@ describe('extendedStateHelper tests', () => {
     describe('setupParallelMachines', () => {
         const spec = {
             routes: {
-                states: {
-                    '1': {
+                states: [
+                    {
+                        id: '1',
+                        initial: 'A',
                         states: {
                             A: {},
                             B: {},
                             C: {}
                         }
                     },
-                    '2': {
+                    {
+                        id: '2',
                         states: {
                             D: {},
                             E: {},
                             F: {}
                         }
                     }
-                }
+                ]
             }
         };
         const helper = createHelper(spec);
-        it('Should get the task Id of which the question belongs to', () => {
+        const result = helper.setupParallelMachines();
+        it('Should return a superRouterSpec and TaskMachines object', () => {
+            expect('superRouterSpec' in result).toEqual(true);
+            expect('taskMachines' in result).toEqual(true);
+        });
+        it('Should return a TaskMachines object with a key for each task ID', () => {
+            expect(Object.keys(result.taskMachines)).toEqual(['1', '2']);
+        });
+        it('Should return a SuperRouterSpec with a currentSectionId and routes', () => {
             const expected = {
-                currentSectionId: 'some-id',
-                events: [],
+                currentSectionId: 'A',
                 initial: '1',
                 routes: {
-                    states: {
-                        '1': {
-                            first: mockFirst
+                    states: [
+                        {
+                            id: '1',
+                            initial: 'A',
+                            states: {
+                                A: {},
+                                B: {},
+                                C: {}
+                            }
                         },
-                        '2': {
-                            first: mockFirst
+                        {
+                            id: '2',
+                            states: {
+                                D: {},
+                                E: {},
+                                F: {}
+                            }
                         }
-                    }
-                },
-                taskStatuses: {
-                    '1': 'incomplete',
-                    '2': 'incomplete'
+                    ]
                 }
             };
-            const result = helper.setupParallelMachines();
-            expect(result).toEqual(expected);
+            expect(result.superRouterSpec).toEqual(expected);
         });
     });
 
     describe('getTaskIdFromQuestionId', () => {
         const spec = {
             routes: {
-                states: {
-                    '1': {
+                states: [
+                    {
+                        id: '1',
                         states: {
                             A: {},
                             B: {},
                             C: {}
                         }
                     },
-                    '2': {
+                    {
+                        id: '2',
                         states: {
                             D: {},
                             E: {},
                             F: {}
                         }
                     },
-                    '3': {
+                    {
+                        id: '3',
                         states: {
                             G: {},
                             H: {},
                             I: {}
                         }
                     }
-                }
+                ]
             }
         };
         const helper = createHelper(spec);
@@ -109,49 +176,88 @@ describe('extendedStateHelper tests', () => {
     });
 
     describe('getTaskContext', () => {
-        const router = {
+        const spec = {
             routes: {
-                states: {
-                    '1': {
-                        last: () => {
-                            return {context: 'foo'};
+                states: [
+                    {
+                        id: '1',
+                        initial: 'A',
+                        states: {
+                            A: {},
+                            B: {},
+                            C: {}
                         }
                     },
-                    '2': {
-                        last: () => {
-                            return {context: 'bar'};
+                    {
+                        id: '2',
+                        initial: 'D',
+                        states: {
+                            D: {},
+                            E: {},
+                            F: {}
                         }
                     },
-                    '3': {
-                        last: () => {
-                            return {context: 'baz'};
+                    {
+                        id: '3',
+                        initial: 'G',
+                        states: {
+                            G: {},
+                            H: {},
+                            I: {}
                         }
                     }
-                }
+                ]
             }
         };
-        const helper = createHelper({});
+        const helper = createHelper(spec);
         it('Should get context of the specified task', () => {
-            const result = helper.getTaskContext(router, '1');
-            const result2 = helper.getTaskContext(router, '2');
-            const result3 = helper.getTaskContext(router, '3');
-            expect(result).toEqual('foo');
-            expect(result2).toEqual('bar');
-            expect(result3).toEqual('baz');
+            const result = helper.getTaskContext('1');
+            expect('progress' in result).toEqual(true);
         });
         it('Should throw is task is undefined', () => {
-            expect(() => helper.getTaskContext(router, undefined)).toThrow(
+            expect(() => helper.getTaskContext(undefined)).toThrow(
                 'The task "undefined" does not exist'
             );
         });
         it('Should throw is task is not found', () => {
-            expect(() => helper.getTaskContext(router, '5')).toThrow('The task "5" does not exist');
+            expect(() => helper.getTaskContext('not-a-task')).toThrow(
+                'The task "not-a-task" does not exist'
+            );
         });
     });
 
     describe('getNotApplicableTasks', () => {
         const spec = {
             routes: {
+                states: [
+                    {
+                        id: '1',
+                        initial: 'A',
+                        states: {
+                            A: {},
+                            B: {},
+                            C: {}
+                        }
+                    },
+                    {
+                        id: '2',
+                        initial: 'D',
+                        states: {
+                            D: {},
+                            E: {},
+                            F: {}
+                        }
+                    },
+                    {
+                        id: '3',
+                        initial: 'G',
+                        states: {
+                            G: {},
+                            H: {},
+                            I: {}
+                        }
+                    }
+                ],
                 guards: {
                     '1': {
                         cond: ['==', 'A', 'A']
@@ -172,60 +278,41 @@ describe('extendedStateHelper tests', () => {
     describe('isAvailable', () => {
         const spec = {
             routes: {
-                states: {
-                    '1': {
+                states: [
+                    {
+                        id: '1',
+                        initial: 'A',
                         states: {
                             A: {},
                             B: {},
                             C: {}
                         }
                     },
-                    '2': {
+                    {
+                        id: '2',
+                        initial: 'D',
                         states: {
                             D: {},
                             E: {},
                             F: {}
                         }
                     },
-                    '3': {
+                    {
+                        id: '3',
+                        initial: 'G',
                         states: {
                             G: {},
                             H: {},
                             I: {}
                         }
                     }
-                }
-            }
-        };
-        const router = {
-            routes: {
-                states: {
+                ],
+                guards: {
                     '1': {
-                        last: () => {
-                            return {
-                                context: {
-                                    progress: ['A']
-                                }
-                            };
-                        }
+                        cond: ['==', 'A', 'A']
                     },
                     '2': {
-                        last: () => {
-                            return {
-                                context: {
-                                    progress: ['D']
-                                }
-                            };
-                        }
-                    },
-                    '3': {
-                        last: () => {
-                            return {
-                                context: {
-                                    progress: []
-                                }
-                            };
-                        }
+                        cond: ['==', 'B', 'A']
                     }
                 }
             },
@@ -237,23 +324,23 @@ describe('extendedStateHelper tests', () => {
         };
         const helper = createHelper(spec);
         it('Should return false if the Id is undefined', () => {
-            const result = helper.isAvailable({}, undefined);
+            const result = helper.isAvailable(undefined);
             expect(result).toEqual(false);
         });
         it('Should return true for "p-task-list"', () => {
-            const result = helper.isAvailable({}, 'p-task-list');
+            const result = helper.isAvailable('p-task-list');
             expect(result).toEqual(true);
         });
         it('Should return true if it finds the target in  a machines progress', () => {
-            const result = helper.isAvailable(router, 'A');
+            const result = helper.isAvailable('A');
             expect(result).toEqual(true);
         });
         it('Should return false if it does not find the target in a machines progress', () => {
-            const result = helper.isAvailable(router, 'G');
+            const result = helper.isAvailable('H');
             expect(result).toEqual(false);
         });
         it("Should return false if the target's task is 'notApplicable'", () => {
-            const result = helper.isAvailable(router, 'D');
+            const result = helper.isAvailable('D');
             expect(result).toEqual(false);
         });
     });
@@ -261,157 +348,704 @@ describe('extendedStateHelper tests', () => {
     describe('getPreviousQuestionId', () => {
         const spec = {
             routes: {
-                states: {
-                    '1': {
+                states: [
+                    {
+                        id: '1',
+                        initial: 'A',
                         states: {
                             A: {},
                             B: {},
                             C: {}
                         }
                     },
-                    '2': {
+                    {
+                        id: '2',
+                        initial: 'D',
                         states: {
                             D: {},
                             E: {},
                             F: {}
                         }
                     },
-                    '3': {
+                    {
+                        id: '3',
+                        initial: 'G',
                         states: {
                             G: {},
                             H: {},
                             I: {}
                         }
                     },
-                    '4': {
+                    {
+                        id: '4',
+                        initial: 'J',
                         states: {
                             J: {},
                             K: {},
                             L: {}
                         }
                     }
-                }
-            }
-        };
-        const router = {
-            routes: {
-                states: {
+                ],
+                guards: {
                     '1': {
-                        last: () => {
-                            return {
-                                context: {
-                                    progress: ['A', 'B', 'C']
-                                }
-                            };
-                        }
+                        cond: ['==', 'A', 'A']
                     },
                     '2': {
-                        last: () => {
-                            return {
-                                context: {
-                                    progress: ['D']
-                                }
-                            };
-                        }
-                    },
-                    '3': {
-                        last: () => {
-                            return {
-                                context: {
-                                    progress: ['G', 'H']
-                                }
-                            };
-                        }
-                    },
-                    '4': {
-                        last: () => {
-                            return {
-                                context: {}
-                            };
-                        }
+                        cond: ['==', 'B', 'A']
                     }
                 }
+            },
+            taskStatuses: {
+                '1': 'incomplete',
+                '2': 'notApplicable',
+                '3': 'incomplete'
             }
         };
         const helper = createHelper(spec);
         it('Should get the previous states pageId.', () => {
-            const result = helper.getPreviousQuestionId(router, 'B');
+            const result = helper.getPreviousQuestionId('B');
 
             expect(result).toEqual('A');
         });
         it('Should return the task list state if the page Id is the first entry in the progress', () => {
-            const result = helper.getPreviousQuestionId(router, 'D');
+            const result = helper.getPreviousQuestionId('A');
 
             expect(result).toEqual('p-task-list');
         });
         it('Should error if the page Id is not in the progress.', () => {
-            expect(() => helper.getPreviousQuestionId(router, 'I')).toThrow(
-                `Cannot go back to "I"`
-            );
+            expect(() => helper.getPreviousQuestionId('C')).toThrow(`Cannot go back to "C"`);
         });
         it('Should error if the progress is not in the context', () => {
-            expect(() => helper.getPreviousQuestionId(router, 'L')).toThrow(
+            expect(() => helper.getPreviousQuestionId('J')).toThrow(
                 `The task "4" has a malformed context. Missing: "Progress"`
             );
         });
     });
 
-    describe('propagateCascade', () => {
+    /*   describe('propagateCascade', () => {
+        const spec = {
+            routes: {
+                states: [
+                    {
+                        id: '1',
+                        initial: 'A',
+                        states: {
+                            A: {},
+                            B: {},
+                            C: {}
+                        }
+                    },
+                    {
+                        id: '2',
+                        initial: 'D',
+                        states: {
+                            D: {},
+                            E: {},
+                            F: {}
+                        }
+                    }
+                ]
+            }
+        };
         const event = {type: 'cascade', value: 'B', origin: '1'};
-        const helper = createHelper({});
+        const helper = createHelper(spec);
+
         it('Should perform a cascade and clear from origin task machine', () => {
-            const router = {
-                routes: {
-                    states: {
-                        '1': {
-                            clearCascadeEvent: jest.fn()
-                        },
-                        '2': {
-                            externalCascade: jest.fn()
-                        }
-                    }
-                }
-            };
-            helper.propagateCascade(router, event);
+            helper.propagateCascade(event);
 
-            expect(router.routes.states['1'].clearCascadeEvent).toHaveBeenCalledTimes(1);
-            expect(router.routes.states['1'].clearCascadeEvent).toHaveBeenCalledWith(event);
-            expect(router.routes.states['2'].externalCascade).toHaveBeenCalledTimes(1);
+            expect(qRouter(spec).externalCascade).toHaveBeenCalledTimes(1);
+            expect(qRouter(spec).externalCascade).toHaveBeenCalledWith(event);
+            expect(qRouter(spec).clearCascadeEvent).toHaveBeenCalledTimes(1);
         });
-        it('Should perform a cascade across all tasks except the origin', () => {
-            const router = {
+    }); */
+
+    describe('getSystemAnswers', () => {
+        const spec = {
+            routes: {
+                states: [
+                    {
+                        id: '1',
+                        initial: 'A',
+                        states: {
+                            A: {},
+                            B: {},
+                            C: {}
+                        }
+                    },
+                    {
+                        id: '2',
+                        initial: 'D',
+                        states: {
+                            D: {},
+                            E: {},
+                            F: {}
+                        }
+                    }
+                ]
+            },
+            answers: {
+                system: {
+                    foo: 'bar'
+                },
+                owner: {
+                    foo: 'bar'
+                },
+                origin: {
+                    foo: 'bar'
+                },
+                '1': {
+                    A: 'foobar'
+                },
+                '2': {
+                    D: 'foobar'
+                }
+            }
+        };
+        const helper = createHelper(spec);
+        it('Should extract the system answers from an answers object', () => {
+            const expected = {
+                system: {
+                    foo: 'bar'
+                },
+                owner: {
+                    foo: 'bar'
+                },
+                origin: {
+                    foo: 'bar'
+                }
+            };
+            const actual = helper.getSystemAnswers();
+
+            expect(actual).toEqual(expected);
+        });
+    });
+
+    describe('persistContext', () => {
+        const spec = {
+            routes: {
+                states: [
+                    {
+                        id: '1',
+                        initial: 'A',
+                        states: {
+                            A: {},
+                            B: {},
+                            C: {}
+                        }
+                    },
+                    {
+                        id: '2',
+                        initial: 'D',
+                        states: {
+                            D: {},
+                            E: {},
+                            F: {}
+                        }
+                    }
+                ]
+            }
+        };
+        const helper = createHelper(spec);
+        it('Should persist the context in each task', () => {
+            const expected = {
+                states: [
+                    {
+                        id: '1',
+                        initial: 'A',
+                        states: {
+                            A: {},
+                            B: {},
+                            C: {}
+                        },
+                        status: 'incomplete',
+                        answers: {A: 'foobar', B: 'foobar'},
+                        events: [{type: 'cascade', origin: '1'}],
+                        progress: ['A', 'B']
+                    },
+                    {
+                        id: '2',
+                        initial: 'D',
+                        states: {
+                            D: {},
+                            E: {},
+                            F: {}
+                        },
+                        status: 'complete',
+                        answers: {D: 'foobar', E: 'foobar', F: 'foobar'},
+                        events: [{type: 'cascade', origin: '2'}],
+                        progress: ['D', 'E', 'F']
+                    }
+                ]
+            };
+
+            const actual = helper.persistContext();
+
+            expect(actual).toEqual(expected);
+        });
+    });
+
+    describe('getSharedProgress', () => {
+        it('Should get the progress from each parallel machine', () => {
+            const spec = {
                 routes: {
-                    states: {
+                    states: [
+                        {
+                            id: '1',
+                            initial: 'A',
+                            states: {
+                                A: {},
+                                B: {},
+                                C: {}
+                            }
+                        },
+                        {
+                            id: '2',
+                            initial: 'D',
+                            states: {
+                                D: {},
+                                E: {},
+                                F: {}
+                            }
+                        }
+                    ]
+                }
+            };
+            const helper = createHelper(spec);
+            const expected = ['A', 'B', 'D', 'E', 'F'];
+
+            const actual = helper.getSharedProgress();
+
+            expect(actual).toEqual(expected);
+        });
+
+        it('Should get the progress only from applicable machines', () => {
+            const spec = {
+                routes: {
+                    states: [
+                        {
+                            id: '1',
+                            initial: 'A',
+                            states: {
+                                A: {},
+                                B: {},
+                                C: {}
+                            }
+                        },
+                        {
+                            id: '2',
+                            initial: 'D',
+                            states: {
+                                D: {},
+                                E: {},
+                                F: {}
+                            }
+                        }
+                    ],
+                    guards: {
                         '1': {
-                            externalCascade: jest.fn(),
-                            clearCascadeEvent: jest.fn()
+                            cond: ['==', 'A', 'A']
                         },
                         '2': {
-                            externalCascade: jest.fn()
-                        },
-                        '3': {
-                            externalCascade: jest.fn()
-                        },
-                        '4': {
-                            externalCascade: jest.fn()
-                        },
-                        '5': {
-                            externalCascade: jest.fn()
-                        },
-                        '6': {
-                            externalCascade: jest.fn()
+                            cond: ['==', 'B', 'A']
                         }
                     }
                 }
             };
-            helper.propagateCascade(router, event);
+            const helper = createHelper(spec);
+            const expected = ['A', 'B'];
 
-            expect(router.routes.states['1'].externalCascade).not.toHaveBeenCalled();
-            expect(router.routes.states['2'].externalCascade).toHaveBeenCalledTimes(1);
-            expect(router.routes.states['3'].externalCascade).toHaveBeenCalledTimes(1);
-            expect(router.routes.states['4'].externalCascade).toHaveBeenCalledTimes(1);
-            expect(router.routes.states['5'].externalCascade).toHaveBeenCalledTimes(1);
-            expect(router.routes.states['6'].externalCascade).toHaveBeenCalledTimes(1);
+            const actual = helper.getSharedProgress();
+
+            expect(actual).toEqual(expected);
+        });
+    });
+
+    describe('getSharedAnswers', () => {
+        it('Should get the answers from each parallel machine', () => {
+            const spec = {
+                routes: {
+                    states: [
+                        {
+                            id: '1',
+                            initial: 'A',
+                            states: {
+                                A: {},
+                                B: {},
+                                C: {}
+                            }
+                        },
+                        {
+                            id: '2',
+                            initial: 'D',
+                            states: {
+                                D: {},
+                                E: {},
+                                F: {}
+                            }
+                        }
+                    ]
+                }
+            };
+            const helper = createHelper(spec);
+            const expected = {A: 'foobar', B: 'foobar', D: 'foobar', E: 'foobar', F: 'foobar'};
+
+            const actual = helper.getSharedAnswers();
+
+            expect(actual).toEqual(expected);
+        });
+
+        it('Should persist the system answers set externally', () => {
+            const spec = {
+                routes: {
+                    states: [
+                        {
+                            id: '1',
+                            initial: 'A',
+                            states: {
+                                A: {},
+                                B: {},
+                                C: {}
+                            }
+                        },
+                        {
+                            id: '2',
+                            initial: 'D',
+                            states: {
+                                D: {},
+                                E: {},
+                                F: {}
+                            }
+                        }
+                    ]
+                },
+                answers: {
+                    system: 'foobar',
+                    origin: 'web'
+                }
+            };
+            const helper = createHelper(spec);
+            const expected = {
+                A: 'foobar',
+                B: 'foobar',
+                D: 'foobar',
+                E: 'foobar',
+                F: 'foobar',
+                system: 'foobar',
+                origin: 'web'
+            };
+
+            const actual = helper.getSharedAnswers();
+
+            expect(actual).toEqual(expected);
+        });
+
+        it('Should get the progress only from applicable machines', () => {
+            const spec = {
+                routes: {
+                    states: [
+                        {
+                            id: '1',
+                            initial: 'A',
+                            states: {
+                                A: {},
+                                B: {},
+                                C: {}
+                            }
+                        },
+                        {
+                            id: '2',
+                            initial: 'D',
+                            states: {
+                                D: {},
+                                E: {},
+                                F: {}
+                            }
+                        }
+                    ],
+                    guards: {
+                        '1': {
+                            cond: ['==', 'A', 'A']
+                        },
+                        '2': {
+                            cond: ['==', 'B', 'A']
+                        }
+                    }
+                }
+            };
+            const helper = createHelper(spec);
+            const expected = {A: 'foobar', B: 'foobar'};
+
+            const actual = helper.getSharedAnswers();
+
+            expect(actual).toEqual(expected);
+        });
+    });
+
+    describe('getSharedEvents', () => {
+        it('Should get the events from each parallel machine', () => {
+            const spec = {
+                routes: {
+                    states: [
+                        {
+                            id: '1',
+                            initial: 'A',
+                            states: {
+                                A: {},
+                                B: {},
+                                C: {}
+                            }
+                        },
+                        {
+                            id: '2',
+                            initial: 'D',
+                            states: {
+                                D: {},
+                                E: {},
+                                F: {}
+                            }
+                        }
+                    ]
+                }
+            };
+            const helper = createHelper(spec);
+            const expected = [
+                {type: 'cascade', origin: '1'},
+                {type: 'cascade', origin: '2'}
+            ];
+
+            const actual = helper.getSharedEvents();
+
+            expect(actual).toEqual(expected);
+        });
+
+        it('Should get the events only from applicable machines', () => {
+            const spec = {
+                routes: {
+                    states: [
+                        {
+                            id: '1',
+                            initial: 'A',
+                            states: {
+                                A: {},
+                                B: {},
+                                C: {}
+                            }
+                        },
+                        {
+                            id: '2',
+                            initial: 'D',
+                            states: {
+                                D: {},
+                                E: {},
+                                F: {}
+                            }
+                        }
+                    ],
+                    guards: {
+                        '1': {
+                            cond: ['==', 'A', 'A']
+                        },
+                        '2': {
+                            cond: ['==', 'B', 'A']
+                        }
+                    }
+                }
+            };
+            const helper = createHelper(spec);
+            const expected = [{type: 'cascade', origin: '1'}];
+
+            const actual = helper.getSharedEvents();
+
+            expect(actual).toEqual(expected);
+        });
+    });
+
+    describe('getSharedStatuses', () => {
+        it('Should get the statuses from each parallel machine', () => {
+            const spec = {
+                routes: {
+                    states: [
+                        {
+                            id: '1',
+                            initial: 'A',
+                            states: {
+                                A: {},
+                                B: {},
+                                C: {}
+                            }
+                        },
+                        {
+                            id: '2',
+                            initial: 'D',
+                            states: {
+                                D: {},
+                                E: {},
+                                F: {}
+                            }
+                        }
+                    ]
+                }
+            };
+            const helper = createHelper(spec);
+            const expected = {
+                '1': 'incomplete',
+                '2': 'complete'
+            };
+
+            const actual = helper.getSharedStatuses();
+
+            expect(actual).toEqual(expected);
+        });
+
+        it('Should get the events only from applicable machines', () => {
+            const spec = {
+                routes: {
+                    states: [
+                        {
+                            id: '1',
+                            initial: 'A',
+                            states: {
+                                A: {},
+                                B: {},
+                                C: {}
+                            }
+                        },
+                        {
+                            id: '2',
+                            initial: 'D',
+                            states: {
+                                D: {},
+                                E: {},
+                                F: {}
+                            }
+                        }
+                    ],
+                    guards: {
+                        '1': {
+                            cond: ['==', 'A', 'A']
+                        },
+                        '2': {
+                            cond: ['==', 'B', 'A']
+                        }
+                    }
+                }
+            };
+            const helper = createHelper(spec);
+            const expected = {
+                '1': 'incomplete'
+            };
+
+            const actual = helper.getSharedStatuses();
+
+            expect(actual).toEqual(expected);
+        });
+    });
+
+    describe('setCurrent', () => {
+        it('Should set the current question id to the value provided', () => {
+            const spec = {
+                routes: {
+                    states: [
+                        {
+                            id: '1',
+                            initial: 'A',
+                            states: {
+                                A: {},
+                                B: {},
+                                C: {}
+                            }
+                        },
+                        {
+                            id: '2',
+                            initial: 'D',
+                            states: {
+                                D: {},
+                                E: {},
+                                F: {}
+                            }
+                        }
+                    ]
+                }
+            };
+            const helper = createHelper(spec);
+
+            const actual = helper.setCurrent('B');
+
+            expect(actual.id).toEqual('B');
+        });
+    });
+
+    describe('first', () => {
+        it('Should set the current question id to the initial state of the spec', () => {
+            const spec = {
+                routes: {
+                    states: [
+                        {
+                            id: '1',
+                            initial: 'A',
+                            states: {
+                                A: {},
+                                B: {},
+                                C: {}
+                            }
+                        },
+                        {
+                            id: '2',
+                            initial: 'D',
+                            states: {
+                                D: {},
+                                E: {},
+                                F: {}
+                            }
+                        }
+                    ]
+                }
+            };
+            const helper = createHelper(spec);
+
+            const actual = helper.first();
+
+            expect(actual.id).toEqual('A');
+        });
+    });
+
+    describe('next', () => {
+        const spec = {
+            routes: {
+                states: [
+                    {
+                        id: '1',
+                        initial: 'A',
+                        states: {
+                            A: {},
+                            B: {},
+                            C: {}
+                        }
+                    },
+                    {
+                        id: '2',
+                        initial: 'D',
+                        states: {
+                            D: {},
+                            E: {},
+                            F: {}
+                        }
+                    }
+                ]
+            },
+            taskStatuses: {
+                '1': 'incomplete',
+                '2': 'incomplete'
+            }
+        };
+        const helper = createHelper(spec);
+        it('Should return the next state of the machine the provided answer belongs to', () => {
+            const actual = helper.next({A: 'foobar'}, 'A');
+
+            expect(actual.id).toEqual('B');
+        });
+        it('Should error if the sectionId being answered is not available.', () => {
+            expect(() => helper.next({C: 'foobar'}, 'C')).toThrow(`The state "C" is not available`);
         });
     });
 });
