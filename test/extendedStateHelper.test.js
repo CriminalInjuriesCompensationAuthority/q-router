@@ -69,39 +69,89 @@ const createHelper = require('../lib/extendedStateHelper');
 
 describe('extendedStateHelper tests', () => {
     describe('setupParallelMachines', () => {
-        const spec = {
-            routes: {
-                states: [
-                    {
-                        id: '1',
-                        initial: 'A',
-                        states: {
-                            A: {},
-                            B: {},
-                            C: {}
-                        }
-                    },
-                    {
-                        id: '2',
-                        states: {
-                            D: {},
-                            E: {},
-                            F: {}
-                        }
-                    }
-                ]
-            }
-        };
-        const helper = createHelper(spec);
-        const result = helper.setupParallelMachines();
         it('Should return a superRouterSpec and TaskMachines object', () => {
+            const spec = {
+                routes: {
+                    states: [
+                        {
+                            id: '1',
+                            initial: 'A',
+                            states: {
+                                A: {},
+                                B: {},
+                                C: {}
+                            }
+                        },
+                        {
+                            id: '2',
+                            states: {
+                                D: {},
+                                E: {},
+                                F: {}
+                            }
+                        }
+                    ]
+                }
+            };
+            const helper = createHelper(spec);
+            const result = helper.setupParallelMachines();
             expect('superRouterSpec' in result).toEqual(true);
             expect('taskMachines' in result).toEqual(true);
         });
         it('Should return a TaskMachines object with a key for each task ID', () => {
+            const spec = {
+                routes: {
+                    states: [
+                        {
+                            id: '1',
+                            initial: 'A',
+                            states: {
+                                A: {},
+                                B: {},
+                                C: {}
+                            }
+                        },
+                        {
+                            id: '2',
+                            states: {
+                                D: {},
+                                E: {},
+                                F: {}
+                            }
+                        }
+                    ]
+                }
+            };
+            const helper = createHelper(spec);
+            const result = helper.setupParallelMachines();
             expect(Object.keys(result.taskMachines)).toEqual(['1', '2']);
         });
         it('Should return a SuperRouterSpec with a currentSectionId and routes', () => {
+            const spec = {
+                routes: {
+                    states: [
+                        {
+                            id: '1',
+                            initial: 'A',
+                            states: {
+                                A: {},
+                                B: {},
+                                C: {}
+                            }
+                        },
+                        {
+                            id: '2',
+                            states: {
+                                D: {},
+                                E: {},
+                                F: {}
+                            }
+                        }
+                    ]
+                }
+            };
+            const helper = createHelper(spec);
+            const result = helper.setupParallelMachines();
             const expected = {
                 currentSectionId: 'A',
                 initial: '1',
@@ -115,6 +165,70 @@ describe('extendedStateHelper tests', () => {
                                 B: {},
                                 C: {}
                             }
+                        },
+                        {
+                            id: '2',
+                            states: {
+                                D: {},
+                                E: {},
+                                F: {}
+                            }
+                        }
+                    ]
+                }
+            };
+            expect(result.superRouterSpec).toEqual(expected);
+        });
+        it('Should return a SuperRouterSpec with a pre-loaded context if provided', () => {
+            const spec = {
+                routes: {
+                    states: [
+                        {
+                            id: '1',
+                            initial: 'A',
+                            states: {
+                                A: {},
+                                B: {},
+                                C: {}
+                            },
+                            answers: {A: 'foobar'},
+                            progress: ['A', 'B'],
+                            status: 'incomplete',
+                            events: [{type: 'event'}]
+                        },
+                        {
+                            id: '2',
+                            states: {
+                                D: {},
+                                E: {},
+                                F: {}
+                            }
+                        }
+                    ]
+                },
+                currentSectionId: 'B'
+            };
+            const helper = createHelper(spec);
+            const result = helper.setupParallelMachines();
+            const expected = {
+                currentSectionId: 'B',
+                initial: '1',
+                routes: {
+                    states: [
+                        {
+                            id: '1',
+                            initial: 'A',
+                            states: {
+                                A: {},
+                                B: {},
+                                C: {}
+                            },
+                            answers: {
+                                A: 'foobar'
+                            },
+                            progress: ['A', 'B'],
+                            status: 'incomplete',
+                            events: [{type: 'event'}]
                         },
                         {
                             id: '2',
@@ -399,7 +513,8 @@ describe('extendedStateHelper tests', () => {
                 '1': 'incomplete',
                 '2': 'notApplicable',
                 '3': 'incomplete'
-            }
+            },
+            currentSectionId: 'B'
         };
         const helper = createHelper(spec);
         it('Should get the previous states pageId.', () => {
@@ -419,6 +534,11 @@ describe('extendedStateHelper tests', () => {
             expect(() => helper.getPreviousQuestionId('J')).toThrow(
                 `The task "4" has a malformed context. Missing: "Progress"`
             );
+        });
+        it('Should get the previous states pageId when no currentId is provided.', () => {
+            const result = helper.getPreviousQuestionId();
+
+            expect(result).toEqual('A');
         });
     });
 
