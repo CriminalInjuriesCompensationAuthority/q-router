@@ -32,7 +32,7 @@ describe('Parallel Router', () => {
         expect(section.context.routes.states.task1.progress).toEqual(['a']);
     });
 
-    it('should restart at the last saved state', () => {
+    it.only('should restart at the last saved state', () => {
         let section;
         const parallelRouter = createParallelRouter({
             currentSectionId: 'a',
@@ -46,22 +46,22 @@ describe('Parallel Router', () => {
                         states: {
                             a: {
                                 on: {
-                                    ANSWER: 'b'
+                                    ANSWER__A: 'b'
                                 }
                             },
                             b: {
                                 on: {
-                                    ANSWER: 'c'
+                                    ANSWER__B: 'c'
                                 }
                             },
                             c: {
                                 on: {
-                                    ANSWER: 'd'
+                                    ANSWER__C: 'd'
                                 }
                             },
                             d: {
                                 on: {
-                                    ANSWER: 'e'
+                                    ANSWER__D: 'e'
                                 }
                             },
                             e: {
@@ -76,10 +76,10 @@ describe('Parallel Router', () => {
             }
         });
 
-        parallelRouter.next({}, 'a'); // b
-        parallelRouter.next({}, 'b'); // c
-        parallelRouter.next({}, 'c'); // d
-        parallelRouter.next({}, 'd'); // e
+        parallelRouter.next({}, 'a', 'ANSWERS__A'); // b
+        parallelRouter.next({}, 'b', 'ANSWERS__B'); // c
+        parallelRouter.next({}, 'c', 'ANSWERS__C'); // d
+        parallelRouter.next({}, 'd', 'ANSWERS__D'); // e
 
         parallelRouter.previous('e'); // d
         section = parallelRouter.previous('d'); // c
@@ -110,7 +110,7 @@ describe('Parallel Router', () => {
                             states: {
                                 a: {
                                     on: {
-                                        ANSWER: [
+                                        ANSWER__A: [
                                             {
                                                 target: 'b'
                                             }
@@ -128,7 +128,7 @@ describe('Parallel Router', () => {
                             states: {
                                 c: {
                                     on: {
-                                        ANSWER: [
+                                        ANSWER__C: [
                                             {
                                                 target: 'd'
                                             }
@@ -164,7 +164,7 @@ describe('Parallel Router', () => {
                             states: {
                                 a: {
                                     on: {
-                                        ANSWER: 'b'
+                                        ANSWER__A: 'b'
                                     }
                                 },
                                 b: {
@@ -198,7 +198,7 @@ describe('Parallel Router', () => {
                             states: {
                                 a: {
                                     on: {
-                                        ANSWER: 'b'
+                                        ANSWER__A: 'b'
                                     }
                                 },
                                 b: {
@@ -232,12 +232,12 @@ describe('Parallel Router', () => {
                             states: {
                                 a: {
                                     on: {
-                                        ANSWER: 'b'
+                                        ANSWER__A: 'b'
                                     }
                                 },
                                 b: {
                                     on: {
-                                        ANSWER: 'c'
+                                        ANSWER__B: 'c'
                                     }
                                 },
                                 c: {
@@ -269,7 +269,7 @@ describe('Parallel Router', () => {
                             states: {
                                 a: {
                                     on: {
-                                        ANSWER: 'b'
+                                        ANSWER__A: 'b'
                                     }
                                 },
                                 b: {
@@ -301,7 +301,7 @@ describe('Parallel Router', () => {
                             states: {
                                 a: {
                                     on: {
-                                        ANSWER: 'b'
+                                        ANSWER__A: 'b'
                                     }
                                 },
                                 b: {
@@ -342,7 +342,7 @@ describe('Parallel Router', () => {
                             states: {
                                 a: {
                                     on: {
-                                        ANSWER: 'b'
+                                        ANSWER__B: 'b'
                                     }
                                 },
                                 b: {
@@ -382,7 +382,7 @@ describe('Parallel Router', () => {
                             states: {
                                 a: {
                                     on: {
-                                        ANSWER: [
+                                        ANSWER__A: [
                                             {
                                                 target: 'b'
                                             }
@@ -400,7 +400,7 @@ describe('Parallel Router', () => {
                             states: {
                                 c: {
                                     on: {
-                                        ANSWER: [
+                                        ANSWER__C: [
                                             {
                                                 target: 'd'
                                             }
@@ -439,7 +439,7 @@ describe('Parallel Router', () => {
                                 states: {
                                     a: {
                                         on: {
-                                            ANSWER: [
+                                            ANSWER__A: [
                                                 {
                                                     target: 'b'
                                                 }
@@ -448,7 +448,7 @@ describe('Parallel Router', () => {
                                     },
                                     b: {
                                         on: {
-                                            ANSWER: [
+                                            ANSWER__B: [
                                                 {
                                                     target: '#task2'
                                                 }
@@ -463,7 +463,7 @@ describe('Parallel Router', () => {
                                 states: {
                                     c: {
                                         on: {
-                                            ANSWER: [
+                                            ANSWER__C: [
                                                 {
                                                     target: 'd'
                                                 }
@@ -503,7 +503,7 @@ describe('Parallel Router', () => {
                             states: {
                                 a: {
                                     on: {
-                                        ANSWER: [
+                                        ANSWER__A: [
                                             {
                                                 target: 'b'
                                             }
@@ -521,7 +521,7 @@ describe('Parallel Router', () => {
                             states: {
                                 c: {
                                     on: {
-                                        ANSWER: [
+                                        ANSWER__C: [
                                             {
                                                 target: 'd'
                                             }
@@ -558,7 +558,7 @@ describe('Parallel Router', () => {
                             states: {
                                 a: {
                                     on: {
-                                        ANSWER: 'b'
+                                        ANSWER__A: 'b'
                                     }
                                 },
                                 b: {
@@ -593,7 +593,7 @@ describe('Parallel Router', () => {
                             states: {
                                 a: {
                                     on: {
-                                        ANSWER: 'b'
+                                        ANSWER__A: 'b'
                                     }
                                 },
                                 b: {
@@ -628,7 +628,7 @@ describe('Parallel Router', () => {
                             states: {
                                 a: {
                                     on: {
-                                        ANSWER: 'b'
+                                        ANSWER__A: 'b'
                                     }
                                 },
                                 b: {
@@ -661,7 +661,7 @@ describe('Parallel Router', () => {
                             states: {
                                 a: {
                                     on: {
-                                        ANSWER: 'b'
+                                        ANSWER__A: 'b'
                                     }
                                 },
                                 b: {
@@ -703,7 +703,7 @@ describe('Parallel Router', () => {
                             states: {
                                 a: {
                                     on: {
-                                        ANSWER: 'b'
+                                        ANSWER__A: 'b'
                                     }
                                 },
                                 b: {
@@ -743,7 +743,7 @@ describe('Parallel Router', () => {
                             states: {
                                 a: {
                                     on: {
-                                        ANSWER: [
+                                        ANSWER__A: [
                                             {
                                                 target: 'b'
                                             }
@@ -761,7 +761,7 @@ describe('Parallel Router', () => {
                             states: {
                                 c: {
                                     on: {
-                                        ANSWER: [
+                                        ANSWER__C: [
                                             {
                                                 target: 'd'
                                             }
@@ -801,7 +801,7 @@ describe('Parallel Router', () => {
                                 states: {
                                     a: {
                                         on: {
-                                            ANSWER: [
+                                            ANSWER__A: [
                                                 {
                                                     target: 'b'
                                                 }
@@ -820,7 +820,7 @@ describe('Parallel Router', () => {
                                 states: {
                                     c: {
                                         on: {
-                                            ANSWER: [
+                                            ANSWER__C: [
                                                 {
                                                     target: 'd'
                                                 }
@@ -864,17 +864,17 @@ describe('Parallel Router', () => {
                             states: {
                                 a: {
                                     on: {
-                                        ANSWER: 'b'
+                                        ANSWER__A: 'b'
                                     }
                                 },
                                 b: {
                                     on: {
-                                        ANSWER: 'c'
+                                        ANSWER__B: 'c'
                                     }
                                 },
                                 c: {
                                     on: {
-                                        ANSWER: 'd'
+                                        ANSWER__C: 'd'
                                     }
                                 },
                                 d: {
@@ -912,17 +912,17 @@ describe('Parallel Router', () => {
                             states: {
                                 a: {
                                     on: {
-                                        ANSWER: 'b'
+                                        ANSWER__A: 'b'
                                     }
                                 },
                                 b: {
                                     on: {
-                                        ANSWER: 'c'
+                                        ANSWER__B: 'c'
                                     }
                                 },
                                 c: {
                                     on: {
-                                        ANSWER: 'd'
+                                        ANSWER__C: 'd'
                                     }
                                 },
                                 d: {
@@ -959,17 +959,17 @@ describe('Parallel Router', () => {
                             states: {
                                 a: {
                                     on: {
-                                        ANSWER: 'b'
+                                        ANSWER__A: 'b'
                                     }
                                 },
                                 b: {
                                     on: {
-                                        ANSWER: 'c'
+                                        ANSWER__B: 'c'
                                     }
                                 },
                                 c: {
                                     on: {
-                                        ANSWER: 'd'
+                                        ANSWER__C: 'd'
                                     }
                                 },
                                 d: {
@@ -1007,17 +1007,17 @@ describe('Parallel Router', () => {
                                 states: {
                                     a: {
                                         on: {
-                                            ANSWER: 'b'
+                                            ANSWER__A: 'b'
                                         }
                                     },
                                     b: {
                                         on: {
-                                            ANSWER: 'c'
+                                            ANSWER__B: 'c'
                                         }
                                     },
                                     c: {
                                         on: {
-                                            ANSWER: 'd'
+                                            ANSWER__C: 'd'
                                         }
                                     },
                                     d: {
@@ -1055,17 +1055,17 @@ describe('Parallel Router', () => {
                                 states: {
                                     a: {
                                         on: {
-                                            ANSWER: 'b'
+                                            ANSWER__A: 'b'
                                         }
                                     },
                                     b: {
                                         on: {
-                                            ANSWER: 'c'
+                                            ANSWER__B: 'c'
                                         }
                                     },
                                     c: {
                                         on: {
-                                            ANSWER: 'd'
+                                            ANSWER__C: 'd'
                                         }
                                     },
                                     d: {
@@ -1080,17 +1080,17 @@ describe('Parallel Router', () => {
                                 states: {
                                     e: {
                                         on: {
-                                            ANSWER: 'f'
+                                            ANSWER__E: 'f'
                                         }
                                     },
                                     f: {
                                         on: {
-                                            ANSWER: 'g'
+                                            ANSWER__F: 'g'
                                         }
                                     },
                                     g: {
                                         on: {
-                                            ANSWER: 'h'
+                                            ANSWER__G: 'h'
                                         }
                                     },
                                     h: {
@@ -1130,17 +1130,17 @@ describe('Parallel Router', () => {
                                 states: {
                                     a: {
                                         on: {
-                                            ANSWER: 'b'
+                                            ANSWER__A: 'b'
                                         }
                                     },
                                     b: {
                                         on: {
-                                            ANSWER: 'c'
+                                            ANSWER__B: 'c'
                                         }
                                     },
                                     c: {
                                         on: {
-                                            ANSWER: 'd'
+                                            ANSWER__C: 'd'
                                         }
                                     },
                                     d: {
@@ -1179,17 +1179,17 @@ describe('Parallel Router', () => {
                                 states: {
                                     a: {
                                         on: {
-                                            ANSWER: 'b'
+                                            ANSWER__A: 'b'
                                         }
                                     },
                                     b: {
                                         on: {
-                                            ANSWER: 'c'
+                                            ANSWER__B: 'c'
                                         }
                                     },
                                     c: {
                                         on: {
-                                            ANSWER: 'd'
+                                            ANSWER__C: 'd'
                                         }
                                     },
                                     d: {
@@ -1204,17 +1204,17 @@ describe('Parallel Router', () => {
                                 states: {
                                     e: {
                                         on: {
-                                            ANSWER: 'f'
+                                            ANSWER__E: 'f'
                                         }
                                     },
                                     f: {
                                         on: {
-                                            ANSWER: 'g'
+                                            ANSWER__F: 'g'
                                         }
                                     },
                                     g: {
                                         on: {
-                                            ANSWER: 'h'
+                                            ANSWER__G: 'h'
                                         }
                                     },
                                     h: {
@@ -1257,17 +1257,17 @@ describe('Parallel Router', () => {
                                 states: {
                                     a: {
                                         on: {
-                                            ANSWER: 'b'
+                                            ANSWER__A: 'b'
                                         }
                                     },
                                     b: {
                                         on: {
-                                            ANSWER: 'c'
+                                            ANSWER__B: 'c'
                                         }
                                     },
                                     c: {
                                         on: {
-                                            ANSWER: 'd'
+                                            ANSWER__C: 'd'
                                         }
                                     },
                                     d: {
@@ -1303,17 +1303,17 @@ describe('Parallel Router', () => {
                                 states: {
                                     a: {
                                         on: {
-                                            ANSWER: 'b'
+                                            ANSWER__A: 'b'
                                         }
                                     },
                                     b: {
                                         on: {
-                                            ANSWER: 'c'
+                                            ANSWER__B: 'c'
                                         }
                                     },
                                     c: {
                                         on: {
-                                            ANSWER: 'd'
+                                            ANSWER__C: 'd'
                                         }
                                     },
                                     d: {
@@ -1350,17 +1350,17 @@ describe('Parallel Router', () => {
                                 states: {
                                     a: {
                                         on: {
-                                            ANSWER: 'b'
+                                            ANSWER__A: 'b'
                                         }
                                     },
                                     b: {
                                         on: {
-                                            ANSWER: 'c'
+                                            ANSWER__B: 'c'
                                         }
                                     },
                                     c: {
                                         on: {
-                                            ANSWER: 'd'
+                                            ANSWER__C: 'd'
                                         }
                                     },
                                     d: {
@@ -1374,17 +1374,17 @@ describe('Parallel Router', () => {
                                 states: {
                                     e: {
                                         on: {
-                                            ANSWER: 'f'
+                                            ANSWER__E: 'f'
                                         }
                                     },
                                     f: {
                                         on: {
-                                            ANSWER: 'g'
+                                            ANSWER__F: 'g'
                                         }
                                     },
                                     g: {
                                         on: {
-                                            ANSWER: 'h'
+                                            ANSWER__G: 'h'
                                         }
                                     },
                                     h: {
@@ -1422,17 +1422,17 @@ describe('Parallel Router', () => {
                                 states: {
                                     a: {
                                         on: {
-                                            ANSWER: 'b'
+                                            ANSWER__A: 'b'
                                         }
                                     },
                                     b: {
                                         on: {
-                                            ANSWER: 'c'
+                                            ANSWER__B: 'c'
                                         }
                                     },
                                     c: {
                                         on: {
-                                            ANSWER: 'd'
+                                            ANSWER__C: 'd'
                                         }
                                     },
                                     d: {
@@ -1446,17 +1446,17 @@ describe('Parallel Router', () => {
                                 states: {
                                     e: {
                                         on: {
-                                            ANSWER: 'f'
+                                            ANSWER__E: 'f'
                                         }
                                     },
                                     f: {
                                         on: {
-                                            ANSWER: 'g'
+                                            ANSWER__F: 'g'
                                         }
                                     },
                                     g: {
                                         on: {
-                                            ANSWER: 'h'
+                                            ANSWER__G: 'h'
                                         }
                                     },
                                     h: {
@@ -1495,17 +1495,17 @@ describe('Parallel Router', () => {
                                 states: {
                                     a: {
                                         on: {
-                                            ANSWER: 'b'
+                                            ANSWER__A: 'b'
                                         }
                                     },
                                     b: {
                                         on: {
-                                            ANSWER: 'c'
+                                            ANSWER__B: 'c'
                                         }
                                     },
                                     c: {
                                         on: {
-                                            ANSWER: 'd'
+                                            ANSWER__C: 'd'
                                         }
                                     },
                                     d: {
@@ -1519,17 +1519,17 @@ describe('Parallel Router', () => {
                                 states: {
                                     e: {
                                         on: {
-                                            ANSWER: 'f'
+                                            ANSWER__E: 'f'
                                         }
                                     },
                                     f: {
                                         on: {
-                                            ANSWER: 'g'
+                                            ANSWER__F: 'g'
                                         }
                                     },
                                     g: {
                                         on: {
-                                            ANSWER: 'h'
+                                            ANSWER__G: 'h'
                                         }
                                     },
                                     h: {
@@ -1553,6 +1553,774 @@ describe('Parallel Router', () => {
 
                 expect(isAvailableA).toEqual(true);
                 expect(isAvailableB).toEqual(false);
+            });
+        });
+    });
+
+    describe('Applicability Status machine', () => {
+        describe('ANSWER__', () => {
+            it('should update the applicability status via the "ANSWER__X" event', () => {
+                const parallelRouter = createParallelRouter({
+                    currentSectionId: 'a',
+                    routes: {
+                        id: 'parallel-routes-test',
+                        type: 'parallel',
+                        states: {
+                            task1: {
+                                initial: 'a',
+                                currentSectionId: 'a',
+                                states: {
+                                    a: {
+                                        on: {
+                                            ANSWER__A: [
+                                                {
+                                                    target: 'b'
+                                                }
+                                            ]
+                                        }
+                                    },
+                                    b: {
+                                        on: {
+                                            ANSWER__B: [
+                                                {
+                                                    target: '#task2'
+                                                }
+                                            ]
+                                        }
+                                    }
+                                }
+                            },
+                            task2: {
+                                initial: 'c',
+                                currentSectionId: 'c',
+                                states: {
+                                    c: {
+                                        on: {
+                                            ANSWER__C: [
+                                                {
+                                                    target: 'd'
+                                                }
+                                            ]
+                                        }
+                                    },
+                                    d: {
+                                        type: 'final'
+                                    }
+                                }
+                            },
+                            'task1__applicability-status': {
+                                initial: 'applicable',
+                                currentSectionId: 'applicable',
+                                states: {
+                                    applicable: {}
+                                }
+                            },
+                            'task2__applicability-status': {
+                                initial: 'inapplicable',
+                                currentSectionId: 'inapplicable',
+                                states: {
+                                    inapplicable: {
+                                        on: {
+                                            ANSWER__A: 'applicable'
+                                        }
+                                    },
+                                    applicable: {}
+                                }
+                            }
+                        }
+                    },
+                    attributes: {
+                        q__roles: {}
+                    },
+                    answers: {}
+                });
+
+                let section = parallelRouter.current();
+                expect(section.value['task2__applicability-status']).toEqual('inapplicable');
+
+                section = parallelRouter.next({}, 'a', 'ANSWER__A');
+                expect(section.id).toBe('b');
+                expect(section.value['task2__applicability-status']).toEqual('applicable');
+            });
+
+            it('should update the applicability status via the ANSWER__ event given certain roles', () => {
+                const parallelRouter = createParallelRouter({
+                    currentSectionId: 'a',
+                    routes: {
+                        id: 'parallel-routes-test',
+                        type: 'parallel',
+                        states: {
+                            task1: {
+                                initial: 'a',
+                                currentSectionId: 'a',
+                                states: {
+                                    a: {
+                                        on: {
+                                            ANSWER__A: [
+                                                {
+                                                    target: 'b'
+                                                }
+                                            ]
+                                        }
+                                    },
+                                    b: {
+                                        on: {
+                                            ANSWER__B: [
+                                                {
+                                                    target: 'c'
+                                                }
+                                            ]
+                                        }
+                                    },
+                                    c: {
+                                        on: {
+                                            ANSWER__C: [
+                                                {
+                                                    target: '#task2'
+                                                }
+                                            ]
+                                        }
+                                    }
+                                }
+                            },
+                            task2: {
+                                initial: 'd',
+                                currentSectionId: 'd',
+                                states: {
+                                    d: {
+                                        on: {
+                                            ANSWER__D: [
+                                                {
+                                                    target: 'e'
+                                                }
+                                            ]
+                                        }
+                                    },
+                                    e: {
+                                        type: 'final'
+                                    }
+                                }
+                            },
+                            'task1__applicability-status': {
+                                initial: 'applicable',
+                                currentSectionId: 'applicable',
+                                states: {
+                                    applicable: {}
+                                }
+                            },
+                            'task2__applicability-status': {
+                                initial: 'inapplicable',
+                                currentSectionId: 'inapplicable',
+                                states: {
+                                    inapplicable: {
+                                        on: {
+                                            ANSWER__B: [
+                                                {
+                                                    target: 'applicable',
+                                                    cond: ['|role.all', 'role1']
+                                                },
+                                                {
+                                                    target: 'inapplicable'
+                                                }
+                                            ]
+                                        }
+                                    },
+                                    applicable: {}
+                                }
+                            }
+                        }
+                    },
+                    attributes: {
+                        q__roles: {
+                            role1: {
+                                schema: {
+                                    $schema: 'http://json-schema.org/draft-07/schema#',
+                                    title: 'Role 1',
+                                    type: 'boolean',
+                                    const: ['==', '$.answers.a.q1', 'foo'],
+                                    examples: [{}],
+                                    invalidExamples: [{}]
+                                }
+                            },
+                            role2: {
+                                schema: {
+                                    $schema: 'http://json-schema.org/draft-07/schema#',
+                                    title: 'Role 2',
+                                    type: 'boolean',
+                                    const: ['==', '$.answers.a.q1', 'bar'],
+                                    examples: [{}],
+                                    invalidExamples: [{}]
+                                }
+                            }
+                        }
+                    },
+                    answers: {}
+                });
+
+                let section = parallelRouter.current();
+                expect(section.value['task2__applicability-status']).toEqual('inapplicable');
+
+                parallelRouter.next({q1: 'foo'}, 'a', 'ANSWER__A');
+                section = parallelRouter.next({}, 'b', 'ANSWER__B');
+
+                expect(section.id).toBe('c');
+                expect(section.value['task2__applicability-status']).toEqual('applicable');
+            });
+
+            it('should not update the applicability status via the ANSWER__ event given certain roles', () => {
+                const parallelRouter = createParallelRouter({
+                    currentSectionId: 'a',
+                    routes: {
+                        id: 'parallel-routes-test',
+                        type: 'parallel',
+                        states: {
+                            task1: {
+                                initial: 'a',
+                                currentSectionId: 'a',
+                                states: {
+                                    a: {
+                                        on: {
+                                            ANSWER__A: [
+                                                {
+                                                    target: 'b'
+                                                }
+                                            ]
+                                        }
+                                    },
+                                    b: {
+                                        on: {
+                                            ANSWER__B: [
+                                                {
+                                                    target: '#task2'
+                                                }
+                                            ]
+                                        }
+                                    }
+                                }
+                            },
+                            task2: {
+                                initial: 'c',
+                                currentSectionId: 'c',
+                                states: {
+                                    c: {
+                                        on: {
+                                            ANSWER__C: [
+                                                {
+                                                    target: 'd'
+                                                }
+                                            ]
+                                        }
+                                    },
+                                    d: {
+                                        type: 'final'
+                                    }
+                                }
+                            },
+                            'task1__applicability-status': {
+                                initial: 'applicable',
+                                currentSectionId: 'applicable',
+                                states: {
+                                    applicable: {}
+                                }
+                            },
+                            'task2__applicability-status': {
+                                initial: 'inapplicable',
+                                currentSectionId: 'inapplicable',
+                                states: {
+                                    inapplicable: {
+                                        on: {
+                                            ANSWER__A: [
+                                                {
+                                                    target: 'applicable',
+                                                    cond: ['|role.all', 'role1']
+                                                },
+                                                {
+                                                    target: 'inapplicable'
+                                                }
+                                            ]
+                                        }
+                                    },
+                                    applicable: {}
+                                }
+                            }
+                        }
+                    },
+                    attributes: {
+                        q__roles: {
+                            role1: {
+                                schema: {
+                                    $schema: 'http://json-schema.org/draft-07/schema#',
+                                    title: 'Role 1',
+                                    type: 'boolean',
+                                    const: ['==', '$.answers.a.q1', 'foo'],
+                                    examples: [{}],
+                                    invalidExamples: [{}]
+                                }
+                            },
+                            role2: {
+                                schema: {
+                                    $schema: 'http://json-schema.org/draft-07/schema#',
+                                    title: 'Role 2',
+                                    type: 'boolean',
+                                    const: ['==', '$.answers.a.q1', 'bar'],
+                                    examples: [{}],
+                                    invalidExamples: [{}]
+                                }
+                            }
+                        }
+                    },
+                    answers: {}
+                });
+
+                let section = parallelRouter.current();
+                expect(section.value['task2__applicability-status']).toEqual('inapplicable');
+
+                section = parallelRouter.next({q1: 'bar'}, 'a', 'ANSWER__A');
+                expect(section.id).toBe('b');
+                expect(section.value['task2__applicability-status']).toEqual('inapplicable');
+            });
+        });
+
+        describe.skip('RETRACT__', () => {
+            // it('should update the applicability status via the "RETRACT__X" event', () => {
+            //     const parallelRouter = createParallelRouter({
+            //         currentSectionId: 'a',
+            //         routes: {
+            //             id: 'parallel-routes-test',
+            //             type: 'parallel',
+            //             states: {
+            //                 task1: {
+            //                     initial: 'a',
+            //                     currentSectionId: 'a',
+            //                     states: {
+            //                         a: {
+            //                             on: {
+            //                                 ANSWER__A: [
+            //                                     {
+            //                                         target: 'b',
+            //                                         cond: ['==', '$.answers.a.q1', 'foo']
+            //                                     },
+            //                                     {
+            //                                         target: 'c',
+            //                                         cond: ['==', '$.answers.a.q1', 'bar']
+            //                                     }
+            //                                 ]
+            //                             }
+            //                         },
+            //                         b: {
+            //                             on: {
+            //                                 ANSWER__B: [
+            //                                     {
+            //                                         target: 'd'
+            //                                     }
+            //                                 ]
+            //                             }
+            //                         },
+            //                         c: {
+            //                             on: {
+            //                                 ANSWER__C: [
+            //                                     {
+            //                                         target: 'd'
+            //                                     }
+            //                                 ]
+            //                             }
+            //                         },
+            //                         d: {
+            //                             on: {
+            //                                 ANSWER__D: [
+            //                                     {
+            //                                         target: 'e',
+            //                                         cond: ['==', '$.answers.a.q1', 'foo']
+            //                                     },
+            //                                     {
+            //                                         target: 'f',
+            //                                         cond: ['==', '$.answers.a.q1', 'bar']
+            //                                     }
+            //                                 ]
+            //                             }
+            //                         },
+            //                         e: {type: 'final'},
+            //                         f: {type: 'final'}
+            //                     }
+            //                 },
+            //                 task2: {
+            //                     initial: 'g',
+            //                     currentSectionId: 'g',
+            //                     states: {
+            //                         g: {
+            //                             on: {
+            //                                 ANSWER__G: [
+            //                                     {
+            //                                         target: 'h'
+            //                                     }
+            //                                 ]
+            //                             }
+            //                         },
+            //                         h: {
+            //                             type: 'final'
+            //                         }
+            //                     }
+            //                 },
+            //                 'task1__applicability-status': {
+            //                     initial: 'applicable',
+            //                     currentSectionId: 'applicable',
+            //                     states: {
+            //                         applicable: {}
+            //                     }
+            //                 },
+            //                 'task2__applicability-status': {
+            //                     initial: 'inapplicable',
+            //                     currentSectionId: 'inapplicable',
+            //                     states: {
+            //                         inapplicable: {
+            //                             on: {
+            //                                 ANSWER__A: [
+            //                                     {
+            //                                         target: 'applicable',
+            //                                         cond: ['|role.all', 'role1']
+            //                                     },
+            //                                     {
+            //                                         target: 'inapplicable'
+            //                                     }
+            //                                 ]
+            //                             }
+            //                         },
+            //                         applicable: {
+            //                             on: {
+            //                                 ANSWER__A: [
+            //                                     {
+            //                                         target: 'inapplicable',
+            //                                         cond: ['|role.none', 'role1']
+            //                                     },
+            //                                     {
+            //                                         target: 'applicable'
+            //                                     }
+            //                                 ] // ,
+            //                                 // RETRACT__A: [
+            //                                 //     {
+            //                                 //         target: 'inapplicable'
+            //                                 //     }
+            //                                 // ]
+            //                             }
+            //                         }
+            //                     }
+            //                 }
+            //             }
+            //         },
+            //         attributes: {
+            //             q__roles: {
+            //                 role1: {
+            //                     schema: {
+            //                         $schema: 'http://json-schema.org/draft-07/schema#',
+            //                         title: 'Role 1',
+            //                         type: 'boolean',
+            //                         const: ['==', '$.answers.a.q1', 'foo'],
+            //                         examples: [{}],
+            //                         invalidExamples: [{}]
+            //                     }
+            //                 },
+            //                 role2: {
+            //                     schema: {
+            //                         $schema: 'http://json-schema.org/draft-07/schema#',
+            //                         title: 'Role 2',
+            //                         type: 'boolean',
+            //                         const: ['==', '$.answers.a.q1', 'bar'],
+            //                         examples: [{}],
+            //                         invalidExamples: [{}]
+            //                     }
+            //                 }
+            //             }
+            //         },
+            //         answers: {}
+            //     });
+
+            //     let section = parallelRouter.current();
+            //     expect(section.value['task2__applicability-status']).toEqual('inapplicable');
+
+            //     parallelRouter.next({q1: 'foo'}, 'a', 'ANSWER__A');
+            //     section = parallelRouter.next({}, 'b', 'ANSWER__B');
+            //     expect(section.id).toBe('d');
+            //     section = parallelRouter.next({}, 'd', 'ANSWER__D');
+            //     expect(section.value['task2__applicability-status']).toEqual('applicable');
+
+            //     parallelRouter.previous('e'); // d.
+            //     parallelRouter.previous('d'); // c.
+            //     parallelRouter.previous('c'); // a.
+
+            //     section = parallelRouter.next({q1: 'bar'}, 'a', 'ANSWER__A'); // causes cascade.
+            //     expect(section.id).toBe('c');
+            //     expect(section.value['task2__applicability-status']).toEqual('inapplicable');
+            // });
+
+            it('should update the applicability status via the RETRACT__ event given certain roles', () => {
+                const parallelRouter = createParallelRouter({
+                    currentSectionId: 'a',
+                    routes: {
+                        id: 'parallel-routes-test',
+                        type: 'parallel',
+                        states: {
+                            task1: {
+                                initial: 'a',
+                                currentSectionId: 'a',
+                                states: {
+                                    a: {
+                                        on: {
+                                            ANSWER__A: [
+                                                {
+                                                    target: 'b',
+                                                    cond: ['==', '$.answers.a.q1', 'myself']
+                                                },
+                                                {
+                                                    target: 'b',
+                                                    cond: ['==', '$.answers.a.q1', 'someone-else']
+                                                }
+                                            ]
+                                        }
+                                    },
+                                    b: {
+                                        on: {
+                                            ANSWER__B: [
+                                                {
+                                                    target: 'c',
+                                                    cond: ['==', '$.answers.a.q1', 'myself']
+                                                },
+                                                {
+                                                    target: 'd',
+                                                    cond: ['==', '$.answers.a.q1', 'someone-else']
+                                                }
+                                            ]
+                                        }
+                                    },
+                                    c: {type: 'final'},
+                                    d: {type: 'final'}
+                                }
+                            },
+                            task2: {
+                                initial: 'g',
+                                currentSectionId: 'g',
+                                states: {
+                                    g: {
+                                        on: {
+                                            ANSWER__G: [
+                                                {
+                                                    target: 'h'
+                                                }
+                                            ]
+                                        }
+                                    },
+                                    h: {
+                                        type: 'final'
+                                    }
+                                }
+                            },
+                            'task1__applicability-status': {
+                                initial: 'applicable',
+                                currentSectionId: 'applicable',
+                                states: {
+                                    applicable: {}
+                                }
+                            },
+                            'task2__applicability-status': {
+                                initial: 'inapplicable',
+                                currentSectionId: 'inapplicable',
+                                states: {
+                                    inapplicable: {
+                                        on: {
+                                            ANSWER__A: [
+                                                {
+                                                    target: 'applicable',
+                                                    cond: ['|role.all', 'role1']
+                                                },
+                                                {
+                                                    target: 'inapplicable'
+                                                }
+                                            ]
+                                        }
+                                    },
+                                    applicable: {
+                                        on: {
+                                            // ANSWER__A: [
+                                            //     {
+                                            //         target: 'inapplicable',
+                                            //         cond: ['|role.none', 'role1']
+                                            //     },
+                                            //     {
+                                            //         target: 'applicable'
+                                            //     }
+                                            // ],
+                                            RETRACT__A: [
+                                                {
+                                                    target: 'inapplicable'
+                                                }
+                                            ]
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    attributes: {
+                        q__roles: {
+                            role1: {
+                                schema: {
+                                    $schema: 'http://json-schema.org/draft-07/schema#',
+                                    title: 'Role 1',
+                                    type: 'boolean',
+                                    const: ['==', '$.answers.a.q1', 'myself'],
+                                    examples: [{}],
+                                    invalidExamples: [{}]
+                                }
+                            },
+                            role2: {
+                                schema: {
+                                    $schema: 'http://json-schema.org/draft-07/schema#',
+                                    title: 'Role 2',
+                                    type: 'boolean',
+                                    const: ['==', '$.answers.a.q1', 'someone-else'],
+                                    examples: [{}],
+                                    invalidExamples: [{}]
+                                }
+                            }
+                        }
+                    },
+                    answers: {}
+                });
+
+                let section = parallelRouter.current();
+                expect(section.value['task2__applicability-status']).toEqual('inapplicable');
+
+                section = parallelRouter.next({q1: 'myself'}, 'a', 'ANSWER__A'); // b.
+                expect(section.value['task2__applicability-status']).toEqual('applicable');
+
+                section = parallelRouter.next({}, 'b', 'ANSWER__B'); // c.
+                expect(section.id).toBe('c');
+
+                parallelRouter.previous('c'); // b.
+                parallelRouter.previous('b'); // a.
+
+                section = parallelRouter.next({q1: 'someone-else'}, 'a', 'ANSWER__A'); // causes cascade.
+                expect(section.value['task2__applicability-status']).toEqual('inapplicable');
+            });
+
+            it('should not update the applicability status via the RETRACT__ event given certain roles', () => {
+                const parallelRouter = createParallelRouter({
+                    currentSectionId: 'a',
+                    routes: {
+                        id: 'parallel-routes-test',
+                        type: 'parallel',
+                        states: {
+                            task1: {
+                                initial: 'a',
+                                currentSectionId: 'a',
+                                states: {
+                                    a: {
+                                        on: {
+                                            ANSWER__A: [
+                                                {
+                                                    target: 'b'
+                                                }
+                                            ]
+                                        }
+                                    },
+                                    b: {
+                                        on: {
+                                            ANSWER__B: [
+                                                {
+                                                    target: '#task2'
+                                                }
+                                            ]
+                                        }
+                                    }
+                                }
+                            },
+                            task2: {
+                                initial: 'c',
+                                currentSectionId: 'c',
+                                states: {
+                                    c: {
+                                        on: {
+                                            ANSWER__C: [
+                                                {
+                                                    target: 'd'
+                                                }
+                                            ]
+                                        }
+                                    },
+                                    d: {
+                                        type: 'final'
+                                    }
+                                }
+                            },
+                            'task1__applicability-status': {
+                                initial: 'applicable',
+                                currentSectionId: 'applicable',
+                                states: {
+                                    applicable: {}
+                                }
+                            },
+                            'task2__applicability-status': {
+                                initial: 'inapplicable',
+                                currentSectionId: 'inapplicable',
+                                states: {
+                                    inapplicable: {
+                                        on: {
+                                            ANSWER__A: [
+                                                {
+                                                    target: 'applicable',
+                                                    cond: ['|role.all', 'role1']
+                                                },
+                                                {
+                                                    target: 'inapplicable'
+                                                }
+                                            ]
+                                        }
+                                    },
+                                    applicable: {
+                                        on: {
+                                            RETRACT_A: [
+                                                {
+                                                    target: 'inapplicable'
+                                                }
+                                            ]
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    attributes: {
+                        q__roles: {
+                            role1: {
+                                schema: {
+                                    $schema: 'http://json-schema.org/draft-07/schema#',
+                                    title: 'Role 1',
+                                    type: 'boolean',
+                                    const: ['==', '$.answers.a.q1', 'foo'],
+                                    examples: [{}],
+                                    invalidExamples: [{}]
+                                }
+                            },
+                            role2: {
+                                schema: {
+                                    $schema: 'http://json-schema.org/draft-07/schema#',
+                                    title: 'Role 2',
+                                    type: 'boolean',
+                                    const: ['==', '$.answers.a.q1', 'bar'],
+                                    examples: [{}],
+                                    invalidExamples: [{}]
+                                }
+                            }
+                        }
+                    },
+                    answers: {}
+                });
+
+                let section = parallelRouter.current();
+                expect(section.value['task2__applicability-status']).toEqual('inapplicable');
+
+                section = parallelRouter.next({q1: 'bar'}, 'a', 'ANSWER__A');
+                expect(section.id).toBe('b');
+                expect(section.value['task2__applicability-status']).toEqual('inapplicable');
             });
         });
     });

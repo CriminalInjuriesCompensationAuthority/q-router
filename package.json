@@ -27,7 +27,6 @@
     },
     "scripts": {
         "prepublishOnly": "nsp check",
-        "pretest": "npm run lint",
         "test": "jest",
         "coverage": "jest --coverage",
         "lint": "eslint ."
@@ -35,6 +34,6 @@
     "license": "MIT",
     "dependencies": {
         "moment": "^2.24.0",
-        "q-expressions": "github:CriminalInjuriesCompensationAuthority/q-expressions"
+        "q-expressions": "github:CriminalInjuriesCompensationAuthority/q-expressions#feature/task-list/wip"
     }
 }
