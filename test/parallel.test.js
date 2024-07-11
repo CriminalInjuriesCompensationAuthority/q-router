@@ -619,7 +619,7 @@ describe('Parallel Router', () => {
 
     describe('Current', () => {
         it('should get the current section', () => {
-            const parallelRouter = createParallelRouter({
+            let parallelRouter = createParallelRouter({
                 currentSectionId: 'a',
                 routes: {
                     id: 'parallel-routes-test',
@@ -656,18 +656,34 @@ describe('Parallel Router', () => {
                 }
             });
 
-            parallelRouter.next({}, 'a', 'ANSWER__A'); // b
-            parallelRouter.next({}, 'b', 'ANSWER__B'); // c
-            parallelRouter.next({}, 'a', 'ANSWER__A'); // b
-
-            const section = parallelRouter.current();
-
+            let section = parallelRouter.next({}, 'a', 'ANSWER__A'); // b
             expect(section.id).toEqual('b');
+
+            parallelRouter = createParallelRouter(section.context);
+            section = parallelRouter.current();
+            expect(section.id).toEqual('b');
+
+            parallelRouter = createParallelRouter(section.context);
+            section = parallelRouter.next({}, 'b', 'ANSWER__B'); // c
+            expect(section.id).toEqual('c');
+
+            parallelRouter = createParallelRouter(section.context);
+            section = parallelRouter.current();
+            expect(section.id).toEqual('c');
+
+            parallelRouter = createParallelRouter(section.context);
+            section = parallelRouter.next({}, 'a', 'ANSWER__A'); // b
+            expect(section.id).toEqual('b');
+
+            parallelRouter = createParallelRouter(section.context);
+            section = parallelRouter.current();
+            expect(section.id).toEqual('b');
+
             expect(section.context.routes.states.task1.progress).toEqual(['a', 'b', 'c']);
         });
 
         it('should set the current section', () => {
-            const parallelRouter = createParallelRouter({
+            let parallelRouter = createParallelRouter({
                 currentSectionId: 'a',
                 routes: {
                     id: 'parallel-routes-test',
@@ -704,17 +720,20 @@ describe('Parallel Router', () => {
                 }
             });
 
-            parallelRouter.next({}, 'a', 'ANSWER__A'); // b
-            parallelRouter.next({}, 'b', 'ANSWER__B'); // c
+            let section = parallelRouter.next({}, 'a', 'ANSWER__A'); // b
+            expect(section.id).toEqual('b');
 
-            const section = parallelRouter.current('a');
+            parallelRouter = createParallelRouter(section.context);
+            section = parallelRouter.next({}, 'b', 'ANSWER__B'); // c
+            expect(section.id).toEqual('c');
 
+            section = parallelRouter.current('a');
             expect(section.id).toEqual('a');
             expect(section.context.routes.states.task1.progress).toEqual(['a', 'b', 'c']);
         });
 
         it('should return undefined if current() attempts to advance to a section that has not been visited', () => {
-            const parallelRouter = createParallelRouter({
+            let parallelRouter = createParallelRouter({
                 currentSectionId: 'a',
                 routes: {
                     id: 'parallel-routes-test',
@@ -751,9 +770,11 @@ describe('Parallel Router', () => {
                 }
             });
 
-            parallelRouter.next({}, 'a', 'ANSWER__A');
+            let section = parallelRouter.next({}, 'a', 'ANSWER__A');
+            section = parallelRouter.current('b');
 
-            const section = parallelRouter.current('c');
+            parallelRouter = createParallelRouter(section.context);
+            section = parallelRouter.current('c');
 
             expect(section).toEqual(undefined);
         });
@@ -762,7 +783,7 @@ describe('Parallel Router', () => {
     describe('First', () => {
         describe('Single task machine', () => {
             it('should get the first section from the progress', () => {
-                const parallelRouter = createParallelRouter({
+                let parallelRouter = createParallelRouter({
                     currentSectionId: 'a',
                     routes: {
                         id: 'parallel-routes-test',
@@ -799,18 +820,22 @@ describe('Parallel Router', () => {
                     }
                 });
 
-                parallelRouter.next({}, 'a', 'ANSWER__A'); // b
-                parallelRouter.next({}, 'b', 'ANSWER__B'); // c
+                let section = parallelRouter.next({}, 'a', 'ANSWER__A'); // b
+                expect(section.id).toEqual('b');
 
-                const section = parallelRouter.first();
+                parallelRouter = createParallelRouter(section.context);
+                section = parallelRouter.next({}, 'b', 'ANSWER__B'); // c
+                expect(section.id).toEqual('c');
 
+                parallelRouter = createParallelRouter(section.context);
+                section = parallelRouter.first();
                 expect(section.id).toEqual('a');
                 expect(section.context.routes.states.task1.progress).toEqual(['a', 'b', 'c']);
             });
         });
         describe('Multiple task machines', () => {
             it('should get the first section from the progress', () => {
-                const parallelRouter = createParallelRouter({
+                let parallelRouter = createParallelRouter({
                     currentSectionId: 'a',
                     routes: {
                         id: 'parallel-routes-test',
@@ -843,7 +868,6 @@ describe('Parallel Router', () => {
                             task2: {
                                 initial: 'e',
                                 currentSectionId: 'e',
-                                progress: ['e', 'f', 'g'],
                                 states: {
                                     e: {
                                         on: {
@@ -872,10 +896,14 @@ describe('Parallel Router', () => {
                     }
                 });
 
-                parallelRouter.next({}, 'e', 'ANSWER__E'); // f
-                parallelRouter.next({}, 'f', 'ANSWER__F'); // g
-                const section = parallelRouter.first();
+                let section = parallelRouter.next({}, 'e', 'ANSWER__E'); // f
+                expect(section.id).toEqual('f');
 
+                parallelRouter = createParallelRouter(section.context);
+                section = parallelRouter.next({}, 'f', 'ANSWER__F'); // g
+                expect(section.id).toEqual('g');
+
+                section = parallelRouter.first();
                 expect(section.id).toEqual('e');
                 expect(section.context.routes.states.task2.progress).toEqual(['e', 'f', 'g']);
             });
@@ -885,7 +913,7 @@ describe('Parallel Router', () => {
     describe('Last', () => {
         describe('Single task machine', () => {
             it('should get the last section from the progress', () => {
-                const parallelRouter = createParallelRouter({
+                let parallelRouter = createParallelRouter({
                     currentSectionId: 'a',
                     routes: {
                         id: 'parallel-routes-test',
@@ -922,19 +950,26 @@ describe('Parallel Router', () => {
                     }
                 });
 
-                parallelRouter.next({}, 'a', 'ANSWER__A'); // b
-                parallelRouter.next({}, 'b', 'ANSWER__B'); // c
-                parallelRouter.next({}, 'a', 'ANSWER__A'); // b
+                let section = parallelRouter.next({}, 'a', 'ANSWER__A'); // b
+                expect(section.id).toEqual('b');
 
-                const section = parallelRouter.last();
+                parallelRouter = createParallelRouter(section.context);
+                section = parallelRouter.next({}, 'b', 'ANSWER__B'); // c
+                expect(section.id).toEqual('c');
 
+                parallelRouter = createParallelRouter(section.context);
+                section = parallelRouter.next({}, 'a', 'ANSWER__A'); // b
+                expect(section.id).toEqual('b');
+
+                parallelRouter = createParallelRouter(section.context);
+                section = parallelRouter.last();
                 expect(section.id).toEqual('c');
                 expect(section.context.routes.states.task1.progress).toEqual(['a', 'b', 'c']);
             });
         });
         describe('Multiple task machine', () => {
             it('should get the last section from the progress', () => {
-                const parallelRouter = createParallelRouter({
+                let parallelRouter = createParallelRouter({
                     currentSectionId: 'g',
                     routes: {
                         id: 'parallel-routes-test',
@@ -996,13 +1031,22 @@ describe('Parallel Router', () => {
                     }
                 });
 
-                parallelRouter.next({}, 'e', 'ANSWER__E'); // f
-                parallelRouter.next({}, 'f', 'ANSWER__F'); // g
-                parallelRouter.next({}, 'g', 'ANSWER__G'); // h
-                parallelRouter.next({}, 'e', 'ANSWER__E'); // f
+                let section = parallelRouter.next({}, 'e', 'ANSWER__E'); // f
+                expect(section.id).toEqual('f');
 
-                const section = parallelRouter.last();
+                parallelRouter = createParallelRouter(section.context);
+                section = parallelRouter.next({}, 'f', 'ANSWER__F'); // g
+                expect(section.id).toEqual('g');
 
+                parallelRouter = createParallelRouter(section.context);
+                section = parallelRouter.next({}, 'g', 'ANSWER__G'); // h
+                expect(section.id).toEqual('h');
+
+                parallelRouter = createParallelRouter(section.context);
+                section = parallelRouter.next({}, 'e', 'ANSWER__E'); // f
+                expect(section.id).toEqual('f');
+
+                section = parallelRouter.last();
                 expect(section.id).toEqual('h');
                 expect(section.context.routes.states.task2.progress).toEqual(['e', 'f', 'g', 'h']);
             });
@@ -1012,7 +1056,7 @@ describe('Parallel Router', () => {
     describe('Available', () => {
         describe('Single task machine', () => {
             it('should return true for section in the progress', () => {
-                const parallelRouter = createParallelRouter({
+                let parallelRouter = createParallelRouter({
                     currentSectionId: 'a',
                     routes: {
                         id: 'parallel-routes-test',
@@ -1049,16 +1093,20 @@ describe('Parallel Router', () => {
                     }
                 });
 
-                parallelRouter.next({}, 'a', 'ANSWER__A'); // b
-                parallelRouter.next({}, 'b', 'ANSWER__B'); // c
+                let section = parallelRouter.next({}, 'a', 'ANSWER__A'); // b
+                expect(section.id).toEqual('b');
 
+                parallelRouter = createParallelRouter(section.context);
+                section = parallelRouter.next({}, 'b', 'ANSWER__B'); // c
+                expect(section.id).toEqual('c');
+
+                parallelRouter = createParallelRouter(section.context);
                 const isAvailable = parallelRouter.available('b');
-
                 expect(isAvailable).toEqual(true);
             });
 
             it('should return false for section not in the progress', () => {
-                const parallelRouter = createParallelRouter({
+                let parallelRouter = createParallelRouter({
                     currentSectionId: 'a',
                     routes: {
                         id: 'parallel-routes-test',
@@ -1095,17 +1143,21 @@ describe('Parallel Router', () => {
                     }
                 });
 
-                parallelRouter.next({}, 'a', 'ANSWER__A'); // b
-                parallelRouter.next({}, 'b', 'ANSWER__B'); // c
+                let section = parallelRouter.next({}, 'a', 'ANSWER__A'); // b
+                expect(section.id).toEqual('b');
 
+                parallelRouter = createParallelRouter(section.context);
+                section = parallelRouter.next({}, 'b', 'ANSWER__B'); // c
+                expect(section.id).toEqual('c');
+
+                parallelRouter = createParallelRouter(section.context);
                 const isAvailable = parallelRouter.available('d');
-
                 expect(isAvailable).toEqual(false);
             });
         });
         describe('Multiple task machines', () => {
             it('should return true for section in the progresses', () => {
-                const parallelRouter = createParallelRouter({
+                let parallelRouter = createParallelRouter({
                     currentSectionId: 'a',
                     routes: {
                         id: 'parallel-routes-test',
@@ -1166,10 +1218,16 @@ describe('Parallel Router', () => {
                     }
                 });
 
-                parallelRouter.next({}, 'e', 'ANSWER__E'); // f
-                parallelRouter.next({}, 'f', 'ANSWER__F'); // g
+                let section = parallelRouter.next({}, 'e', 'ANSWER__E'); // f
+                expect(section.id).toEqual('f');
 
+                parallelRouter = createParallelRouter(section.context);
+                section = parallelRouter.next({}, 'f', 'ANSWER__F'); // g
+                expect(section.id).toEqual('g');
+
+                parallelRouter = createParallelRouter(section.context);
                 const isAvailableA = parallelRouter.available('a');
+                parallelRouter = createParallelRouter(section.context); // verbosity.
                 const isAvailableB = parallelRouter.available('f');
 
                 expect(isAvailableA).toEqual(true);
@@ -1177,7 +1235,7 @@ describe('Parallel Router', () => {
             });
 
             it('should return false for section in the progresses', () => {
-                const parallelRouter = createParallelRouter({
+                let parallelRouter = createParallelRouter({
                     currentSectionId: 'a',
                     routes: {
                         id: 'parallel-routes-test',
@@ -1238,11 +1296,20 @@ describe('Parallel Router', () => {
                     }
                 });
 
-                parallelRouter.next({}, 'a', 'ANSWER__A'); // b
-                parallelRouter.next({}, 'e', 'ANSWER__E'); // f
-                parallelRouter.next({}, 'f', 'ANSWER__F'); // g
+                let section = parallelRouter.next({}, 'a', 'ANSWER__A'); // b
+                expect(section.id).toEqual('b');
 
+                parallelRouter = createParallelRouter(section.context);
+                section = parallelRouter.next({}, 'e', 'ANSWER__E'); // f
+                expect(section.id).toEqual('f');
+
+                parallelRouter = createParallelRouter(section.context);
+                section = parallelRouter.next({}, 'f', 'ANSWER__F'); // g
+                expect(section.id).toEqual('g');
+
+                parallelRouter = createParallelRouter(section.context);
                 const isAvailableA = parallelRouter.available('c');
+                parallelRouter = createParallelRouter(section.context); // verbosity.
                 const isAvailableB = parallelRouter.available('h');
 
                 expect(isAvailableA).toEqual(false);
@@ -1250,7 +1317,7 @@ describe('Parallel Router', () => {
             });
 
             it('should return true and false for section in the progresses', () => {
-                const parallelRouter = createParallelRouter({
+                let parallelRouter = createParallelRouter({
                     currentSectionId: 'a',
                     routes: {
                         id: 'parallel-routes-test',
@@ -1311,11 +1378,20 @@ describe('Parallel Router', () => {
                     }
                 });
 
-                parallelRouter.next({}, 'a', 'ANSWER__A'); // b
-                parallelRouter.next({}, 'b', 'ANSWER__B'); // c
-                parallelRouter.next({}, 'e', 'ANSWER__E'); // f
+                let section = parallelRouter.next({}, 'a', 'ANSWER__A'); // b
+                expect(section.id).toEqual('b');
 
+                parallelRouter = createParallelRouter(section.context);
+                section = parallelRouter.next({}, 'b', 'ANSWER__B'); // c
+                expect(section.id).toEqual('c');
+
+                parallelRouter = createParallelRouter(section.context);
+                section = parallelRouter.next({}, 'e', 'ANSWER__E'); // f
+                expect(section.id).toEqual('f');
+
+                parallelRouter = createParallelRouter(section.context);
                 const isAvailableA = parallelRouter.available('a');
+                parallelRouter = createParallelRouter(section.context); // verbosity.
                 const isAvailableB = parallelRouter.available('g');
 
                 expect(isAvailableA).toEqual(true);
@@ -1325,93 +1401,535 @@ describe('Parallel Router', () => {
     });
 
     describe('Applicability Status machine', () => {
-        describe('ANSWER__', () => {
-            it('should update the applicability status via the "ANSWER__X" event', () => {
-                const parallelRouter = createParallelRouter({
-                    currentSectionId: 'a',
-                    routes: {
-                        id: 'parallel-routes-test',
-                        type: 'parallel',
-                        states: {
-                            task1: {
-                                initial: 'a',
-                                currentSectionId: 'a',
-                                states: {
-                                    a: {
-                                        on: {
-                                            ANSWER__A: [
-                                                {
-                                                    target: 'b'
-                                                }
-                                            ]
-                                        }
-                                    },
-                                    b: {
-                                        on: {
-                                            ANSWER__B: [
-                                                {
-                                                    target: '#task2'
-                                                }
-                                            ]
-                                        }
+        it('should update the applicability status via the "ANSWER__X" event', () => {
+            let parallelRouter = createParallelRouter({
+                currentSectionId: 'a',
+                routes: {
+                    id: 'parallel-routes-test',
+                    type: 'parallel',
+                    states: {
+                        task1: {
+                            initial: 'a',
+                            currentSectionId: 'a',
+                            states: {
+                                a: {
+                                    on: {
+                                        ANSWER__A: [
+                                            {
+                                                target: 'b'
+                                            }
+                                        ]
                                     }
-                                }
-                            },
-                            task2: {
-                                initial: 'c',
-                                currentSectionId: 'c',
-                                states: {
-                                    c: {
-                                        on: {
-                                            ANSWER__C: [
-                                                {
-                                                    target: 'd'
-                                                }
-                                            ]
-                                        }
-                                    },
-                                    d: {
-                                        type: 'final'
+                                },
+                                b: {
+                                    on: {
+                                        ANSWER__B: [
+                                            {
+                                                target: '#task2'
+                                            }
+                                        ]
                                     }
-                                }
-                            },
-                            'task1__applicability-status': {
-                                initial: 'applicable',
-                                currentSectionId: 'applicable',
-                                states: {
-                                    applicable: {}
-                                }
-                            },
-                            'task2__applicability-status': {
-                                initial: 'notApplicable',
-                                currentSectionId: 'notApplicable',
-                                states: {
-                                    notApplicable: {
-                                        on: {
-                                            ANSWER__A: 'applicable'
-                                        }
-                                    },
-                                    applicable: {}
                                 }
                             }
+                        },
+                        task2: {
+                            initial: 'c',
+                            currentSectionId: 'c',
+                            states: {
+                                c: {
+                                    on: {
+                                        ANSWER__C: [
+                                            {
+                                                target: 'd'
+                                            }
+                                        ]
+                                    }
+                                },
+                                d: {
+                                    type: 'final'
+                                }
+                            }
+                        },
+                        'task1__applicability-status': {
+                            initial: 'applicable',
+                            currentSectionId: 'applicable',
+                            states: {
+                                applicable: {}
+                            }
+                        },
+                        'task2__applicability-status': {
+                            initial: 'notApplicable',
+                            currentSectionId: 'notApplicable',
+                            states: {
+                                notApplicable: {
+                                    on: {
+                                        ANSWER__A: 'applicable'
+                                    }
+                                },
+                                applicable: {}
+                            }
                         }
-                    },
-                    attributes: {
-                        q__roles: {}
-                    },
-                    answers: {}
-                });
-
-                let section = parallelRouter.current();
-                expect(section.value['task2__applicability-status']).toEqual('notApplicable');
-
-                section = parallelRouter.next({}, 'a', 'ANSWER__A');
-                expect(section.id).toBe('b');
-                expect(section.value['task2__applicability-status']).toEqual('applicable');
+                    }
+                },
+                attributes: {
+                    q__roles: {}
+                },
+                answers: {}
             });
 
-            it('should not update the applicability status via the ANSWER__ event given certain roles', () => {
-                const parallelRouter = createParallelRouter({
+            let section = parallelRouter.current();
+            expect(section.value['task2__applicability-status']).toEqual('notApplicable');
+
+            parallelRouter = createParallelRouter(section.context);
+            section = parallelRouter.next({}, 'a', 'ANSWER__A');
+            expect(section.id).toBe('b');
+            expect(section.value['task2__applicability-status']).toEqual('applicable');
+        });
+
+        it('should not update the applicability status via the ANSWER__ event given certain roles', () => {
+            let parallelRouter = createParallelRouter({
+                currentSectionId: 'a',
+                routes: {
+                    id: 'parallel-routes-test',
+                    type: 'parallel',
+                    states: {
+                        task1: {
+                            initial: 'a',
+                            currentSectionId: 'a',
+                            states: {
+                                a: {
+                                    on: {
+                                        ANSWER__A: [
+                                            {
+                                                target: 'b'
+                                            }
+                                        ]
+                                    }
+                                },
+                                b: {
+                                    on: {
+                                        ANSWER__B: [
+                                            {
+                                                target: '#task2'
+                                            }
+                                        ]
+                                    }
+                                }
+                            }
+                        },
+                        task2: {
+                            initial: 'c',
+                            currentSectionId: 'c',
+                            states: {
+                                c: {
+                                    on: {
+                                        ANSWER__C: [
+                                            {
+                                                target: 'd'
+                                            }
+                                        ]
+                                    }
+                                },
+                                d: {
+                                    type: 'final'
+                                }
+                            }
+                        },
+                        'task1__applicability-status': {
+                            initial: 'applicable',
+                            currentSectionId: 'applicable',
+                            states: {
+                                applicable: {}
+                            }
+                        },
+                        'task2__applicability-status': {
+                            initial: 'notApplicable',
+                            currentSectionId: 'notApplicable',
+                            states: {
+                                notApplicable: {
+                                    on: {
+                                        ANSWER__A: [
+                                            {
+                                                target: 'applicable',
+                                                cond: ['|role.all', 'role1']
+                                            },
+                                            {
+                                                target: 'notApplicable'
+                                            }
+                                        ]
+                                    }
+                                },
+                                applicable: {}
+                            }
+                        }
+                    }
+                },
+                attributes: {
+                    q__roles: {
+                        role1: {
+                            schema: {
+                                $schema: 'http://json-schema.org/draft-07/schema#',
+                                title: 'Role 1',
+                                type: 'boolean',
+                                const: ['==', '$.answers.a.q1', 'foo'],
+                                examples: [{}],
+                                invalidExamples: [{}]
+                            }
+                        },
+                        role2: {
+                            schema: {
+                                $schema: 'http://json-schema.org/draft-07/schema#',
+                                title: 'Role 2',
+                                type: 'boolean',
+                                const: ['==', '$.answers.a.q1', 'bar'],
+                                examples: [{}],
+                                invalidExamples: [{}]
+                            }
+                        }
+                    }
+                },
+                answers: {}
+            });
+
+            let section = parallelRouter.current();
+            expect(section.value['task2__applicability-status']).toEqual('notApplicable');
+
+            parallelRouter = createParallelRouter(section.context);
+            section = parallelRouter.next({q1: 'bar'}, 'a', 'ANSWER__A');
+            expect(section.id).toBe('b');
+            expect(section.value['task2__applicability-status']).toEqual('notApplicable');
+        });
+
+        it('should conditionally route to a machine', () => {
+            let parallelRouter = createParallelRouter({
+                currentSectionId: 'a',
+                routes: {
+                    id: 'parallel-routes-test',
+                    type: 'parallel',
+                    states: {
+                        task1: {
+                            initial: 'a',
+                            currentSectionId: 'a',
+                            states: {
+                                a: {
+                                    on: {
+                                        ANSWER__A: [
+                                            {
+                                                target: 'b',
+                                                cond: ['==', '$.answers.a.q1', 'foo']
+                                            },
+                                            {
+                                                target: 'c',
+                                                cond: ['==', '$.answers.a.q1', 'bar']
+                                            }
+                                        ]
+                                    }
+                                },
+                                b: {
+                                    on: {
+                                        ANSWER__B: [
+                                            {
+                                                target: 'd'
+                                            }
+                                        ]
+                                    }
+                                },
+                                c: {
+                                    on: {
+                                        ANSWER__C: [
+                                            {
+                                                target: 'd'
+                                            }
+                                        ]
+                                    }
+                                },
+                                d: {
+                                    on: {
+                                        ANSWER__D: [
+                                            {
+                                                target: '#task2',
+                                                cond: ['|role.all', 'role1']
+                                            }
+                                        ]
+                                    }
+                                }
+                            }
+                        },
+                        task2: {
+                            initial: 'e',
+                            currentSectionId: 'e',
+                            states: {
+                                e: {
+                                    on: {
+                                        ANSWER__E: [
+                                            {
+                                                target: 'f'
+                                            }
+                                        ]
+                                    }
+                                },
+                                f: {
+                                    type: 'final'
+                                }
+                            }
+                        },
+                        'task1__applicability-status': {
+                            initial: 'applicable',
+                            currentSectionId: 'applicable',
+                            states: {
+                                applicable: {}
+                            }
+                        },
+                        'task2__applicability-status': {
+                            initial: 'notApplicable',
+                            currentSectionId: 'notApplicable',
+                            states: {
+                                notApplicable: {
+                                    on: {
+                                        ANSWER__D: [
+                                            {
+                                                target: 'applicable',
+                                                cond: ['|role.all', 'role1']
+                                            },
+                                            {
+                                                target: 'notApplicable'
+                                            }
+                                        ]
+                                    }
+                                },
+                                applicable: {}
+                            }
+                        }
+                    }
+                },
+                attributes: {
+                    q__roles: {
+                        role1: {
+                            schema: {
+                                $schema: 'http://json-schema.org/draft-07/schema#',
+                                title: 'Role 1',
+                                type: 'boolean',
+                                const: ['==', '$.answers.b.q1', true],
+                                examples: [{}],
+                                invalidExamples: [{}]
+                            }
+                        },
+                        role2: {
+                            schema: {
+                                $schema: 'http://json-schema.org/draft-07/schema#',
+                                title: 'Role 2',
+                                type: 'boolean',
+                                const: ['==', '$.answers.c.q1', true],
+                                examples: [{}],
+                                invalidExamples: [{}]
+                            }
+                        }
+                    }
+                },
+                answers: {}
+            });
+
+            let section = parallelRouter.current();
+            expect(section.value['task2__applicability-status']).toEqual('notApplicable');
+
+            parallelRouter = createParallelRouter(section.context);
+            section = parallelRouter.next({q1: 'foo'}, 'a', 'ANSWER__A'); // b
+            expect(section.id).toEqual('b');
+
+            parallelRouter = createParallelRouter(section.context);
+            section = parallelRouter.next({q1: true}, 'b', 'ANSWER__B'); // d
+            expect(section.id).toEqual('d');
+
+            parallelRouter = createParallelRouter(section.context);
+            section = parallelRouter.next({}, 'd', 'ANSWER__D'); // #task2.e
+            expect(section.value['task2__applicability-status']).toEqual('applicable');
+
+            parallelRouter = createParallelRouter(section.context);
+            section = parallelRouter.current();
+            expect(section.id).toEqual('e');
+        });
+
+        it('should conditionally skip a machine', () => {
+            let parallelRouter = createParallelRouter({
+                currentSectionId: 'a',
+                routes: {
+                    id: 'parallel-routes-test',
+                    type: 'parallel',
+                    states: {
+                        task1: {
+                            initial: 'a',
+                            currentSectionId: 'a',
+                            states: {
+                                a: {
+                                    on: {
+                                        ANSWER__A: [
+                                            {
+                                                target: 'b',
+                                                cond: ['==', '$.answers.a.q1', 'foo']
+                                            },
+                                            {
+                                                target: 'c',
+                                                cond: ['==', '$.answers.a.q1', 'bar']
+                                            }
+                                        ]
+                                    }
+                                },
+                                b: {
+                                    on: {
+                                        ANSWER__B: [
+                                            {
+                                                target: 'd'
+                                            }
+                                        ]
+                                    }
+                                },
+                                c: {
+                                    on: {
+                                        ANSWER__C: [
+                                            {
+                                                target: 'd'
+                                            }
+                                        ]
+                                    }
+                                },
+                                d: {
+                                    on: {
+                                        ANSWER__D: [
+                                            {
+                                                target: '#task2',
+                                                cond: ['|role.all', 'role2']
+                                            },
+                                            {
+                                                target: '#task3'
+                                            }
+                                        ]
+                                    }
+                                }
+                            }
+                        },
+                        task2: {
+                            initial: 'e',
+                            currentSectionId: 'e',
+                            states: {
+                                e: {
+                                    on: {
+                                        ANSWER__E: [
+                                            {
+                                                target: 'f'
+                                            }
+                                        ]
+                                    }
+                                },
+                                f: {
+                                    type: 'final'
+                                }
+                            }
+                        },
+                        task3: {
+                            initial: 'g',
+                            currentSectionId: 'g',
+                            states: {
+                                g: {
+                                    on: {
+                                        ANSWER__G: [
+                                            {
+                                                target: 'h'
+                                            }
+                                        ]
+                                    }
+                                },
+                                h: {
+                                    type: 'final'
+                                }
+                            }
+                        },
+                        'task1__applicability-status': {
+                            initial: 'applicable',
+                            currentSectionId: 'applicable',
+                            states: {
+                                applicable: {}
+                            }
+                        },
+                        'task2__applicability-status': {
+                            initial: 'notApplicable',
+                            currentSectionId: 'notApplicable',
+                            states: {
+                                notApplicable: {
+                                    on: {
+                                        ANSWER__D: [
+                                            {
+                                                target: 'applicable',
+                                                cond: ['|role.all', 'role2']
+                                            },
+                                            {
+                                                target: 'notApplicable'
+                                            }
+                                        ]
+                                    }
+                                },
+                                applicable: {}
+                            }
+                        },
+                        'task3__applicability-status': {
+                            initial: 'applicable',
+                            currentSectionId: 'applicable',
+                            states: {
+                                applicable: {}
+                            }
+                        }
+                    }
+                },
+                attributes: {
+                    q__roles: {
+                        role1: {
+                            schema: {
+                                $schema: 'http://json-schema.org/draft-07/schema#',
+                                title: 'Role 1',
+                                type: 'boolean',
+                                const: ['==', '$.answers.b.q1', true],
+                                examples: [{}],
+                                invalidExamples: [{}]
+                            }
+                        },
+                        role2: {
+                            schema: {
+                                $schema: 'http://json-schema.org/draft-07/schema#',
+                                title: 'Role 2',
+                                type: 'boolean',
+                                const: ['==', '$.answers.c.q1', true],
+                                examples: [{}],
+                                invalidExamples: [{}]
+                            }
+                        }
+                    }
+                },
+                answers: {}
+            });
+
+            let section = parallelRouter.current();
+            expect(section.value['task2__applicability-status']).toEqual('notApplicable');
+
+            parallelRouter = createParallelRouter(section.context);
+            section = parallelRouter.next({q1: 'foo'}, 'a', 'ANSWER__A');
+            expect(section.id).toEqual('b');
+
+            parallelRouter = createParallelRouter(section.context);
+            section = parallelRouter.next({q1: true}, 'b', 'ANSWER__B');
+            expect(section.id).toEqual('d');
+
+            parallelRouter = createParallelRouter(section.context);
+            section = parallelRouter.next({}, 'd', 'ANSWER__D');
+            expect(section.id).toEqual('g');
+            expect(section.value['task2__applicability-status']).toEqual('notApplicable');
+
+            parallelRouter = createParallelRouter(section.context);
+            section = parallelRouter.current();
+            expect(section.id).toEqual('g');
+        });
+
+        describe('applicability via roles', () => {
+            it('should update a status from "cannotStartYet" to "applicable" if role is satisfied', () => {
+                let parallelRouter = createParallelRouter({
                     currentSectionId: 'a',
                     routes: {
                         id: 'parallel-routes-test',
@@ -1434,6 +1952,15 @@ describe('Parallel Router', () => {
                                         on: {
                                             ANSWER__B: [
                                                 {
+                                                    target: 'c'
+                                                }
+                                            ]
+                                        }
+                                    },
+                                    c: {
+                                        on: {
+                                            ANSWER__C: [
+                                                {
                                                     target: '#task2'
                                                 }
                                             ]
@@ -1442,19 +1969,19 @@ describe('Parallel Router', () => {
                                 }
                             },
                             task2: {
-                                initial: 'c',
-                                currentSectionId: 'c',
+                                initial: 'd',
+                                currentSectionId: 'd',
                                 states: {
-                                    c: {
+                                    d: {
                                         on: {
-                                            ANSWER__C: [
+                                            ANSWER__D: [
                                                 {
-                                                    target: 'd'
+                                                    target: 'e'
                                                 }
                                             ]
                                         }
                                     },
-                                    d: {
+                                    e: {
                                         type: 'final'
                                     }
                                 }
@@ -1467,18 +1994,18 @@ describe('Parallel Router', () => {
                                 }
                             },
                             'task2__applicability-status': {
-                                initial: 'notApplicable',
-                                currentSectionId: 'notApplicable',
+                                initial: 'cannotStartYet',
+                                currentSectionId: 'cannotStartYet',
                                 states: {
-                                    notApplicable: {
+                                    cannotStartYet: {
                                         on: {
-                                            ANSWER__A: [
+                                            ANSWER__B: [
                                                 {
                                                     target: 'applicable',
                                                     cond: ['|role.all', 'role1']
                                                 },
                                                 {
-                                                    target: 'notApplicable'
+                                                    target: 'cannotStartYet'
                                                 }
                                             ]
                                         }
@@ -1516,21 +2043,28 @@ describe('Parallel Router', () => {
                 });
 
                 let section = parallelRouter.current();
-                expect(section.value['task2__applicability-status']).toEqual('notApplicable');
+                expect(section.value['task2__applicability-status']).toEqual('cannotStartYet');
 
-                section = parallelRouter.next({q1: 'bar'}, 'a', 'ANSWER__A');
-                expect(section.id).toBe('b');
-                expect(section.value['task2__applicability-status']).toEqual('notApplicable');
+                parallelRouter = createParallelRouter(section.context);
+                section = parallelRouter.next({q1: 'foo'}, 'a', 'ANSWER__A');
+                expect(section.id).toEqual('b');
+
+                parallelRouter = createParallelRouter(section.context);
+                section = parallelRouter.next({q1: true}, 'b', 'ANSWER__B');
+                expect(section.id).toEqual('c');
+                expect(section.id).toBe('c');
+                expect(section.value['task2__applicability-status']).toEqual('applicable');
             });
 
-            it('should conditionally route to a machine', () => {
-                const parallelRouter = createParallelRouter({
+            it('should update a status from "applicable" to "cannotStartYet" if roles become unsatisfied due to a cascade', () => {
+                let parallelRouter = createParallelRouter({
                     currentSectionId: 'a',
                     routes: {
                         id: 'parallel-routes-test',
                         type: 'parallel',
                         states: {
                             task1: {
+                                id: 'task1',
                                 initial: 'a',
                                 currentSectionId: 'a',
                                 states: {
@@ -1539,11 +2073,11 @@ describe('Parallel Router', () => {
                                             ANSWER__A: [
                                                 {
                                                     target: 'b',
-                                                    cond: ['==', '$.answers.a.q1', 'foo']
+                                                    cond: ['|role.all', 'role1']
                                                 },
                                                 {
                                                     target: 'c',
-                                                    cond: ['==', '$.answers.a.q1', 'bar']
+                                                    cond: ['|role.all', 'role2']
                                                 }
                                             ]
                                         }
@@ -1552,7 +2086,7 @@ describe('Parallel Router', () => {
                                         on: {
                                             ANSWER__B: [
                                                 {
-                                                    target: 'd'
+                                                    target: 'c'
                                                 }
                                             ]
                                         }
@@ -1561,17 +2095,7 @@ describe('Parallel Router', () => {
                                         on: {
                                             ANSWER__C: [
                                                 {
-                                                    target: 'd'
-                                                }
-                                            ]
-                                        }
-                                    },
-                                    d: {
-                                        on: {
-                                            ANSWER__D: [
-                                                {
-                                                    target: '#task2',
-                                                    cond: ['|role.all', 'role1']
+                                                    target: '#task2'
                                                 }
                                             ]
                                         }
@@ -1579,24 +2103,26 @@ describe('Parallel Router', () => {
                                 }
                             },
                             task2: {
-                                initial: 'e',
-                                currentSectionId: 'e',
+                                id: 'task2',
+                                initial: 'd',
+                                currentSectionId: 'd',
                                 states: {
-                                    e: {
+                                    d: {
                                         on: {
-                                            ANSWER__E: [
+                                            ANSWER__D: [
                                                 {
-                                                    target: 'f'
+                                                    target: 'e'
                                                 }
                                             ]
                                         }
                                     },
-                                    f: {
+                                    e: {
                                         type: 'final'
                                     }
                                 }
                             },
                             'task1__applicability-status': {
+                                id: 'task1__applicability-status',
                                 initial: 'applicable',
                                 currentSectionId: 'applicable',
                                 states: {
@@ -1604,23 +2130,32 @@ describe('Parallel Router', () => {
                                 }
                             },
                             'task2__applicability-status': {
-                                initial: 'notApplicable',
-                                currentSectionId: 'notApplicable',
+                                id: 'task2__applicability-status',
+                                initial: 'cannotStartYet',
+                                currentSectionId: 'cannotStartYet',
                                 states: {
-                                    notApplicable: {
+                                    cannotStartYet: {
                                         on: {
-                                            ANSWER__D: [
+                                            ANSWER__B: [
                                                 {
                                                     target: 'applicable',
                                                     cond: ['|role.all', 'role1']
                                                 },
                                                 {
-                                                    target: 'notApplicable'
+                                                    target: 'cannotStartYet'
                                                 }
                                             ]
                                         }
                                     },
-                                    applicable: {}
+                                    applicable: {
+                                        on: {
+                                            CASCADE__TASK1: [
+                                                {
+                                                    target: 'cannotStartYet'
+                                                }
+                                            ]
+                                        }
+                                    }
                                 }
                             }
                         }
@@ -1632,7 +2167,7 @@ describe('Parallel Router', () => {
                                     $schema: 'http://json-schema.org/draft-07/schema#',
                                     title: 'Role 1',
                                     type: 'boolean',
-                                    const: ['==', '$.answers.b.q1', true],
+                                    const: ['==', '$.answers.a.q1', 'foo'],
                                     examples: [{}],
                                     invalidExamples: [{}]
                                 }
@@ -1642,7 +2177,7 @@ describe('Parallel Router', () => {
                                     $schema: 'http://json-schema.org/draft-07/schema#',
                                     title: 'Role 2',
                                     type: 'boolean',
-                                    const: ['==', '$.answers.c.q1', true],
+                                    const: ['==', '$.answers.a.q1', 'bar'],
                                     examples: [{}],
                                     invalidExamples: [{}]
                                 }
@@ -1653,25 +2188,139 @@ describe('Parallel Router', () => {
                 });
 
                 let section = parallelRouter.current();
-                expect(section.value['task2__applicability-status']).toEqual('notApplicable');
+                expect(section.value['task2__applicability-status']).toEqual('cannotStartYet');
 
-                parallelRouter.next({q1: 'foo'}, 'a', 'ANSWER__A');
-                parallelRouter.next({q1: true}, 'b', 'ANSWER__B');
-                section = parallelRouter.next({}, 'd', 'ANSWER__D');
+                parallelRouter = createParallelRouter(section.context);
+                section = parallelRouter.next({q1: 'foo'}, 'a', 'ANSWER__A');
+                expect(section.id).toEqual('b');
+
+                parallelRouter = createParallelRouter(section.context);
+                section = parallelRouter.next({}, 'b', 'ANSWER__B');
+                expect(section.id).toBe('c');
                 expect(section.value['task2__applicability-status']).toEqual('applicable');
 
-                section = parallelRouter.current();
-                expect(section.id).toEqual('e');
+                parallelRouter = createParallelRouter(section.context);
+                section = parallelRouter.next({q1: 'bar'}, 'a', 'ANSWER__A');
+                expect(section.value['task2__applicability-status']).toEqual('cannotStartYet');
             });
+        });
 
-            it('should conditionally skip a machine', () => {
-                const parallelRouter = createParallelRouter({
+        describe('applicability via conds', () => {
+            it('should update a status from "cannotStartYet" to "applicable" if role is satisfied', () => {
+                let parallelRouter = createParallelRouter({
                     currentSectionId: 'a',
                     routes: {
                         id: 'parallel-routes-test',
                         type: 'parallel',
                         states: {
                             task1: {
+                                initial: 'a',
+                                currentSectionId: 'a',
+                                states: {
+                                    a: {
+                                        on: {
+                                            ANSWER__A: [
+                                                {
+                                                    target: 'b'
+                                                }
+                                            ]
+                                        }
+                                    },
+                                    b: {
+                                        on: {
+                                            ANSWER__B: [
+                                                {
+                                                    target: 'c'
+                                                }
+                                            ]
+                                        }
+                                    },
+                                    c: {
+                                        on: {
+                                            ANSWER__C: [
+                                                {
+                                                    target: '#task2'
+                                                }
+                                            ]
+                                        }
+                                    }
+                                }
+                            },
+                            task2: {
+                                initial: 'd',
+                                currentSectionId: 'd',
+                                states: {
+                                    d: {
+                                        on: {
+                                            ANSWER__D: [
+                                                {
+                                                    target: 'e'
+                                                }
+                                            ]
+                                        }
+                                    },
+                                    e: {
+                                        type: 'final'
+                                    }
+                                }
+                            },
+                            'task1__applicability-status': {
+                                initial: 'applicable',
+                                currentSectionId: 'applicable',
+                                states: {
+                                    applicable: {}
+                                }
+                            },
+                            'task2__applicability-status': {
+                                initial: 'cannotStartYet',
+                                currentSectionId: 'cannotStartYet',
+                                states: {
+                                    cannotStartYet: {
+                                        on: {
+                                            ANSWER__B: [
+                                                {
+                                                    target: 'applicable',
+                                                    cond: ['==', '$.answers.a.q1', 'foo']
+                                                },
+                                                {
+                                                    target: 'cannotStartYet'
+                                                }
+                                            ]
+                                        }
+                                    },
+                                    applicable: {}
+                                }
+                            }
+                        }
+                    },
+                    attributes: {
+                        q__roles: {}
+                    },
+                    answers: {}
+                });
+
+                let section = parallelRouter.current();
+                expect(section.value['task2__applicability-status']).toEqual('cannotStartYet');
+
+                parallelRouter = createParallelRouter(section.context);
+                section = parallelRouter.next({q1: 'foo'}, 'a', 'ANSWER__A');
+                expect(section.id).toEqual('b');
+
+                parallelRouter = createParallelRouter(section.context);
+                section = parallelRouter.next({q1: true}, 'b', 'ANSWER__B');
+                expect(section.id).toBe('c');
+                expect(section.value['task2__applicability-status']).toEqual('applicable');
+            });
+
+            it('should update a status from "applicable" to "cannotStartYet" if roles become unsatisfied due to a cascade', () => {
+                let parallelRouter = createParallelRouter({
+                    currentSectionId: 'a',
+                    routes: {
+                        id: 'parallel-routes-test',
+                        type: 'parallel',
+                        states: {
+                            task1: {
+                                id: 'task1',
                                 initial: 'a',
                                 currentSectionId: 'a',
                                 states: {
@@ -1693,7 +2342,7 @@ describe('Parallel Router', () => {
                                         on: {
                                             ANSWER__B: [
                                                 {
-                                                    target: 'd'
+                                                    target: 'c'
                                                 }
                                             ]
                                         }
@@ -1702,20 +2351,7 @@ describe('Parallel Router', () => {
                                         on: {
                                             ANSWER__C: [
                                                 {
-                                                    target: 'd'
-                                                }
-                                            ]
-                                        }
-                                    },
-                                    d: {
-                                        on: {
-                                            ANSWER__D: [
-                                                {
-                                                    target: '#task2',
-                                                    cond: ['|role.all', 'role2']
-                                                },
-                                                {
-                                                    target: '#task3'
+                                                    target: '#task2'
                                                 }
                                             ]
                                         }
@@ -1723,42 +2359,26 @@ describe('Parallel Router', () => {
                                 }
                             },
                             task2: {
-                                initial: 'e',
-                                currentSectionId: 'e',
+                                id: 'task2',
+                                initial: 'd',
+                                currentSectionId: 'd',
                                 states: {
+                                    d: {
+                                        on: {
+                                            ANSWER__D: [
+                                                {
+                                                    target: 'e'
+                                                }
+                                            ]
+                                        }
+                                    },
                                     e: {
-                                        on: {
-                                            ANSWER__E: [
-                                                {
-                                                    target: 'f'
-                                                }
-                                            ]
-                                        }
-                                    },
-                                    f: {
-                                        type: 'final'
-                                    }
-                                }
-                            },
-                            task3: {
-                                initial: 'g',
-                                currentSectionId: 'g',
-                                states: {
-                                    g: {
-                                        on: {
-                                            ANSWER__G: [
-                                                {
-                                                    target: 'h'
-                                                }
-                                            ]
-                                        }
-                                    },
-                                    h: {
                                         type: 'final'
                                     }
                                 }
                             },
                             'task1__applicability-status': {
+                                id: 'task1__applicability-status',
                                 initial: 'applicable',
                                 currentSectionId: 'applicable',
                                 states: {
@@ -1766,574 +2386,63 @@ describe('Parallel Router', () => {
                                 }
                             },
                             'task2__applicability-status': {
-                                initial: 'notApplicable',
-                                currentSectionId: 'notApplicable',
+                                id: 'task2__applicability-status',
+                                initial: 'cannotStartYet',
+                                currentSectionId: 'cannotStartYet',
                                 states: {
-                                    notApplicable: {
+                                    cannotStartYet: {
                                         on: {
-                                            ANSWER__D: [
+                                            ANSWER__B: [
                                                 {
                                                     target: 'applicable',
-                                                    cond: ['|role.all', 'role2']
+                                                    cond: ['==', '$.answers.a.q1', 'foo']
                                                 },
                                                 {
-                                                    target: 'notApplicable'
+                                                    target: 'cannotStartYet'
                                                 }
                                             ]
                                         }
                                     },
-                                    applicable: {}
-                                }
-                            },
-                            'task3__applicability-status': {
-                                initial: 'applicable',
-                                currentSectionId: 'applicable',
-                                states: {
-                                    applicable: {}
+                                    applicable: {
+                                        on: {
+                                            CASCADE__TASK1: [
+                                                {
+                                                    target: 'cannotStartYet'
+                                                }
+                                            ]
+                                        }
+                                    }
                                 }
                             }
                         }
                     },
                     attributes: {
-                        q__roles: {
-                            role1: {
-                                schema: {
-                                    $schema: 'http://json-schema.org/draft-07/schema#',
-                                    title: 'Role 1',
-                                    type: 'boolean',
-                                    const: ['==', '$.answers.b.q1', true],
-                                    examples: [{}],
-                                    invalidExamples: [{}]
-                                }
-                            },
-                            role2: {
-                                schema: {
-                                    $schema: 'http://json-schema.org/draft-07/schema#',
-                                    title: 'Role 2',
-                                    type: 'boolean',
-                                    const: ['==', '$.answers.c.q1', true],
-                                    examples: [{}],
-                                    invalidExamples: [{}]
-                                }
-                            }
-                        }
+                        q__roles: {}
                     },
                     answers: {}
                 });
 
                 let section = parallelRouter.current();
-                expect(section.value['task2__applicability-status']).toEqual('notApplicable');
+                expect(section.value['task2__applicability-status']).toEqual('cannotStartYet');
 
-                parallelRouter.next({q1: 'foo'}, 'a', 'ANSWER__A');
-                section = parallelRouter.next({q1: true}, 'b', 'ANSWER__B');
-                section = parallelRouter.next({}, 'd', 'ANSWER__D');
-                expect(section.value['task2__applicability-status']).toEqual('notApplicable');
-                section = parallelRouter.current();
-                expect(section.id).toEqual('g');
-            });
+                parallelRouter = createParallelRouter(section.context);
+                section = parallelRouter.next({q1: 'foo'}, 'a', 'ANSWER__A');
+                expect(section.id).toEqual('b');
 
-            describe('applicability via roles', () => {
-                it('should update a status from "cannotStartYet" to "applicable" if role is satisfied', () => {
-                    const parallelRouter = createParallelRouter({
-                        currentSectionId: 'a',
-                        routes: {
-                            id: 'parallel-routes-test',
-                            type: 'parallel',
-                            states: {
-                                task1: {
-                                    initial: 'a',
-                                    currentSectionId: 'a',
-                                    states: {
-                                        a: {
-                                            on: {
-                                                ANSWER__A: [
-                                                    {
-                                                        target: 'b'
-                                                    }
-                                                ]
-                                            }
-                                        },
-                                        b: {
-                                            on: {
-                                                ANSWER__B: [
-                                                    {
-                                                        target: 'c'
-                                                    }
-                                                ]
-                                            }
-                                        },
-                                        c: {
-                                            on: {
-                                                ANSWER__C: [
-                                                    {
-                                                        target: '#task2'
-                                                    }
-                                                ]
-                                            }
-                                        }
-                                    }
-                                },
-                                task2: {
-                                    initial: 'd',
-                                    currentSectionId: 'd',
-                                    states: {
-                                        d: {
-                                            on: {
-                                                ANSWER__D: [
-                                                    {
-                                                        target: 'e'
-                                                    }
-                                                ]
-                                            }
-                                        },
-                                        e: {
-                                            type: 'final'
-                                        }
-                                    }
-                                },
-                                'task1__applicability-status': {
-                                    initial: 'applicable',
-                                    currentSectionId: 'applicable',
-                                    states: {
-                                        applicable: {}
-                                    }
-                                },
-                                'task2__applicability-status': {
-                                    initial: 'cannotStartYet',
-                                    currentSectionId: 'cannotStartYet',
-                                    states: {
-                                        cannotStartYet: {
-                                            on: {
-                                                ANSWER__B: [
-                                                    {
-                                                        target: 'applicable',
-                                                        cond: ['|role.all', 'role1']
-                                                    },
-                                                    {
-                                                        target: 'cannotStartYet'
-                                                    }
-                                                ]
-                                            }
-                                        },
-                                        applicable: {}
-                                    }
-                                }
-                            }
-                        },
-                        attributes: {
-                            q__roles: {
-                                role1: {
-                                    schema: {
-                                        $schema: 'http://json-schema.org/draft-07/schema#',
-                                        title: 'Role 1',
-                                        type: 'boolean',
-                                        const: ['==', '$.answers.a.q1', 'foo'],
-                                        examples: [{}],
-                                        invalidExamples: [{}]
-                                    }
-                                },
-                                role2: {
-                                    schema: {
-                                        $schema: 'http://json-schema.org/draft-07/schema#',
-                                        title: 'Role 2',
-                                        type: 'boolean',
-                                        const: ['==', '$.answers.a.q1', 'bar'],
-                                        examples: [{}],
-                                        invalidExamples: [{}]
-                                    }
-                                }
-                            }
-                        },
-                        answers: {}
-                    });
+                parallelRouter = createParallelRouter(section.context);
+                section = parallelRouter.next({}, 'b', 'ANSWER__B');
+                expect(section.id).toEqual('c');
+                expect(section.value['task2__applicability-status']).toEqual('applicable');
 
-                    let section = parallelRouter.current();
-                    expect(section.value['task2__applicability-status']).toEqual('cannotStartYet');
-
-                    parallelRouter.next({q1: 'foo'}, 'a', 'ANSWER__A');
-                    section = parallelRouter.next({q1: true}, 'b', 'ANSWER__B');
-
-                    expect(section.id).toBe('c');
-                    expect(section.value['task2__applicability-status']).toEqual('applicable');
-                });
-
-                it('should update a status from "applicable" to "cannotStartYet" if roles become unsatisfied due to an answer difference', () => {
-                    const parallelRouter = createParallelRouter({
-                        currentSectionId: 'a',
-                        routes: {
-                            id: 'parallel-routes-test',
-                            type: 'parallel',
-                            states: {
-                                task1: {
-                                    id: 'task1',
-                                    initial: 'a',
-                                    currentSectionId: 'a',
-                                    states: {
-                                        a: {
-                                            on: {
-                                                ANSWER__A: [
-                                                    {
-                                                        target: 'b',
-                                                        cond: ['|role.all', 'role1']
-                                                    },
-                                                    {
-                                                        target: 'c',
-                                                        cond: ['|role.all', 'role2']
-                                                    }
-                                                ]
-                                            }
-                                        },
-                                        b: {
-                                            on: {
-                                                ANSWER__B: [
-                                                    {
-                                                        target: 'c'
-                                                    }
-                                                ]
-                                            }
-                                        },
-                                        c: {
-                                            on: {
-                                                ANSWER__C: [
-                                                    {
-                                                        target: '#task2'
-                                                    }
-                                                ]
-                                            }
-                                        }
-                                    }
-                                },
-                                task2: {
-                                    id: 'task2',
-                                    initial: 'd',
-                                    currentSectionId: 'd',
-                                    states: {
-                                        d: {
-                                            on: {
-                                                ANSWER__D: [
-                                                    {
-                                                        target: 'e'
-                                                    }
-                                                ]
-                                            }
-                                        },
-                                        e: {
-                                            type: 'final'
-                                        }
-                                    }
-                                },
-                                'task1__applicability-status': {
-                                    id: 'task1__applicability-status',
-                                    initial: 'applicable',
-                                    currentSectionId: 'applicable',
-                                    states: {
-                                        applicable: {}
-                                    }
-                                },
-                                'task2__applicability-status': {
-                                    id: 'task2__applicability-status',
-                                    initial: 'cannotStartYet',
-                                    currentSectionId: 'cannotStartYet',
-                                    states: {
-                                        cannotStartYet: {
-                                            on: {
-                                                ANSWER__B: [
-                                                    {
-                                                        target: 'applicable',
-                                                        cond: ['|role.all', 'role1']
-                                                    },
-                                                    {
-                                                        target: 'cannotStartYet'
-                                                    }
-                                                ]
-                                            }
-                                        },
-                                        applicable: {
-                                            on: {
-                                                CASCADE__TASK1: [
-                                                    {
-                                                        target: 'cannotStartYet'
-                                                    }
-                                                ]
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-                        },
-                        attributes: {
-                            q__roles: {
-                                role1: {
-                                    schema: {
-                                        $schema: 'http://json-schema.org/draft-07/schema#',
-                                        title: 'Role 1',
-                                        type: 'boolean',
-                                        const: ['==', '$.answers.a.q1', 'foo'],
-                                        examples: [{}],
-                                        invalidExamples: [{}]
-                                    }
-                                },
-                                role2: {
-                                    schema: {
-                                        $schema: 'http://json-schema.org/draft-07/schema#',
-                                        title: 'Role 2',
-                                        type: 'boolean',
-                                        const: ['==', '$.answers.a.q1', 'bar'],
-                                        examples: [{}],
-                                        invalidExamples: [{}]
-                                    }
-                                }
-                            }
-                        },
-                        answers: {}
-                    });
-
-                    let section = parallelRouter.current();
-                    expect(section.value['task2__applicability-status']).toEqual('cannotStartYet');
-
-                    parallelRouter.next({q1: 'foo'}, 'a', 'ANSWER__A');
-                    section = parallelRouter.next({}, 'b', 'ANSWER__B');
-
-                    expect(section.id).toBe('c');
-                    expect(section.value['task2__applicability-status']).toEqual('applicable');
-
-                    section = parallelRouter.next({q1: 'bar'}, 'a', 'ANSWER__A');
-                    expect(section.value['task2__applicability-status']).toEqual('cannotStartYet');
-                });
-            });
-
-            describe('applicability via conds', () => {
-                it('should update a status from "cannotStartYet" to "applicable" if role is satisfied', () => {
-                    const parallelRouter = createParallelRouter({
-                        currentSectionId: 'a',
-                        routes: {
-                            id: 'parallel-routes-test',
-                            type: 'parallel',
-                            states: {
-                                task1: {
-                                    initial: 'a',
-                                    currentSectionId: 'a',
-                                    states: {
-                                        a: {
-                                            on: {
-                                                ANSWER__A: [
-                                                    {
-                                                        target: 'b'
-                                                    }
-                                                ]
-                                            }
-                                        },
-                                        b: {
-                                            on: {
-                                                ANSWER__B: [
-                                                    {
-                                                        target: 'c'
-                                                    }
-                                                ]
-                                            }
-                                        },
-                                        c: {
-                                            on: {
-                                                ANSWER__C: [
-                                                    {
-                                                        target: '#task2'
-                                                    }
-                                                ]
-                                            }
-                                        }
-                                    }
-                                },
-                                task2: {
-                                    initial: 'd',
-                                    currentSectionId: 'd',
-                                    states: {
-                                        d: {
-                                            on: {
-                                                ANSWER__D: [
-                                                    {
-                                                        target: 'e'
-                                                    }
-                                                ]
-                                            }
-                                        },
-                                        e: {
-                                            type: 'final'
-                                        }
-                                    }
-                                },
-                                'task1__applicability-status': {
-                                    initial: 'applicable',
-                                    currentSectionId: 'applicable',
-                                    states: {
-                                        applicable: {}
-                                    }
-                                },
-                                'task2__applicability-status': {
-                                    initial: 'cannotStartYet',
-                                    currentSectionId: 'cannotStartYet',
-                                    states: {
-                                        cannotStartYet: {
-                                            on: {
-                                                ANSWER__B: [
-                                                    {
-                                                        target: 'applicable',
-                                                        cond: ['==', '$.answers.a.q1', 'foo']
-                                                    },
-                                                    {
-                                                        target: 'cannotStartYet'
-                                                    }
-                                                ]
-                                            }
-                                        },
-                                        applicable: {}
-                                    }
-                                }
-                            }
-                        },
-                        attributes: {
-                            q__roles: {}
-                        },
-                        answers: {}
-                    });
-
-                    let section = parallelRouter.current();
-                    expect(section.value['task2__applicability-status']).toEqual('cannotStartYet');
-
-                    parallelRouter.next({q1: 'foo'}, 'a', 'ANSWER__A');
-                    section = parallelRouter.next({q1: true}, 'b', 'ANSWER__B');
-
-                    expect(section.id).toBe('c');
-                    expect(section.value['task2__applicability-status']).toEqual('applicable');
-                });
-
-                it('should update a status from "applicable" to "cannotStartYet" if roles become unsatisfied due to an answer difference', () => {
-                    const parallelRouter = createParallelRouter({
-                        currentSectionId: 'a',
-                        routes: {
-                            id: 'parallel-routes-test',
-                            type: 'parallel',
-                            states: {
-                                task1: {
-                                    id: 'task1',
-                                    initial: 'a',
-                                    currentSectionId: 'a',
-                                    states: {
-                                        a: {
-                                            on: {
-                                                ANSWER__A: [
-                                                    {
-                                                        target: 'b',
-                                                        cond: ['==', '$.answers.a.q1', 'foo']
-                                                    },
-                                                    {
-                                                        target: 'c',
-                                                        cond: ['==', '$.answers.a.q1', 'bar']
-                                                    }
-                                                ]
-                                            }
-                                        },
-                                        b: {
-                                            on: {
-                                                ANSWER__B: [
-                                                    {
-                                                        target: 'c'
-                                                    }
-                                                ]
-                                            }
-                                        },
-                                        c: {
-                                            on: {
-                                                ANSWER__C: [
-                                                    {
-                                                        target: '#task2'
-                                                    }
-                                                ]
-                                            }
-                                        }
-                                    }
-                                },
-                                task2: {
-                                    id: 'task2',
-                                    initial: 'd',
-                                    currentSectionId: 'd',
-                                    states: {
-                                        d: {
-                                            on: {
-                                                ANSWER__D: [
-                                                    {
-                                                        target: 'e'
-                                                    }
-                                                ]
-                                            }
-                                        },
-                                        e: {
-                                            type: 'final'
-                                        }
-                                    }
-                                },
-                                'task1__applicability-status': {
-                                    id: 'task1__applicability-status',
-                                    initial: 'applicable',
-                                    currentSectionId: 'applicable',
-                                    states: {
-                                        applicable: {}
-                                    }
-                                },
-                                'task2__applicability-status': {
-                                    id: 'task2__applicability-status',
-                                    initial: 'cannotStartYet',
-                                    currentSectionId: 'cannotStartYet',
-                                    states: {
-                                        cannotStartYet: {
-                                            on: {
-                                                ANSWER__B: [
-                                                    {
-                                                        target: 'applicable',
-                                                        cond: ['==', '$.answers.a.q1', 'foo']
-                                                    },
-                                                    {
-                                                        target: 'cannotStartYet'
-                                                    }
-                                                ]
-                                            }
-                                        },
-                                        applicable: {
-                                            on: {
-                                                CASCADE__TASK1: [
-                                                    {
-                                                        target: 'cannotStartYet'
-                                                    }
-                                                ]
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-                        },
-                        attributes: {
-                            q__roles: {}
-                        },
-                        answers: {}
-                    });
-
-                    let section = parallelRouter.current();
-                    expect(section.value['task2__applicability-status']).toEqual('cannotStartYet');
-
-                    parallelRouter.next({q1: 'foo'}, 'a', 'ANSWER__A');
-                    section = parallelRouter.next({}, 'b', 'ANSWER__B');
-
-                    expect(section.id).toBe('c');
-                    expect(section.value['task2__applicability-status']).toEqual('applicable');
-
-                    section = parallelRouter.next({q1: 'bar'}, 'a', 'ANSWER__A');
-                    expect(section.value['task2__applicability-status']).toEqual('cannotStartYet');
-                });
+                parallelRouter = createParallelRouter(section.context);
+                section = parallelRouter.next({q1: 'bar'}, 'a', 'ANSWER__A');
+                expect(section.value['task2__applicability-status']).toEqual('cannotStartYet');
             });
         });
 
         describe('Multi-machine cascade', () => {
-            it('should retract answers and cause a machines-wide cascade', () => {
-                const parallelRouter = createParallelRouter({
+            it('should retract answers and cause a multi-machines-wide cascade', () => {
+                let parallelRouter = createParallelRouter({
                     currentSectionId: 'a',
                     routes: {
                         id: 'parallel-routes-test',
@@ -2489,20 +2598,34 @@ describe('Parallel Router', () => {
                 expect(section.value['task2__applicability-status']).toEqual('notApplicable');
                 expect(section.context.routes.states.task1.progress).toEqual(['a']);
 
+                parallelRouter = createParallelRouter(section.context);
                 section = parallelRouter.next({q1: 'foo'}, 'a', 'ANSWER__A'); // b.
                 expect(section.value['task2__applicability-status']).toEqual('applicable');
 
+                parallelRouter = createParallelRouter(section.context);
                 section = parallelRouter.next({q1: 1}, 'b', 'ANSWER__B'); // d.
                 expect(section.context.routes.states.task1.progress).toEqual(['a', 'b', 'd']);
-                section = parallelRouter.next({}, 'd', 'ANSWER__D'); // #task2.e
-                expect(section.context.routes.states.task1.progress).toEqual(['e']);
 
-                parallelRouter.next({}, 'e', 'ANSWER__E'); // f.
-                parallelRouter.next({}, 'f', 'ANSWER__F'); // g. has routing dependency on b
+                parallelRouter = createParallelRouter(section.context);
+                section = parallelRouter.next({}, 'd', 'ANSWER__D'); // #task2.e
+                expect(section.context.routes.states.task2.progress).toEqual(['e']);
+
+                parallelRouter = createParallelRouter(section.context);
+                section = parallelRouter.next({}, 'e', 'ANSWER__E'); // f.
+                expect(section.id).toEqual('f');
+
+                parallelRouter = createParallelRouter(section.context);
+                section = parallelRouter.next({}, 'f', 'ANSWER__F'); // g. has routing dependency on b
+                expect(section.id).toEqual('g');
+
+                parallelRouter = createParallelRouter(section.context);
                 section = parallelRouter.next({}, 'g', 'ANSWER__G'); // h.
+                expect(section.id).toEqual('h');
 
                 // re-answer the first question in task1. this answer makes role1 irrelevant.
+                parallelRouter = createParallelRouter(section.context);
                 section = parallelRouter.next({q1: 'bar'}, 'a', 'ANSWER__A');
+                expect(section.id).toEqual('c');
                 expect(section.context.routes.states.task1.progress).toEqual(['a', 'c']);
                 expect(section.context.routes.states.task2.progress).toEqual(['e']);
                 expect(section.value['task2__applicability-status']).toEqual('notApplicable');
@@ -2511,90 +2634,453 @@ describe('Parallel Router', () => {
     });
 
     describe('Completion status machine', () => {
-        describe('ANSWER__', () => {
-            it('should update the completion status to "completed" via the "ANSWER__X" event', () => {
-                const parallelRouter = createParallelRouter({
-                    currentSectionId: 'a',
-                    routes: {
-                        id: 'parallel-routes-test',
-                        type: 'parallel',
-                        states: {
-                            task1: {
-                                initial: 'a',
-                                currentSectionId: 'a',
-                                states: {
-                                    a: {
-                                        on: {
-                                            ANSWER__A: [
-                                                {
-                                                    target: 'b'
-                                                }
-                                            ]
-                                        }
-                                    },
-                                    b: {
-                                        on: {
-                                            ANSWER__B: [
-                                                {
-                                                    target: '#task2'
-                                                }
-                                            ]
+        describe('events', () => {
+            describe('ANSWER__{{STATE_ID}}', () => {
+                it('should update the completion status on transition', () => {
+                    let parallelRouter = createParallelRouter({
+                        currentSectionId: 'a',
+                        routes: {
+                            id: 'parallel-routes-test',
+                            type: 'parallel',
+                            states: {
+                                task1: {
+                                    initial: 'a',
+                                    currentSectionId: 'a',
+                                    states: {
+                                        a: {
+                                            on: {
+                                                ANSWER__A: [
+                                                    {
+                                                        target: 'b'
+                                                    }
+                                                ]
+                                            }
+                                        },
+                                        b: {
+                                            on: {
+                                                ANSWER__B: [
+                                                    {
+                                                        target: '#task2'
+                                                    }
+                                                ]
+                                            }
                                         }
                                     }
-                                }
-                            },
-                            task2: {
-                                initial: 'c',
-                                currentSectionId: 'c',
-                                states: {
-                                    c: {
-                                        on: {
-                                            ANSWER__C: [
-                                                {
-                                                    target: 'd'
-                                                }
-                                            ]
+                                },
+                                task2: {
+                                    initial: 'c',
+                                    currentSectionId: 'c',
+                                    states: {
+                                        c: {
+                                            on: {
+                                                ANSWER__C: [
+                                                    {
+                                                        target: 'd'
+                                                    }
+                                                ]
+                                            }
+                                        },
+                                        d: {
+                                            type: 'final'
                                         }
-                                    },
-                                    d: {
-                                        type: 'final'
                                     }
-                                }
-                            },
-                            'task1__completion-status': {
-                                initial: 'incomplete',
-                                currentSectionId: 'incomplete',
-                                states: {
-                                    incomplete: {
-                                        on: {
-                                            ANSWER__B: [
-                                                {
-                                                    target: 'completed'
-                                                }
-                                            ]
-                                        }
-                                    },
-                                    completed: {}
+                                },
+                                'task1__completion-status': {
+                                    initial: 'incomplete',
+                                    currentSectionId: 'incomplete',
+                                    states: {
+                                        incomplete: {
+                                            on: {
+                                                ANSWER__B: 'completed'
+                                            }
+                                        },
+                                        completed: {}
+                                    }
+                                },
+                                'task2__completion-status': {
+                                    initial: 'incomplete',
+                                    currentSectionId: 'incomplete',
+                                    states: {
+                                        incomplete: {
+                                            on: {
+                                                ANSWER__D: 'completed'
+                                            }
+                                        },
+                                        completed: {}
+                                    }
                                 }
                             }
-                        }
-                    },
-                    attributes: {
-                        q__roles: {}
-                    },
-                    answers: {}
+                        },
+                        attributes: {
+                            q__roles: {}
+                        },
+                        answers: {}
+                    });
+
+                    let section = parallelRouter.current();
+                    expect(section.value['task1__completion-status']).toEqual('incomplete');
+
+                    parallelRouter = createParallelRouter(section.context);
+                    section = parallelRouter.next({}, 'a', 'ANSWER__A'); // b
+                    expect(section.id).toBe('b');
+
+                    parallelRouter = createParallelRouter(section.context);
+                    section = parallelRouter.next({}, 'b', 'ANSWER__B'); // #task2.c
+                    expect(section.id).toBe('c');
+                    expect(section.value['task1__completion-status']).toEqual('completed');
                 });
-
-                let section = parallelRouter.current();
-                expect(section.value['task1__completion-status']).toEqual('incomplete');
-
-                section = parallelRouter.next({q1: 'foo'}, 'a', 'ANSWER__A');
-                section = parallelRouter.next({q1: 'bar'}, 'b', 'ANSWER__B');
-                expect(section.value['task1__completion-status']).toEqual('completed');
             });
+            describe('COMPLETE__{{TASK_ID}}', () => {
+                describe('state target is machine id', () => {
+                    it('should update a tasks completion status to "complete" on transition', () => {
+                        let parallelRouter = createParallelRouter({
+                            currentSectionId: 'a',
+                            routes: {
+                                id: 'parallel-routes-test',
+                                type: 'parallel',
+                                states: {
+                                    task1: {
+                                        initial: 'a',
+                                        currentSectionId: 'a',
+                                        states: {
+                                            a: {
+                                                on: {
+                                                    ANSWER__A: [
+                                                        {
+                                                            target: 'b'
+                                                        }
+                                                    ]
+                                                }
+                                            },
+                                            b: {
+                                                on: {
+                                                    ANSWER__B: [
+                                                        {
+                                                            target: '#task2'
+                                                        }
+                                                    ]
+                                                }
+                                            }
+                                        }
+                                    },
+                                    task2: {
+                                        initial: 'c',
+                                        currentSectionId: 'c',
+                                        states: {
+                                            c: {
+                                                on: {
+                                                    ANSWER__C: [
+                                                        {
+                                                            target: 'd'
+                                                        }
+                                                    ]
+                                                }
+                                            },
+                                            d: {
+                                                type: 'final'
+                                            }
+                                        }
+                                    },
+                                    'task1__completion-status': {
+                                        initial: 'incomplete',
+                                        currentSectionId: 'incomplete',
+                                        states: {
+                                            incomplete: {
+                                                on: {
+                                                    COMPLETE__TASK1: 'completed'
+                                                }
+                                            },
+                                            completed: {}
+                                        }
+                                    },
+                                    'task2__completion-status': {
+                                        initial: 'incomplete',
+                                        currentSectionId: 'incomplete',
+                                        states: {
+                                            incomplete: {
+                                                on: {
+                                                    COMPLETE__TASK2: 'completed'
+                                                }
+                                            },
+                                            completed: {}
+                                        }
+                                    }
+                                }
+                            },
+                            attributes: {
+                                q__roles: {}
+                            },
+                            answers: {}
+                        });
 
-            it('should update the completion status back to "incomplete" via the "CASCADE__" event', () => {
-                const parallelRouter = createParallelRouter({
+                        let section = parallelRouter.current();
+                        expect(section.value['task1__completion-status']).toEqual('incomplete');
+
+                        parallelRouter = createParallelRouter(section.context);
+                        section = parallelRouter.next({}, 'a', 'ANSWER__A'); // b
+                        expect(section.id).toBe('b');
+
+                        parallelRouter = createParallelRouter(section.context);
+                        section = parallelRouter.next({}, 'b', 'ANSWER__B'); // #task2.c
+                        expect(section.id).toBe('c');
+                        expect(section.value['task1__completion-status']).toEqual('completed');
+                    });
+                });
+            });
+            describe('CASCADE__{{TASK_ID}}', () => {
+                describe('target + cond', () => {
+                    it('should update the completion status to "complete" then "incomplete"', () => {
+                        let parallelRouter = createParallelRouter({
+                            currentSectionId: 'a',
+                            routes: {
+                                id: 'parallel-routes-test',
+                                type: 'parallel',
+                                states: {
+                                    task1: {
+                                        id: 'task1',
+                                        initial: 'a',
+                                        currentSectionId: 'a',
+                                        states: {
+                                            a: {
+                                                // mirrors residency and nationality questions.
+                                                on: {
+                                                    ANSWER__A: [
+                                                        {
+                                                            target: 'b',
+                                                            cond: ['==', '$.answers.a.q1', false]
+                                                        },
+                                                        {
+                                                            target: '#task2'
+                                                        }
+                                                    ]
+                                                }
+                                            },
+                                            b: {
+                                                on: {
+                                                    ANSWER__B: [
+                                                        {
+                                                            target: 'c',
+                                                            cond: ['==', '$.answers.b.q1', false]
+                                                        },
+                                                        {
+                                                            target: '#task2'
+                                                        }
+                                                    ]
+                                                }
+                                            },
+                                            c: {
+                                                on: {
+                                                    ANSWER__C: [
+                                                        {
+                                                            target: 'd',
+                                                            cond: ['==', '$.answers.c.q1', false]
+                                                        },
+                                                        {
+                                                            target: '#task2'
+                                                        }
+                                                    ]
+                                                }
+                                            },
+                                            d: {
+                                                on: {
+                                                    ANSWER__D: [
+                                                        {
+                                                            target: '#task2'
+                                                        }
+                                                    ]
+                                                }
+                                            }
+                                        }
+                                    },
+                                    task2: {
+                                        id: 'task2',
+                                        initial: 'e',
+                                        currentSectionId: 'e',
+                                        states: {
+                                            e: {
+                                                type: 'final'
+                                            }
+                                        }
+                                    },
+                                    'task1__completion-status': {
+                                        id: 'task1__completion-status',
+                                        initial: 'incomplete',
+                                        currentSectionId: 'incomplete',
+                                        states: {
+                                            incomplete: {
+                                                on: {
+                                                    ANSWER__A: [
+                                                        {
+                                                            target: 'completed',
+                                                            cond: ['==', '$.answers.a.q1', true]
+                                                        },
+                                                        {
+                                                            target: 'incomplete'
+                                                        }
+                                                    ],
+                                                    ANSWER__B: [
+                                                        {
+                                                            target: 'completed',
+                                                            cond: ['==', '$.answers.b.q1', true]
+                                                        },
+                                                        {
+                                                            target: 'incomplete'
+                                                        }
+                                                    ]
+                                                    // ...
+                                                }
+                                            },
+                                            completed: {
+                                                on: {
+                                                    CASCADE__TASK1: 'incomplete'
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            },
+                            attributes: {
+                                q__roles: {}
+                            },
+                            answers: {}
+                        });
+
+                        let section = parallelRouter.current();
+                        expect(section.value['task1__completion-status']).toEqual('incomplete');
+
+                        parallelRouter = createParallelRouter(section.context);
+                        section = parallelRouter.next({q1: true}, 'a', 'ANSWER__A'); // #task2.e
+                        expect(section.id).toBe('e');
+                        expect(section.value['task1__completion-status']).toEqual('completed');
+
+                        parallelRouter = createParallelRouter(section.context);
+                        section = parallelRouter.next({q1: false}, 'a', 'ANSWER__A'); // b.
+                        expect(section.id).toBe('b');
+                        expect(section.value['task1__completion-status']).toEqual('incomplete');
+                    });
+                });
+                describe('state target is machine id', () => {
+                    it('should update the completion status to "complete" then "incomplete"', () => {
+                        let parallelRouter = createParallelRouter({
+                            currentSectionId: 'a',
+                            routes: {
+                                id: 'parallel-routes-test',
+                                type: 'parallel',
+                                states: {
+                                    task1: {
+                                        id: 'task1',
+                                        initial: 'a',
+                                        currentSectionId: 'a',
+                                        states: {
+                                            a: {
+                                                // mirrors residency and nationality questions.
+                                                on: {
+                                                    ANSWER__A: [
+                                                        {
+                                                            target: 'b',
+                                                            cond: ['==', '$.answers.a.q1', false]
+                                                        },
+                                                        {
+                                                            target: '#task2'
+                                                        }
+                                                    ]
+                                                }
+                                            },
+                                            b: {
+                                                on: {
+                                                    ANSWER__B: [
+                                                        {
+                                                            target: 'c',
+                                                            cond: ['==', '$.answers.b.q1', false]
+                                                        },
+                                                        {
+                                                            target: '#task2'
+                                                        }
+                                                    ]
+                                                }
+                                            },
+                                            c: {
+                                                on: {
+                                                    ANSWER__C: [
+                                                        {
+                                                            target: 'd',
+                                                            cond: ['==', '$.answers.c.q1', false]
+                                                        },
+                                                        {
+                                                            target: '#task2'
+                                                        }
+                                                    ]
+                                                }
+                                            },
+                                            d: {
+                                                on: {
+                                                    ANSWER__D: [
+                                                        {
+                                                            target: '#task2'
+                                                        }
+                                                    ]
+                                                }
+                                            }
+                                        }
+                                    },
+                                    task2: {
+                                        id: 'task2',
+                                        initial: 'e',
+                                        currentSectionId: 'e',
+                                        states: {
+                                            e: {
+                                                type: 'final'
+                                            }
+                                        }
+                                    },
+                                    'task1__completion-status': {
+                                        id: 'task1__completion-status',
+                                        initial: 'incomplete',
+                                        currentSectionId: 'incomplete',
+                                        states: {
+                                            incomplete: {
+                                                on: {
+                                                    COMPLETE__TASK1: [
+                                                        {
+                                                            target: 'completed'
+                                                        }
+                                                    ]
+                                                }
+                                            },
+                                            completed: {
+                                                on: {
+                                                    CASCADE__TASK1: 'incomplete'
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            },
+                            attributes: {
+                                q__roles: {}
+                            },
+                            answers: {}
+                        });
+
+                        let section = parallelRouter.current();
+                        expect(section.value['task1__completion-status']).toEqual('incomplete');
+
+                        parallelRouter = createParallelRouter(section.context);
+                        section = parallelRouter.next({q1: true}, 'a', 'ANSWER__A'); // #task2.e
+                        expect(section.id).toBe('e');
+                        expect(section.value['task1__completion-status']).toEqual('completed');
+
+                        parallelRouter = createParallelRouter(section.context);
+                        section = parallelRouter.next({q1: false}, 'a', 'ANSWER__A'); // b.
+                        expect(section.id).toBe('b');
+                        expect(section.value['task1__completion-status']).toEqual('incomplete');
+                    });
+                });
+            });
+        });
+        describe('Multi-machine cascade', () => {
+            it('should retract answers and cause a multi-machines-wide cascade', () => {
+                let parallelRouter = createParallelRouter({
                     currentSectionId: 'a',
                     routes: {
                         id: 'parallel-routes-test',
@@ -2609,7 +3095,12 @@ describe('Parallel Router', () => {
                                         on: {
                                             ANSWER__A: [
                                                 {
-                                                    target: 'b'
+                                                    target: 'b',
+                                                    cond: ['==', '$.answers.a.q1', 'foo']
+                                                },
+                                                {
+                                                    target: 'c',
+                                                    cond: ['==', '$.answers.a.q1', 'bar']
                                                 }
                                             ]
                                         }
@@ -2618,12 +3109,7 @@ describe('Parallel Router', () => {
                                         on: {
                                             ANSWER__B: [
                                                 {
-                                                    target: 'c',
-                                                    cond: ['==', '$.answers.a.q1', 'foo']
-                                                },
-                                                {
-                                                    target: 'd',
-                                                    cond: ['==', '$.answers.a.q1', 'bar']
+                                                    target: 'd'
                                                 }
                                             ]
                                         }
@@ -2632,7 +3118,7 @@ describe('Parallel Router', () => {
                                         on: {
                                             ANSWER__C: [
                                                 {
-                                                    target: 'e'
+                                                    target: 'd'
                                                 }
                                             ]
                                         }
@@ -2640,24 +3126,6 @@ describe('Parallel Router', () => {
                                     d: {
                                         on: {
                                             ANSWER__D: [
-                                                {
-                                                    target: 'f'
-                                                }
-                                            ]
-                                        }
-                                    },
-                                    e: {
-                                        on: {
-                                            ANSWER__E: [
-                                                {
-                                                    target: '#task2'
-                                                }
-                                            ]
-                                        }
-                                    },
-                                    f: {
-                                        on: {
-                                            ANSWER__F: [
                                                 {
                                                     target: '#task2'
                                                 }
@@ -2668,9 +3136,32 @@ describe('Parallel Router', () => {
                             },
                             task2: {
                                 id: 'task2',
-                                initial: 'g',
-                                currentSectionId: 'g',
+                                initial: 'e',
+                                currentSectionId: 'e',
                                 states: {
+                                    e: {
+                                        on: {
+                                            ANSWER__E: [
+                                                {
+                                                    target: 'f'
+                                                }
+                                            ]
+                                        }
+                                    },
+                                    f: {
+                                        on: {
+                                            ANSWER__F: [
+                                                {
+                                                    target: 'g',
+                                                    cond: ['==', '$.answers.b.q1', 1]
+                                                },
+                                                {
+                                                    target: 'h',
+                                                    cond: ['==', '$.answers.c.q1', 1]
+                                                }
+                                            ]
+                                        }
+                                    },
                                     g: {
                                         on: {
                                             ANSWER__G: [
@@ -2685,30 +3176,37 @@ describe('Parallel Router', () => {
                                     }
                                 }
                             },
-                            'task1__completion-status': {
-                                id: 'task1__completion-status',
-                                initial: 'incomplete',
-                                currentSectionId: 'incomplete',
+                            'task1__applicability-status': {
+                                id: 'task1__applicability-status',
+                                initial: 'applicable',
+                                currentSectionId: 'applicable',
                                 states: {
-                                    incomplete: {
+                                    applicable: {}
+                                }
+                            },
+                            'task2__applicability-status': {
+                                id: 'task2__applicability-status',
+                                initial: 'notApplicable',
+                                currentSectionId: 'notApplicable',
+                                states: {
+                                    notApplicable: {
                                         on: {
-                                            ANSWER__E: [
+                                            ANSWER__A: [
                                                 {
-                                                    target: 'completed'
-                                                }
-                                            ],
-                                            ANSWER__F: [
+                                                    target: 'applicable',
+                                                    cond: ['|role.all', 'role1']
+                                                },
                                                 {
-                                                    target: 'completed'
+                                                    target: 'notApplicable'
                                                 }
                                             ]
                                         }
                                     },
-                                    completed: {
+                                    applicable: {
                                         on: {
                                             CASCADE__TASK1: [
                                                 {
-                                                    target: 'incomplete'
+                                                    target: 'notApplicable'
                                                 }
                                             ]
                                         }
@@ -2718,23 +3216,57 @@ describe('Parallel Router', () => {
                         }
                     },
                     attributes: {
-                        q__roles: {}
+                        q__roles: {
+                            role1: {
+                                schema: {
+                                    $schema: 'http://json-schema.org/draft-07/schema#',
+                                    title: 'Role 1',
+                                    type: 'boolean',
+                                    const: ['==', '$.answers.a.q1', 'foo'],
+                                    examples: [{}],
+                                    invalidExamples: [{}]
+                                }
+                            }
+                        }
                     },
                     answers: {}
                 });
 
                 let section = parallelRouter.current();
-                expect(section.value['task1__completion-status']).toEqual('incomplete');
+                expect(section.value['task2__applicability-status']).toEqual('notApplicable');
+                expect(section.context.routes.states.task1.progress).toEqual(['a']);
 
-                parallelRouter.next({q1: 'foo'}, 'a', 'ANSWER__A'); // b.
-                parallelRouter.next({}, 'b', 'ANSWER__B'); // c.
-                section = parallelRouter.next({}, 'c', 'ANSWER__C'); // e.
-                section = parallelRouter.next({}, 'e', 'ANSWER__E'); // g.
+                parallelRouter = createParallelRouter(section.context);
+                section = parallelRouter.next({q1: 'foo'}, 'a', 'ANSWER__A'); // b.
+                expect(section.value['task2__applicability-status']).toEqual('applicable');
+
+                parallelRouter = createParallelRouter(section.context);
+                section = parallelRouter.next({q1: 1}, 'b', 'ANSWER__B'); // d.
+                expect(section.context.routes.states.task1.progress).toEqual(['a', 'b', 'd']);
+
+                parallelRouter = createParallelRouter(section.context);
+                section = parallelRouter.next({}, 'd', 'ANSWER__D'); // #task2.e
+                expect(section.context.routes.states.task2.progress).toEqual(['e']);
+
+                parallelRouter = createParallelRouter(section.context);
+                section = parallelRouter.next({}, 'e', 'ANSWER__E'); // f.
+                expect(section.id).toEqual('f');
+
+                parallelRouter = createParallelRouter(section.context);
+                section = parallelRouter.next({}, 'f', 'ANSWER__F'); // g. has routing dependency on b
                 expect(section.id).toEqual('g');
-                expect(section.value['task1__completion-status']).toEqual('completed');
 
+                parallelRouter = createParallelRouter(section.context);
+                section = parallelRouter.next({}, 'g', 'ANSWER__G'); // h.
+                expect(section.id).toEqual('h');
+
+                // re-answer the first question in task1. this answer makes role1 irrelevant.
+                parallelRouter = createParallelRouter(section.context);
                 section = parallelRouter.next({q1: 'bar'}, 'a', 'ANSWER__A');
-                expect(section.value['task1__completion-status']).toEqual('incomplete');
+                expect(section.id).toEqual('c');
+                expect(section.context.routes.states.task1.progress).toEqual(['a', 'c']);
+                expect(section.context.routes.states.task2.progress).toEqual(['e']);
+                expect(section.value['task2__applicability-status']).toEqual('notApplicable');
             });
         });
     });
