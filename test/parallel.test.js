@@ -3270,4 +3270,105 @@ describe('Parallel Router', () => {
             });
         });
     });
+
+    describe('wildcard transitions', () => {
+        it('should transition due to a wildcard match', () => {
+            let parallelRouter = createParallelRouter({
+                currentSectionId: 'a',
+                routes: {
+                    id: 'parallel-routes-test',
+                    type: 'parallel',
+                    states: {
+                        task1: {
+                            initial: 'a',
+                            currentSectionId: 'a',
+                            states: {
+                                a: {
+                                    on: {
+                                        ANSWER__A: [
+                                            {
+                                                target: 'b'
+                                            }
+                                        ]
+                                    }
+                                },
+                                b: {
+                                    on: {
+                                        ANSWER__B: [
+                                            {
+                                                target: '#task2'
+                                            }
+                                        ]
+                                    }
+                                }
+                            }
+                        },
+                        task2: {
+                            initial: 'c',
+                            currentSectionId: 'c',
+                            states: {
+                                c: {
+                                    on: {
+                                        ANSWER__C: [
+                                            {
+                                                target: 'd'
+                                            }
+                                        ]
+                                    }
+                                },
+                                d: {
+                                    type: 'final'
+                                }
+                            }
+                        },
+                        'task1__applicability-status': {
+                            initial: 'applicable',
+                            currentSectionId: 'applicable',
+                            states: {
+                                applicable: {}
+                            }
+                        },
+                        'task2__applicability-status': {
+                            initial: 'notApplicable',
+                            currentSectionId: 'notApplicable',
+                            states: {
+                                notApplicable: {
+                                    on: {
+                                        'ANSWER*': 'applicable',
+                                        cond: ['|role.all', 'role1']
+                                    }
+                                },
+                                completed: {}
+                            }
+                        }
+                    }
+                },
+                attributes: {
+                    q__roles: {
+                        role1: {
+                            schema: {
+                                $schema: 'http://json-schema.org/draft-07/schema#',
+                                title: 'Role 1',
+                                type: 'boolean',
+                                const: ['==', '$.answers.a.q1', 'foo'],
+                                examples: [{}],
+                                invalidExamples: [{}]
+                            }
+                        }
+                    }
+                },
+                answers: {}
+            });
+
+            let section = parallelRouter.current();
+            expect(section.value['task2__applicability-status']).toEqual('notApplicable');
+
+            parallelRouter = createParallelRouter(section.context);
+            section = parallelRouter.next({q1: 'foo'}, 'a', 'ANSWER__A'); // b
+            expect(section.id).toBe('b');
+
+            parallelRouter = createParallelRouter(section.context);
+            expect(section.value['task2__applicability-status']).toEqual('applicable');
+        });
+    });
 });
