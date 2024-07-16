@@ -46,22 +46,22 @@ describe('Parallel Router', () => {
                         states: {
                             a: {
                                 on: {
-                                    ANSWER__A: 'b'
+                                    ANSWER: 'b'
                                 }
                             },
                             b: {
                                 on: {
-                                    ANSWER__B: 'c'
+                                    ANSWER: 'c'
                                 }
                             },
                             c: {
                                 on: {
-                                    ANSWER__C: 'd'
+                                    ANSWER: 'd'
                                 }
                             },
                             d: {
                                 on: {
-                                    ANSWER__D: 'e'
+                                    ANSWER: 'e'
                                 }
                             },
                             e: {
@@ -76,10 +76,10 @@ describe('Parallel Router', () => {
             }
         });
 
-        parallelRouter.next({}, 'a', 'ANSWER__A'); // b
-        parallelRouter.next({}, 'b', 'ANSWER__B'); // c
-        parallelRouter.next({}, 'c', 'ANSWER__C'); // d
-        parallelRouter.next({}, 'd', 'ANSWER__D'); // e
+        parallelRouter.next({}, 'a', 'ANSWER'); // b
+        parallelRouter.next({}, 'b', 'ANSWER'); // c
+        parallelRouter.next({}, 'c', 'ANSWER'); // d
+        parallelRouter.next({}, 'd', 'ANSWER'); // e
 
         parallelRouter.previous('e'); // d
         section = parallelRouter.previous('d'); // c
@@ -110,7 +110,7 @@ describe('Parallel Router', () => {
                             states: {
                                 a: {
                                     on: {
-                                        ANSWER__A: [
+                                        ANSWER: [
                                             {
                                                 target: 'b'
                                             }
@@ -128,7 +128,7 @@ describe('Parallel Router', () => {
                             states: {
                                 c: {
                                     on: {
-                                        ANSWER__C: [
+                                        ANSWER: [
                                             {
                                                 target: 'd'
                                             }
@@ -147,7 +147,7 @@ describe('Parallel Router', () => {
                 }
             });
 
-            const nextState = parallelRouter.next({}, 'c', 'ANSWER__C');
+            const nextState = parallelRouter.next({}, 'c', 'ANSWER');
             expect(nextState.id).toBe('d');
         });
 
@@ -164,7 +164,7 @@ describe('Parallel Router', () => {
                             states: {
                                 a: {
                                     on: {
-                                        ANSWER__A: 'b'
+                                        ANSWER: 'b'
                                     }
                                 },
                                 b: {
@@ -179,7 +179,7 @@ describe('Parallel Router', () => {
                 }
             });
 
-            const section = parallelRouter.next({}, 'a', 'ANSWER__A');
+            const section = parallelRouter.next({}, 'a', 'ANSWER');
 
             expect(section.id).toEqual('b');
             expect(section.context.routes.states.task1.progress).toEqual(['a', 'b']);
@@ -198,12 +198,12 @@ describe('Parallel Router', () => {
                             states: {
                                 a: {
                                     on: {
-                                        ANSWER__A: 'b'
+                                        ANSWER: 'b'
                                     }
                                 },
                                 b: {
                                     on: {
-                                        ANSWER__B: 'c'
+                                        ANSWER: 'c'
                                     }
                                 },
                                 c: {
@@ -218,7 +218,7 @@ describe('Parallel Router', () => {
                 }
             });
 
-            const section = parallelRouter.next({}, 'b', 'ANSWER__B');
+            const section = parallelRouter.next({}, 'b', 'ANSWER');
             expect(section).toEqual(undefined);
         });
 
@@ -235,7 +235,7 @@ describe('Parallel Router', () => {
                             states: {
                                 a: {
                                     on: {
-                                        ANSWER__A: 'b'
+                                        ANSWER: 'b'
                                     }
                                 },
                                 b: {
@@ -250,7 +250,7 @@ describe('Parallel Router', () => {
                 }
             });
 
-            const section = parallelRouter.next({}, 'c', 'ANSWER__C');
+            const section = parallelRouter.next({}, 'c', 'ANSWER');
             expect(section).toEqual(undefined);
         });
 
@@ -267,7 +267,7 @@ describe('Parallel Router', () => {
                             states: {
                                 a: {
                                     on: {
-                                        ANSWER__A: [
+                                        ANSWER: [
                                             {
                                                 target: 'b'
                                             }
@@ -285,7 +285,7 @@ describe('Parallel Router', () => {
                             states: {
                                 c: {
                                     on: {
-                                        ANSWER__C: [
+                                        ANSWER: [
                                             {
                                                 target: 'd'
                                             }
@@ -304,8 +304,8 @@ describe('Parallel Router', () => {
                 }
             });
 
-            parallelRouter.next({}, 'c', 'ANSWER__C'); // d
-            expect(() => parallelRouter.next({}, 'd', 'ANSWER__D')).toThrow(
+            parallelRouter.next({}, 'c', 'ANSWER'); // d
+            expect(() => parallelRouter.next({}, 'd', 'ANSWER')).toThrow(
                 'There are no next sections after section: "d"'
             );
         });
@@ -324,7 +324,7 @@ describe('Parallel Router', () => {
                                 states: {
                                     a: {
                                         on: {
-                                            ANSWER__A: [
+                                            ANSWER: [
                                                 {
                                                     target: 'b'
                                                 }
@@ -333,7 +333,7 @@ describe('Parallel Router', () => {
                                     },
                                     b: {
                                         on: {
-                                            ANSWER__B: [
+                                            ANSWER: [
                                                 {
                                                     target: '#task2'
                                                 }
@@ -348,7 +348,7 @@ describe('Parallel Router', () => {
                                 states: {
                                     c: {
                                         on: {
-                                            ANSWER__C: [
+                                            ANSWER: [
                                                 {
                                                     target: 'd'
                                                 }
@@ -367,7 +367,7 @@ describe('Parallel Router', () => {
                     }
                 });
 
-                parallelRouter.next({}, 'a', 'ANSWER__A'); // b
+                parallelRouter.next({}, 'a', 'ANSWER'); // b
                 const section = parallelRouter.next({}, '#task2'); // task2 initial section "c".
                 expect(section.id).toBe('c');
             });
@@ -388,7 +388,7 @@ describe('Parallel Router', () => {
                             states: {
                                 a: {
                                     on: {
-                                        ANSWER__A: [
+                                        ANSWER: [
                                             {
                                                 target: 'b'
                                             }
@@ -406,7 +406,7 @@ describe('Parallel Router', () => {
                             states: {
                                 c: {
                                     on: {
-                                        ANSWER__C: [
+                                        ANSWER: [
                                             {
                                                 target: 'd'
                                             }
@@ -425,7 +425,7 @@ describe('Parallel Router', () => {
                 }
             });
 
-            parallelRouter.next({}, 'c', 'ANSWER__C'); // d
+            parallelRouter.next({}, 'c', 'ANSWER'); // d
             const section = parallelRouter.previous('d'); // c
             expect(section.id).toBe('c');
         });
@@ -443,7 +443,7 @@ describe('Parallel Router', () => {
                             states: {
                                 a: {
                                     on: {
-                                        ANSWER__A: 'b'
+                                        ANSWER: 'b'
                                     }
                                 },
                                 b: {
@@ -458,7 +458,7 @@ describe('Parallel Router', () => {
                 }
             });
 
-            parallelRouter.next({}, 'a', 'ANSWER__A'); // b
+            parallelRouter.next({}, 'a', 'ANSWER'); // b
             const section = parallelRouter.previous('b'); // a
 
             expect(section.id).toEqual('a');
@@ -478,7 +478,7 @@ describe('Parallel Router', () => {
                             states: {
                                 a: {
                                     on: {
-                                        ANSWER__A: 'b'
+                                        ANSWER: 'b'
                                     }
                                 },
                                 b: {
@@ -510,7 +510,7 @@ describe('Parallel Router', () => {
                             states: {
                                 a: {
                                     on: {
-                                        ANSWER__A: [
+                                        ANSWER: [
                                             {
                                                 target: 'b'
                                             }
@@ -528,7 +528,7 @@ describe('Parallel Router', () => {
                             states: {
                                 c: {
                                     on: {
-                                        ANSWER__C: [
+                                        ANSWER: [
                                             {
                                                 target: 'd'
                                             }
@@ -547,7 +547,7 @@ describe('Parallel Router', () => {
                 }
             });
 
-            parallelRouter.next({}, 'c', 'ANSWER__C'); // d
+            parallelRouter.next({}, 'c', 'ANSWER'); // d
             parallelRouter.previous('d'); // c
             expect(() => parallelRouter.previous('c')).toThrow(
                 'There are no previous sections before section: "c"'
@@ -568,7 +568,7 @@ describe('Parallel Router', () => {
                                 states: {
                                     a: {
                                         on: {
-                                            ANSWER__A: [
+                                            ANSWER: [
                                                 {
                                                     target: 'b'
                                                 }
@@ -587,7 +587,7 @@ describe('Parallel Router', () => {
                                 states: {
                                     c: {
                                         on: {
-                                            ANSWER__C: [
+                                            ANSWER: [
                                                 {
                                                     target: 'd'
                                                 }
@@ -606,7 +606,7 @@ describe('Parallel Router', () => {
                     }
                 });
 
-                parallelRouter.next({}, 'c', 'ANSWER__C'); // d
+                parallelRouter.next({}, 'c', 'ANSWER'); // d
                 parallelRouter.previous('d'); // c
                 parallelRouter.previous('c'); // #referrer
 
@@ -631,17 +631,17 @@ describe('Parallel Router', () => {
                             states: {
                                 a: {
                                     on: {
-                                        ANSWER__A: 'b'
+                                        ANSWER: 'b'
                                     }
                                 },
                                 b: {
                                     on: {
-                                        ANSWER__B: 'c'
+                                        ANSWER: 'c'
                                     }
                                 },
                                 c: {
                                     on: {
-                                        ANSWER__C: 'd'
+                                        ANSWER: 'd'
                                     }
                                 },
                                 d: {
@@ -656,7 +656,7 @@ describe('Parallel Router', () => {
                 }
             });
 
-            let section = parallelRouter.next({}, 'a', 'ANSWER__A'); // b
+            let section = parallelRouter.next({}, 'a', 'ANSWER'); // b
             expect(section.id).toEqual('b');
 
             parallelRouter = createParallelRouter(section.context);
@@ -664,7 +664,7 @@ describe('Parallel Router', () => {
             expect(section.id).toEqual('b');
 
             parallelRouter = createParallelRouter(section.context);
-            section = parallelRouter.next({}, 'b', 'ANSWER__B'); // c
+            section = parallelRouter.next({}, 'b', 'ANSWER'); // c
             expect(section.id).toEqual('c');
 
             parallelRouter = createParallelRouter(section.context);
@@ -672,7 +672,7 @@ describe('Parallel Router', () => {
             expect(section.id).toEqual('c');
 
             parallelRouter = createParallelRouter(section.context);
-            section = parallelRouter.next({}, 'a', 'ANSWER__A'); // b
+            section = parallelRouter.next({}, 'a', 'ANSWER'); // b
             expect(section.id).toEqual('b');
 
             parallelRouter = createParallelRouter(section.context);
@@ -695,17 +695,17 @@ describe('Parallel Router', () => {
                             states: {
                                 a: {
                                     on: {
-                                        ANSWER__A: 'b'
+                                        ANSWER: 'b'
                                     }
                                 },
                                 b: {
                                     on: {
-                                        ANSWER__B: 'c'
+                                        ANSWER: 'c'
                                     }
                                 },
                                 c: {
                                     on: {
-                                        ANSWER__C: 'd'
+                                        ANSWER: 'd'
                                     }
                                 },
                                 d: {
@@ -720,11 +720,11 @@ describe('Parallel Router', () => {
                 }
             });
 
-            let section = parallelRouter.next({}, 'a', 'ANSWER__A'); // b
+            let section = parallelRouter.next({}, 'a', 'ANSWER'); // b
             expect(section.id).toEqual('b');
 
             parallelRouter = createParallelRouter(section.context);
-            section = parallelRouter.next({}, 'b', 'ANSWER__B'); // c
+            section = parallelRouter.next({}, 'b', 'ANSWER'); // c
             expect(section.id).toEqual('c');
 
             section = parallelRouter.current('a');
@@ -745,17 +745,17 @@ describe('Parallel Router', () => {
                             states: {
                                 a: {
                                     on: {
-                                        ANSWER__A: 'b'
+                                        ANSWER: 'b'
                                     }
                                 },
                                 b: {
                                     on: {
-                                        ANSWER__B: 'c'
+                                        ANSWER: 'c'
                                     }
                                 },
                                 c: {
                                     on: {
-                                        ANSWER__C: 'd'
+                                        ANSWER: 'd'
                                     }
                                 },
                                 d: {
@@ -770,7 +770,7 @@ describe('Parallel Router', () => {
                 }
             });
 
-            let section = parallelRouter.next({}, 'a', 'ANSWER__A');
+            let section = parallelRouter.next({}, 'a', 'ANSWER');
             section = parallelRouter.current('b');
 
             parallelRouter = createParallelRouter(section.context);
@@ -795,17 +795,17 @@ describe('Parallel Router', () => {
                                 states: {
                                     a: {
                                         on: {
-                                            ANSWER__A: 'b'
+                                            ANSWER: 'b'
                                         }
                                     },
                                     b: {
                                         on: {
-                                            ANSWER__B: 'c'
+                                            ANSWER: 'c'
                                         }
                                     },
                                     c: {
                                         on: {
-                                            ANSWER__C: 'd'
+                                            ANSWER: 'd'
                                         }
                                     },
                                     d: {
@@ -820,11 +820,11 @@ describe('Parallel Router', () => {
                     }
                 });
 
-                let section = parallelRouter.next({}, 'a', 'ANSWER__A'); // b
+                let section = parallelRouter.next({}, 'a', 'ANSWER'); // b
                 expect(section.id).toEqual('b');
 
                 parallelRouter = createParallelRouter(section.context);
-                section = parallelRouter.next({}, 'b', 'ANSWER__B'); // c
+                section = parallelRouter.next({}, 'b', 'ANSWER'); // c
                 expect(section.id).toEqual('c');
 
                 parallelRouter = createParallelRouter(section.context);
@@ -847,17 +847,17 @@ describe('Parallel Router', () => {
                                 states: {
                                     a: {
                                         on: {
-                                            ANSWER__A: 'b'
+                                            ANSWER: 'b'
                                         }
                                     },
                                     b: {
                                         on: {
-                                            ANSWER__B: 'c'
+                                            ANSWER: 'c'
                                         }
                                     },
                                     c: {
                                         on: {
-                                            ANSWER__C: 'd'
+                                            ANSWER: 'd'
                                         }
                                     },
                                     d: {
@@ -871,17 +871,17 @@ describe('Parallel Router', () => {
                                 states: {
                                     e: {
                                         on: {
-                                            ANSWER__E: 'f'
+                                            ANSWER: 'f'
                                         }
                                     },
                                     f: {
                                         on: {
-                                            ANSWER__F: 'g'
+                                            ANSWER: 'g'
                                         }
                                     },
                                     g: {
                                         on: {
-                                            ANSWER__G: 'h'
+                                            ANSWER: 'h'
                                         }
                                     },
                                     h: {
@@ -896,11 +896,11 @@ describe('Parallel Router', () => {
                     }
                 });
 
-                let section = parallelRouter.next({}, 'e', 'ANSWER__E'); // f
+                let section = parallelRouter.next({}, 'e', 'ANSWER'); // f
                 expect(section.id).toEqual('f');
 
                 parallelRouter = createParallelRouter(section.context);
-                section = parallelRouter.next({}, 'f', 'ANSWER__F'); // g
+                section = parallelRouter.next({}, 'f', 'ANSWER'); // g
                 expect(section.id).toEqual('g');
 
                 section = parallelRouter.first();
@@ -925,17 +925,17 @@ describe('Parallel Router', () => {
                                 states: {
                                     a: {
                                         on: {
-                                            ANSWER__A: 'b'
+                                            ANSWER: 'b'
                                         }
                                     },
                                     b: {
                                         on: {
-                                            ANSWER__B: 'c'
+                                            ANSWER: 'c'
                                         }
                                     },
                                     c: {
                                         on: {
-                                            ANSWER__C: 'd'
+                                            ANSWER: 'd'
                                         }
                                     },
                                     d: {
@@ -950,15 +950,15 @@ describe('Parallel Router', () => {
                     }
                 });
 
-                let section = parallelRouter.next({}, 'a', 'ANSWER__A'); // b
+                let section = parallelRouter.next({}, 'a', 'ANSWER'); // b
                 expect(section.id).toEqual('b');
 
                 parallelRouter = createParallelRouter(section.context);
-                section = parallelRouter.next({}, 'b', 'ANSWER__B'); // c
+                section = parallelRouter.next({}, 'b', 'ANSWER'); // c
                 expect(section.id).toEqual('c');
 
                 parallelRouter = createParallelRouter(section.context);
-                section = parallelRouter.next({}, 'a', 'ANSWER__A'); // b
+                section = parallelRouter.next({}, 'a', 'ANSWER'); // b
                 expect(section.id).toEqual('b');
 
                 parallelRouter = createParallelRouter(section.context);
@@ -981,17 +981,17 @@ describe('Parallel Router', () => {
                                 states: {
                                     a: {
                                         on: {
-                                            ANSWER__A: 'b'
+                                            ANSWER: 'b'
                                         }
                                     },
                                     b: {
                                         on: {
-                                            ANSWER__B: 'c'
+                                            ANSWER: 'c'
                                         }
                                     },
                                     c: {
                                         on: {
-                                            ANSWER__C: 'd'
+                                            ANSWER: 'd'
                                         }
                                     },
                                     d: {
@@ -1006,17 +1006,17 @@ describe('Parallel Router', () => {
                                 states: {
                                     e: {
                                         on: {
-                                            ANSWER__E: 'f'
+                                            ANSWER: 'f'
                                         }
                                     },
                                     f: {
                                         on: {
-                                            ANSWER__F: 'g'
+                                            ANSWER: 'g'
                                         }
                                     },
                                     g: {
                                         on: {
-                                            ANSWER__G: 'h'
+                                            ANSWER: 'h'
                                         }
                                     },
                                     h: {
@@ -1031,19 +1031,19 @@ describe('Parallel Router', () => {
                     }
                 });
 
-                let section = parallelRouter.next({}, 'e', 'ANSWER__E'); // f
+                let section = parallelRouter.next({}, 'e', 'ANSWER'); // f
                 expect(section.id).toEqual('f');
 
                 parallelRouter = createParallelRouter(section.context);
-                section = parallelRouter.next({}, 'f', 'ANSWER__F'); // g
+                section = parallelRouter.next({}, 'f', 'ANSWER'); // g
                 expect(section.id).toEqual('g');
 
                 parallelRouter = createParallelRouter(section.context);
-                section = parallelRouter.next({}, 'g', 'ANSWER__G'); // h
+                section = parallelRouter.next({}, 'g', 'ANSWER'); // h
                 expect(section.id).toEqual('h');
 
                 parallelRouter = createParallelRouter(section.context);
-                section = parallelRouter.next({}, 'e', 'ANSWER__E'); // f
+                section = parallelRouter.next({}, 'e', 'ANSWER'); // f
                 expect(section.id).toEqual('f');
 
                 section = parallelRouter.last();
@@ -1068,17 +1068,17 @@ describe('Parallel Router', () => {
                                 states: {
                                     a: {
                                         on: {
-                                            ANSWER__A: 'b'
+                                            ANSWER: 'b'
                                         }
                                     },
                                     b: {
                                         on: {
-                                            ANSWER__B: 'c'
+                                            ANSWER: 'c'
                                         }
                                     },
                                     c: {
                                         on: {
-                                            ANSWER__C: 'd'
+                                            ANSWER: 'd'
                                         }
                                     },
                                     d: {
@@ -1093,11 +1093,11 @@ describe('Parallel Router', () => {
                     }
                 });
 
-                let section = parallelRouter.next({}, 'a', 'ANSWER__A'); // b
+                let section = parallelRouter.next({}, 'a', 'ANSWER'); // b
                 expect(section.id).toEqual('b');
 
                 parallelRouter = createParallelRouter(section.context);
-                section = parallelRouter.next({}, 'b', 'ANSWER__B'); // c
+                section = parallelRouter.next({}, 'b', 'ANSWER'); // c
                 expect(section.id).toEqual('c');
 
                 parallelRouter = createParallelRouter(section.context);
@@ -1118,17 +1118,17 @@ describe('Parallel Router', () => {
                                 states: {
                                     a: {
                                         on: {
-                                            ANSWER__A: 'b'
+                                            ANSWER: 'b'
                                         }
                                     },
                                     b: {
                                         on: {
-                                            ANSWER__B: 'c'
+                                            ANSWER: 'c'
                                         }
                                     },
                                     c: {
                                         on: {
-                                            ANSWER__C: 'd'
+                                            ANSWER: 'd'
                                         }
                                     },
                                     d: {
@@ -1143,11 +1143,11 @@ describe('Parallel Router', () => {
                     }
                 });
 
-                let section = parallelRouter.next({}, 'a', 'ANSWER__A'); // b
+                let section = parallelRouter.next({}, 'a', 'ANSWER'); // b
                 expect(section.id).toEqual('b');
 
                 parallelRouter = createParallelRouter(section.context);
-                section = parallelRouter.next({}, 'b', 'ANSWER__B'); // c
+                section = parallelRouter.next({}, 'b', 'ANSWER'); // c
                 expect(section.id).toEqual('c');
 
                 parallelRouter = createParallelRouter(section.context);
@@ -1169,17 +1169,17 @@ describe('Parallel Router', () => {
                                 states: {
                                     a: {
                                         on: {
-                                            ANSWER__A: 'b'
+                                            ANSWER: 'b'
                                         }
                                     },
                                     b: {
                                         on: {
-                                            ANSWER__B: 'c'
+                                            ANSWER: 'c'
                                         }
                                     },
                                     c: {
                                         on: {
-                                            ANSWER__C: 'd'
+                                            ANSWER: 'd'
                                         }
                                     },
                                     d: {
@@ -1193,17 +1193,17 @@ describe('Parallel Router', () => {
                                 states: {
                                     e: {
                                         on: {
-                                            ANSWER__E: 'f'
+                                            ANSWER: 'f'
                                         }
                                     },
                                     f: {
                                         on: {
-                                            ANSWER__F: 'g'
+                                            ANSWER: 'g'
                                         }
                                     },
                                     g: {
                                         on: {
-                                            ANSWER__G: 'h'
+                                            ANSWER: 'h'
                                         }
                                     },
                                     h: {
@@ -1218,11 +1218,11 @@ describe('Parallel Router', () => {
                     }
                 });
 
-                let section = parallelRouter.next({}, 'e', 'ANSWER__E'); // f
+                let section = parallelRouter.next({}, 'e', 'ANSWER'); // f
                 expect(section.id).toEqual('f');
 
                 parallelRouter = createParallelRouter(section.context);
-                section = parallelRouter.next({}, 'f', 'ANSWER__F'); // g
+                section = parallelRouter.next({}, 'f', 'ANSWER'); // g
                 expect(section.id).toEqual('g');
 
                 parallelRouter = createParallelRouter(section.context);
@@ -1247,17 +1247,17 @@ describe('Parallel Router', () => {
                                 states: {
                                     a: {
                                         on: {
-                                            ANSWER__A: 'b'
+                                            ANSWER: 'b'
                                         }
                                     },
                                     b: {
                                         on: {
-                                            ANSWER__B: 'c'
+                                            ANSWER: 'c'
                                         }
                                     },
                                     c: {
                                         on: {
-                                            ANSWER__C: 'd'
+                                            ANSWER: 'd'
                                         }
                                     },
                                     d: {
@@ -1271,17 +1271,17 @@ describe('Parallel Router', () => {
                                 states: {
                                     e: {
                                         on: {
-                                            ANSWER__E: 'f'
+                                            ANSWER: 'f'
                                         }
                                     },
                                     f: {
                                         on: {
-                                            ANSWER__F: 'g'
+                                            ANSWER: 'g'
                                         }
                                     },
                                     g: {
                                         on: {
-                                            ANSWER__G: 'h'
+                                            ANSWER: 'h'
                                         }
                                     },
                                     h: {
@@ -1296,15 +1296,15 @@ describe('Parallel Router', () => {
                     }
                 });
 
-                let section = parallelRouter.next({}, 'a', 'ANSWER__A'); // b
+                let section = parallelRouter.next({}, 'a', 'ANSWER'); // b
                 expect(section.id).toEqual('b');
 
                 parallelRouter = createParallelRouter(section.context);
-                section = parallelRouter.next({}, 'e', 'ANSWER__E'); // f
+                section = parallelRouter.next({}, 'e', 'ANSWER'); // f
                 expect(section.id).toEqual('f');
 
                 parallelRouter = createParallelRouter(section.context);
-                section = parallelRouter.next({}, 'f', 'ANSWER__F'); // g
+                section = parallelRouter.next({}, 'f', 'ANSWER'); // g
                 expect(section.id).toEqual('g');
 
                 parallelRouter = createParallelRouter(section.context);
@@ -1329,17 +1329,17 @@ describe('Parallel Router', () => {
                                 states: {
                                     a: {
                                         on: {
-                                            ANSWER__A: 'b'
+                                            ANSWER: 'b'
                                         }
                                     },
                                     b: {
                                         on: {
-                                            ANSWER__B: 'c'
+                                            ANSWER: 'c'
                                         }
                                     },
                                     c: {
                                         on: {
-                                            ANSWER__C: 'd'
+                                            ANSWER: 'd'
                                         }
                                     },
                                     d: {
@@ -1353,17 +1353,17 @@ describe('Parallel Router', () => {
                                 states: {
                                     e: {
                                         on: {
-                                            ANSWER__E: 'f'
+                                            ANSWER: 'f'
                                         }
                                     },
                                     f: {
                                         on: {
-                                            ANSWER__F: 'g'
+                                            ANSWER: 'g'
                                         }
                                     },
                                     g: {
                                         on: {
-                                            ANSWER__G: 'h'
+                                            ANSWER: 'h'
                                         }
                                     },
                                     h: {
@@ -1378,15 +1378,15 @@ describe('Parallel Router', () => {
                     }
                 });
 
-                let section = parallelRouter.next({}, 'a', 'ANSWER__A'); // b
+                let section = parallelRouter.next({}, 'a', 'ANSWER'); // b
                 expect(section.id).toEqual('b');
 
                 parallelRouter = createParallelRouter(section.context);
-                section = parallelRouter.next({}, 'b', 'ANSWER__B'); // c
+                section = parallelRouter.next({}, 'b', 'ANSWER'); // c
                 expect(section.id).toEqual('c');
 
                 parallelRouter = createParallelRouter(section.context);
-                section = parallelRouter.next({}, 'e', 'ANSWER__E'); // f
+                section = parallelRouter.next({}, 'e', 'ANSWER'); // f
                 expect(section.id).toEqual('f');
 
                 parallelRouter = createParallelRouter(section.context);
@@ -1401,7 +1401,7 @@ describe('Parallel Router', () => {
     });
 
     describe('Applicability Status machine', () => {
-        it('should update the applicability status via the "ANSWER__X" event', () => {
+        it('should update the applicability status via the "ANSWER" event', () => {
             let parallelRouter = createParallelRouter({
                 currentSectionId: 'a',
                 routes: {
@@ -1409,12 +1409,13 @@ describe('Parallel Router', () => {
                     type: 'parallel',
                     states: {
                         task1: {
+                            id: 'task1',
                             initial: 'a',
                             currentSectionId: 'a',
                             states: {
                                 a: {
                                     on: {
-                                        ANSWER__A: [
+                                        ANSWER: [
                                             {
                                                 target: 'b'
                                             }
@@ -1423,7 +1424,7 @@ describe('Parallel Router', () => {
                                 },
                                 b: {
                                     on: {
-                                        ANSWER__B: [
+                                        ANSWER: [
                                             {
                                                 target: '#task2'
                                             }
@@ -1433,12 +1434,13 @@ describe('Parallel Router', () => {
                             }
                         },
                         task2: {
+                            id: 'task2',
                             initial: 'c',
                             currentSectionId: 'c',
                             states: {
                                 c: {
                                     on: {
-                                        ANSWER__C: [
+                                        ANSWER: [
                                             {
                                                 target: 'd'
                                             }
@@ -1463,7 +1465,11 @@ describe('Parallel Router', () => {
                             states: {
                                 notApplicable: {
                                     on: {
-                                        ANSWER__A: 'applicable'
+                                        UPDATE__STATUS: [
+                                            {
+                                                target: 'applicable'
+                                            }
+                                        ]
                                     }
                                 },
                                 applicable: {}
@@ -1481,12 +1487,12 @@ describe('Parallel Router', () => {
             expect(section.value['task2__applicability-status']).toEqual('notApplicable');
 
             parallelRouter = createParallelRouter(section.context);
-            section = parallelRouter.next({}, 'a', 'ANSWER__A');
+            section = parallelRouter.next({}, 'a', 'ANSWER');
             expect(section.id).toBe('b');
             expect(section.value['task2__applicability-status']).toEqual('applicable');
         });
 
-        it('should not update the applicability status via the ANSWER__ event given certain roles', () => {
+        it('should not update the applicability status via the ANSWER event given certain roles', () => {
             let parallelRouter = createParallelRouter({
                 currentSectionId: 'a',
                 routes: {
@@ -1499,7 +1505,7 @@ describe('Parallel Router', () => {
                             states: {
                                 a: {
                                     on: {
-                                        ANSWER__A: [
+                                        ANSWER: [
                                             {
                                                 target: 'b'
                                             }
@@ -1508,7 +1514,7 @@ describe('Parallel Router', () => {
                                 },
                                 b: {
                                     on: {
-                                        ANSWER__B: [
+                                        ANSWER: [
                                             {
                                                 target: '#task2'
                                             }
@@ -1523,7 +1529,7 @@ describe('Parallel Router', () => {
                             states: {
                                 c: {
                                     on: {
-                                        ANSWER__C: [
+                                        ANSWER: [
                                             {
                                                 target: 'd'
                                             }
@@ -1548,7 +1554,7 @@ describe('Parallel Router', () => {
                             states: {
                                 notApplicable: {
                                     on: {
-                                        ANSWER__A: [
+                                        UPDATE__STATUS: [
                                             {
                                                 target: 'applicable',
                                                 cond: ['|role.all', 'role1']
@@ -1595,7 +1601,7 @@ describe('Parallel Router', () => {
             expect(section.value['task2__applicability-status']).toEqual('notApplicable');
 
             parallelRouter = createParallelRouter(section.context);
-            section = parallelRouter.next({q1: 'bar'}, 'a', 'ANSWER__A');
+            section = parallelRouter.next({q1: 'bar'}, 'a', 'ANSWER');
             expect(section.id).toBe('b');
             expect(section.value['task2__applicability-status']).toEqual('notApplicable');
         });
@@ -1608,12 +1614,13 @@ describe('Parallel Router', () => {
                     type: 'parallel',
                     states: {
                         task1: {
+                            id: 'task1',
                             initial: 'a',
                             currentSectionId: 'a',
                             states: {
                                 a: {
                                     on: {
-                                        ANSWER__A: [
+                                        ANSWER: [
                                             {
                                                 target: 'b',
                                                 cond: ['==', '$.answers.a.q1', 'foo']
@@ -1627,7 +1634,7 @@ describe('Parallel Router', () => {
                                 },
                                 b: {
                                     on: {
-                                        ANSWER__B: [
+                                        ANSWER: [
                                             {
                                                 target: 'd'
                                             }
@@ -1636,7 +1643,7 @@ describe('Parallel Router', () => {
                                 },
                                 c: {
                                     on: {
-                                        ANSWER__C: [
+                                        ANSWER: [
                                             {
                                                 target: 'd'
                                             }
@@ -1645,7 +1652,7 @@ describe('Parallel Router', () => {
                                 },
                                 d: {
                                     on: {
-                                        ANSWER__D: [
+                                        ANSWER: [
                                             {
                                                 target: '#task2',
                                                 cond: ['|role.all', 'role1']
@@ -1661,7 +1668,7 @@ describe('Parallel Router', () => {
                             states: {
                                 e: {
                                     on: {
-                                        ANSWER__E: [
+                                        ANSWER: [
                                             {
                                                 target: 'f'
                                             }
@@ -1686,7 +1693,7 @@ describe('Parallel Router', () => {
                             states: {
                                 notApplicable: {
                                     on: {
-                                        ANSWER__D: [
+                                        UPDATE__STATUS: [
                                             {
                                                 target: 'applicable',
                                                 cond: ['|role.all', 'role1']
@@ -1733,15 +1740,15 @@ describe('Parallel Router', () => {
             expect(section.value['task2__applicability-status']).toEqual('notApplicable');
 
             parallelRouter = createParallelRouter(section.context);
-            section = parallelRouter.next({q1: 'foo'}, 'a', 'ANSWER__A'); // b
+            section = parallelRouter.next({q1: 'foo'}, 'a', 'ANSWER'); // b
             expect(section.id).toEqual('b');
 
             parallelRouter = createParallelRouter(section.context);
-            section = parallelRouter.next({q1: true}, 'b', 'ANSWER__B'); // d
+            section = parallelRouter.next({q1: true}, 'b', 'ANSWER'); // d
             expect(section.id).toEqual('d');
 
             parallelRouter = createParallelRouter(section.context);
-            section = parallelRouter.next({}, 'd', 'ANSWER__D'); // #task2.e
+            section = parallelRouter.next({}, 'd', 'ANSWER'); // #task2.e
             expect(section.value['task2__applicability-status']).toEqual('applicable');
 
             parallelRouter = createParallelRouter(section.context);
@@ -1762,7 +1769,7 @@ describe('Parallel Router', () => {
                             states: {
                                 a: {
                                     on: {
-                                        ANSWER__A: [
+                                        ANSWER: [
                                             {
                                                 target: 'b',
                                                 cond: ['==', '$.answers.a.q1', 'foo']
@@ -1776,7 +1783,7 @@ describe('Parallel Router', () => {
                                 },
                                 b: {
                                     on: {
-                                        ANSWER__B: [
+                                        ANSWER: [
                                             {
                                                 target: 'd'
                                             }
@@ -1785,7 +1792,7 @@ describe('Parallel Router', () => {
                                 },
                                 c: {
                                     on: {
-                                        ANSWER__C: [
+                                        ANSWER: [
                                             {
                                                 target: 'd'
                                             }
@@ -1794,7 +1801,7 @@ describe('Parallel Router', () => {
                                 },
                                 d: {
                                     on: {
-                                        ANSWER__D: [
+                                        ANSWER: [
                                             {
                                                 target: '#task2',
                                                 cond: ['|role.all', 'role2']
@@ -1813,7 +1820,7 @@ describe('Parallel Router', () => {
                             states: {
                                 e: {
                                     on: {
-                                        ANSWER__E: [
+                                        ANSWER: [
                                             {
                                                 target: 'f'
                                             }
@@ -1831,7 +1838,7 @@ describe('Parallel Router', () => {
                             states: {
                                 g: {
                                     on: {
-                                        ANSWER__G: [
+                                        ANSWER: [
                                             {
                                                 target: 'h'
                                             }
@@ -1856,7 +1863,7 @@ describe('Parallel Router', () => {
                             states: {
                                 notApplicable: {
                                     on: {
-                                        ANSWER__D: [
+                                        UPDATE__STATUS: [
                                             {
                                                 target: 'applicable',
                                                 cond: ['|role.all', 'role2']
@@ -1910,15 +1917,15 @@ describe('Parallel Router', () => {
             expect(section.value['task2__applicability-status']).toEqual('notApplicable');
 
             parallelRouter = createParallelRouter(section.context);
-            section = parallelRouter.next({q1: 'foo'}, 'a', 'ANSWER__A');
+            section = parallelRouter.next({q1: 'foo'}, 'a', 'ANSWER');
             expect(section.id).toEqual('b');
 
             parallelRouter = createParallelRouter(section.context);
-            section = parallelRouter.next({q1: true}, 'b', 'ANSWER__B');
+            section = parallelRouter.next({q1: true}, 'b', 'ANSWER');
             expect(section.id).toEqual('d');
 
             parallelRouter = createParallelRouter(section.context);
-            section = parallelRouter.next({}, 'd', 'ANSWER__D');
+            section = parallelRouter.next({}, 'd', 'ANSWER');
             expect(section.id).toEqual('g');
             expect(section.value['task2__applicability-status']).toEqual('notApplicable');
 
@@ -1941,7 +1948,7 @@ describe('Parallel Router', () => {
                                 states: {
                                     a: {
                                         on: {
-                                            ANSWER__A: [
+                                            ANSWER: [
                                                 {
                                                     target: 'b'
                                                 }
@@ -1950,7 +1957,7 @@ describe('Parallel Router', () => {
                                     },
                                     b: {
                                         on: {
-                                            ANSWER__B: [
+                                            ANSWER: [
                                                 {
                                                     target: 'c'
                                                 }
@@ -1959,7 +1966,7 @@ describe('Parallel Router', () => {
                                     },
                                     c: {
                                         on: {
-                                            ANSWER__C: [
+                                            ANSWER: [
                                                 {
                                                     target: '#task2'
                                                 }
@@ -1974,7 +1981,7 @@ describe('Parallel Router', () => {
                                 states: {
                                     d: {
                                         on: {
-                                            ANSWER__D: [
+                                            ANSWER: [
                                                 {
                                                     target: 'e'
                                                 }
@@ -1999,7 +2006,7 @@ describe('Parallel Router', () => {
                                 states: {
                                     cannotStartYet: {
                                         on: {
-                                            ANSWER__B: [
+                                            UPDATE__STATUS: [
                                                 {
                                                     target: 'applicable',
                                                     cond: ['|role.all', 'role1']
@@ -2046,11 +2053,11 @@ describe('Parallel Router', () => {
                 expect(section.value['task2__applicability-status']).toEqual('cannotStartYet');
 
                 parallelRouter = createParallelRouter(section.context);
-                section = parallelRouter.next({q1: 'foo'}, 'a', 'ANSWER__A');
+                section = parallelRouter.next({q1: 'foo'}, 'a', 'ANSWER');
                 expect(section.id).toEqual('b');
 
                 parallelRouter = createParallelRouter(section.context);
-                section = parallelRouter.next({q1: true}, 'b', 'ANSWER__B');
+                section = parallelRouter.next({q1: true}, 'b', 'ANSWER');
                 expect(section.id).toEqual('c');
                 expect(section.id).toBe('c');
                 expect(section.value['task2__applicability-status']).toEqual('applicable');
@@ -2070,7 +2077,7 @@ describe('Parallel Router', () => {
                                 states: {
                                     a: {
                                         on: {
-                                            ANSWER__A: [
+                                            ANSWER: [
                                                 {
                                                     target: 'b',
                                                     cond: ['|role.all', 'role1']
@@ -2084,7 +2091,7 @@ describe('Parallel Router', () => {
                                     },
                                     b: {
                                         on: {
-                                            ANSWER__B: [
+                                            ANSWER: [
                                                 {
                                                     target: 'c'
                                                 }
@@ -2093,7 +2100,7 @@ describe('Parallel Router', () => {
                                     },
                                     c: {
                                         on: {
-                                            ANSWER__C: [
+                                            ANSWER: [
                                                 {
                                                     target: '#task2'
                                                 }
@@ -2109,7 +2116,7 @@ describe('Parallel Router', () => {
                                 states: {
                                     d: {
                                         on: {
-                                            ANSWER__D: [
+                                            ANSWER: [
                                                 {
                                                     target: 'e'
                                                 }
@@ -2136,7 +2143,7 @@ describe('Parallel Router', () => {
                                 states: {
                                     cannotStartYet: {
                                         on: {
-                                            ANSWER__B: [
+                                            UPDATE__STATUS: [
                                                 {
                                                     target: 'applicable',
                                                     cond: ['|role.all', 'role1']
@@ -2191,16 +2198,16 @@ describe('Parallel Router', () => {
                 expect(section.value['task2__applicability-status']).toEqual('cannotStartYet');
 
                 parallelRouter = createParallelRouter(section.context);
-                section = parallelRouter.next({q1: 'foo'}, 'a', 'ANSWER__A');
+                section = parallelRouter.next({q1: 'foo'}, 'a', 'ANSWER');
                 expect(section.id).toEqual('b');
 
                 parallelRouter = createParallelRouter(section.context);
-                section = parallelRouter.next({}, 'b', 'ANSWER__B');
+                section = parallelRouter.next({}, 'b', 'ANSWER');
                 expect(section.id).toBe('c');
                 expect(section.value['task2__applicability-status']).toEqual('applicable');
 
                 parallelRouter = createParallelRouter(section.context);
-                section = parallelRouter.next({q1: 'bar'}, 'a', 'ANSWER__A');
+                section = parallelRouter.next({q1: 'bar'}, 'a', 'ANSWER');
                 expect(section.value['task2__applicability-status']).toEqual('cannotStartYet');
             });
         });
@@ -2219,7 +2226,7 @@ describe('Parallel Router', () => {
                                 states: {
                                     a: {
                                         on: {
-                                            ANSWER__A: [
+                                            ANSWER: [
                                                 {
                                                     target: 'b'
                                                 }
@@ -2228,7 +2235,7 @@ describe('Parallel Router', () => {
                                     },
                                     b: {
                                         on: {
-                                            ANSWER__B: [
+                                            ANSWER: [
                                                 {
                                                     target: 'c'
                                                 }
@@ -2237,7 +2244,7 @@ describe('Parallel Router', () => {
                                     },
                                     c: {
                                         on: {
-                                            ANSWER__C: [
+                                            ANSWER: [
                                                 {
                                                     target: '#task2'
                                                 }
@@ -2252,7 +2259,7 @@ describe('Parallel Router', () => {
                                 states: {
                                     d: {
                                         on: {
-                                            ANSWER__D: [
+                                            ANSWER: [
                                                 {
                                                     target: 'e'
                                                 }
@@ -2277,7 +2284,7 @@ describe('Parallel Router', () => {
                                 states: {
                                     cannotStartYet: {
                                         on: {
-                                            ANSWER__B: [
+                                            UPDATE__STATUS: [
                                                 {
                                                     target: 'applicable',
                                                     cond: ['==', '$.answers.a.q1', 'foo']
@@ -2303,11 +2310,11 @@ describe('Parallel Router', () => {
                 expect(section.value['task2__applicability-status']).toEqual('cannotStartYet');
 
                 parallelRouter = createParallelRouter(section.context);
-                section = parallelRouter.next({q1: 'foo'}, 'a', 'ANSWER__A');
+                section = parallelRouter.next({q1: 'foo'}, 'a', 'ANSWER');
                 expect(section.id).toEqual('b');
 
                 parallelRouter = createParallelRouter(section.context);
-                section = parallelRouter.next({q1: true}, 'b', 'ANSWER__B');
+                section = parallelRouter.next({q1: true}, 'b', 'ANSWER');
                 expect(section.id).toBe('c');
                 expect(section.value['task2__applicability-status']).toEqual('applicable');
             });
@@ -2326,7 +2333,7 @@ describe('Parallel Router', () => {
                                 states: {
                                     a: {
                                         on: {
-                                            ANSWER__A: [
+                                            ANSWER: [
                                                 {
                                                     target: 'b',
                                                     cond: ['==', '$.answers.a.q1', 'foo']
@@ -2340,7 +2347,7 @@ describe('Parallel Router', () => {
                                     },
                                     b: {
                                         on: {
-                                            ANSWER__B: [
+                                            ANSWER: [
                                                 {
                                                     target: 'c'
                                                 }
@@ -2349,7 +2356,7 @@ describe('Parallel Router', () => {
                                     },
                                     c: {
                                         on: {
-                                            ANSWER__C: [
+                                            ANSWER: [
                                                 {
                                                     target: '#task2'
                                                 }
@@ -2365,7 +2372,7 @@ describe('Parallel Router', () => {
                                 states: {
                                     d: {
                                         on: {
-                                            ANSWER__D: [
+                                            ANSWER: [
                                                 {
                                                     target: 'e'
                                                 }
@@ -2392,7 +2399,7 @@ describe('Parallel Router', () => {
                                 states: {
                                     cannotStartYet: {
                                         on: {
-                                            ANSWER__B: [
+                                            UPDATE__STATUS: [
                                                 {
                                                     target: 'applicable',
                                                     cond: ['==', '$.answers.a.q1', 'foo']
@@ -2426,16 +2433,16 @@ describe('Parallel Router', () => {
                 expect(section.value['task2__applicability-status']).toEqual('cannotStartYet');
 
                 parallelRouter = createParallelRouter(section.context);
-                section = parallelRouter.next({q1: 'foo'}, 'a', 'ANSWER__A');
+                section = parallelRouter.next({q1: 'foo'}, 'a', 'ANSWER');
                 expect(section.id).toEqual('b');
 
                 parallelRouter = createParallelRouter(section.context);
-                section = parallelRouter.next({}, 'b', 'ANSWER__B');
+                section = parallelRouter.next({}, 'b', 'ANSWER');
                 expect(section.id).toEqual('c');
                 expect(section.value['task2__applicability-status']).toEqual('applicable');
 
                 parallelRouter = createParallelRouter(section.context);
-                section = parallelRouter.next({q1: 'bar'}, 'a', 'ANSWER__A');
+                section = parallelRouter.next({q1: 'bar'}, 'a', 'ANSWER');
                 expect(section.value['task2__applicability-status']).toEqual('cannotStartYet');
             });
         });
@@ -2455,7 +2462,7 @@ describe('Parallel Router', () => {
                                 states: {
                                     a: {
                                         on: {
-                                            ANSWER__A: [
+                                            ANSWER: [
                                                 {
                                                     target: 'b',
                                                     cond: ['==', '$.answers.a.q1', 'foo']
@@ -2469,7 +2476,7 @@ describe('Parallel Router', () => {
                                     },
                                     b: {
                                         on: {
-                                            ANSWER__B: [
+                                            ANSWER: [
                                                 {
                                                     target: 'd'
                                                 }
@@ -2478,7 +2485,7 @@ describe('Parallel Router', () => {
                                     },
                                     c: {
                                         on: {
-                                            ANSWER__C: [
+                                            ANSWER: [
                                                 {
                                                     target: 'd'
                                                 }
@@ -2487,7 +2494,7 @@ describe('Parallel Router', () => {
                                     },
                                     d: {
                                         on: {
-                                            ANSWER__D: [
+                                            ANSWER: [
                                                 {
                                                     target: '#task2'
                                                 }
@@ -2503,7 +2510,7 @@ describe('Parallel Router', () => {
                                 states: {
                                     e: {
                                         on: {
-                                            ANSWER__E: [
+                                            ANSWER: [
                                                 {
                                                     target: 'f'
                                                 }
@@ -2512,7 +2519,7 @@ describe('Parallel Router', () => {
                                     },
                                     f: {
                                         on: {
-                                            ANSWER__F: [
+                                            ANSWER: [
                                                 {
                                                     target: 'g',
                                                     cond: ['==', '$.answers.b.q1', 1]
@@ -2526,7 +2533,7 @@ describe('Parallel Router', () => {
                                     },
                                     g: {
                                         on: {
-                                            ANSWER__G: [
+                                            ANSWER: [
                                                 {
                                                     target: 'h'
                                                 }
@@ -2553,7 +2560,7 @@ describe('Parallel Router', () => {
                                 states: {
                                     notApplicable: {
                                         on: {
-                                            ANSWER__A: [
+                                            UPDATE__STATUS: [
                                                 {
                                                     target: 'applicable',
                                                     cond: ['|role.all', 'role1']
@@ -2599,32 +2606,32 @@ describe('Parallel Router', () => {
                 expect(section.context.routes.states.task1.progress).toEqual(['a']);
 
                 parallelRouter = createParallelRouter(section.context);
-                section = parallelRouter.next({q1: 'foo'}, 'a', 'ANSWER__A'); // b.
+                section = parallelRouter.next({q1: 'foo'}, 'a', 'ANSWER'); // b.
                 expect(section.value['task2__applicability-status']).toEqual('applicable');
 
                 parallelRouter = createParallelRouter(section.context);
-                section = parallelRouter.next({q1: 1}, 'b', 'ANSWER__B'); // d.
+                section = parallelRouter.next({q1: 1}, 'b', 'ANSWER'); // d.
                 expect(section.context.routes.states.task1.progress).toEqual(['a', 'b', 'd']);
 
                 parallelRouter = createParallelRouter(section.context);
-                section = parallelRouter.next({}, 'd', 'ANSWER__D'); // #task2.e
+                section = parallelRouter.next({}, 'd', 'ANSWER'); // #task2.e
                 expect(section.context.routes.states.task2.progress).toEqual(['e']);
 
                 parallelRouter = createParallelRouter(section.context);
-                section = parallelRouter.next({}, 'e', 'ANSWER__E'); // f.
+                section = parallelRouter.next({}, 'e', 'ANSWER'); // f.
                 expect(section.id).toEqual('f');
 
                 parallelRouter = createParallelRouter(section.context);
-                section = parallelRouter.next({}, 'f', 'ANSWER__F'); // g. has routing dependency on b
+                section = parallelRouter.next({}, 'f', 'ANSWER'); // g. has routing dependency on b
                 expect(section.id).toEqual('g');
 
                 parallelRouter = createParallelRouter(section.context);
-                section = parallelRouter.next({}, 'g', 'ANSWER__G'); // h.
+                section = parallelRouter.next({}, 'g', 'ANSWER'); // h.
                 expect(section.id).toEqual('h');
 
                 // re-answer the first question in task1. this answer makes role1 irrelevant.
                 parallelRouter = createParallelRouter(section.context);
-                section = parallelRouter.next({q1: 'bar'}, 'a', 'ANSWER__A');
+                section = parallelRouter.next({q1: 'bar'}, 'a', 'ANSWER');
                 expect(section.id).toEqual('c');
                 expect(section.context.routes.states.task1.progress).toEqual(['a', 'c']);
                 expect(section.context.routes.states.task2.progress).toEqual(['e']);
@@ -2635,101 +2642,6 @@ describe('Parallel Router', () => {
 
     describe('Completion status machine', () => {
         describe('events', () => {
-            describe('ANSWER__{{STATE_ID}}', () => {
-                it('should update the completion status on transition', () => {
-                    let parallelRouter = createParallelRouter({
-                        currentSectionId: 'a',
-                        routes: {
-                            id: 'parallel-routes-test',
-                            type: 'parallel',
-                            states: {
-                                task1: {
-                                    initial: 'a',
-                                    currentSectionId: 'a',
-                                    states: {
-                                        a: {
-                                            on: {
-                                                ANSWER__A: [
-                                                    {
-                                                        target: 'b'
-                                                    }
-                                                ]
-                                            }
-                                        },
-                                        b: {
-                                            on: {
-                                                ANSWER__B: [
-                                                    {
-                                                        target: '#task2'
-                                                    }
-                                                ]
-                                            }
-                                        }
-                                    }
-                                },
-                                task2: {
-                                    initial: 'c',
-                                    currentSectionId: 'c',
-                                    states: {
-                                        c: {
-                                            on: {
-                                                ANSWER__C: [
-                                                    {
-                                                        target: 'd'
-                                                    }
-                                                ]
-                                            }
-                                        },
-                                        d: {
-                                            type: 'final'
-                                        }
-                                    }
-                                },
-                                'task1__completion-status': {
-                                    initial: 'incomplete',
-                                    currentSectionId: 'incomplete',
-                                    states: {
-                                        incomplete: {
-                                            on: {
-                                                ANSWER__B: 'completed'
-                                            }
-                                        },
-                                        completed: {}
-                                    }
-                                },
-                                'task2__completion-status': {
-                                    initial: 'incomplete',
-                                    currentSectionId: 'incomplete',
-                                    states: {
-                                        incomplete: {
-                                            on: {
-                                                ANSWER__D: 'completed'
-                                            }
-                                        },
-                                        completed: {}
-                                    }
-                                }
-                            }
-                        },
-                        attributes: {
-                            q__roles: {}
-                        },
-                        answers: {}
-                    });
-
-                    let section = parallelRouter.current();
-                    expect(section.value['task1__completion-status']).toEqual('incomplete');
-
-                    parallelRouter = createParallelRouter(section.context);
-                    section = parallelRouter.next({}, 'a', 'ANSWER__A'); // b
-                    expect(section.id).toBe('b');
-
-                    parallelRouter = createParallelRouter(section.context);
-                    section = parallelRouter.next({}, 'b', 'ANSWER__B'); // #task2.c
-                    expect(section.id).toBe('c');
-                    expect(section.value['task1__completion-status']).toEqual('completed');
-                });
-            });
             describe('COMPLETE__{{TASK_ID}}', () => {
                 describe('state target is machine id', () => {
                     it('should update a tasks completion status to "complete" on transition', () => {
@@ -2745,7 +2657,7 @@ describe('Parallel Router', () => {
                                         states: {
                                             a: {
                                                 on: {
-                                                    ANSWER__A: [
+                                                    ANSWER: [
                                                         {
                                                             target: 'b'
                                                         }
@@ -2754,7 +2666,7 @@ describe('Parallel Router', () => {
                                             },
                                             b: {
                                                 on: {
-                                                    ANSWER__B: [
+                                                    ANSWER: [
                                                         {
                                                             target: '#task2'
                                                         }
@@ -2769,7 +2681,7 @@ describe('Parallel Router', () => {
                                         states: {
                                             c: {
                                                 on: {
-                                                    ANSWER__C: [
+                                                    ANSWER: [
                                                         {
                                                             target: 'd'
                                                         }
@@ -2817,148 +2729,17 @@ describe('Parallel Router', () => {
                         expect(section.value['task1__completion-status']).toEqual('incomplete');
 
                         parallelRouter = createParallelRouter(section.context);
-                        section = parallelRouter.next({}, 'a', 'ANSWER__A'); // b
+                        section = parallelRouter.next({}, 'a', 'ANSWER'); // b
                         expect(section.id).toBe('b');
 
                         parallelRouter = createParallelRouter(section.context);
-                        section = parallelRouter.next({}, 'b', 'ANSWER__B'); // #task2.c
+                        section = parallelRouter.next({}, 'b', 'ANSWER'); // #task2.c
                         expect(section.id).toBe('c');
                         expect(section.value['task1__completion-status']).toEqual('completed');
                     });
                 });
             });
             describe('CASCADE__{{TASK_ID}}', () => {
-                describe('target + cond', () => {
-                    it('should update the completion status to "complete" then "incomplete"', () => {
-                        let parallelRouter = createParallelRouter({
-                            currentSectionId: 'a',
-                            routes: {
-                                id: 'parallel-routes-test',
-                                type: 'parallel',
-                                states: {
-                                    task1: {
-                                        id: 'task1',
-                                        initial: 'a',
-                                        currentSectionId: 'a',
-                                        states: {
-                                            a: {
-                                                // mirrors residency and nationality questions.
-                                                on: {
-                                                    ANSWER__A: [
-                                                        {
-                                                            target: 'b',
-                                                            cond: ['==', '$.answers.a.q1', false]
-                                                        },
-                                                        {
-                                                            target: '#task2'
-                                                        }
-                                                    ]
-                                                }
-                                            },
-                                            b: {
-                                                on: {
-                                                    ANSWER__B: [
-                                                        {
-                                                            target: 'c',
-                                                            cond: ['==', '$.answers.b.q1', false]
-                                                        },
-                                                        {
-                                                            target: '#task2'
-                                                        }
-                                                    ]
-                                                }
-                                            },
-                                            c: {
-                                                on: {
-                                                    ANSWER__C: [
-                                                        {
-                                                            target: 'd',
-                                                            cond: ['==', '$.answers.c.q1', false]
-                                                        },
-                                                        {
-                                                            target: '#task2'
-                                                        }
-                                                    ]
-                                                }
-                                            },
-                                            d: {
-                                                on: {
-                                                    ANSWER__D: [
-                                                        {
-                                                            target: '#task2'
-                                                        }
-                                                    ]
-                                                }
-                                            }
-                                        }
-                                    },
-                                    task2: {
-                                        id: 'task2',
-                                        initial: 'e',
-                                        currentSectionId: 'e',
-                                        states: {
-                                            e: {
-                                                type: 'final'
-                                            }
-                                        }
-                                    },
-                                    'task1__completion-status': {
-                                        id: 'task1__completion-status',
-                                        initial: 'incomplete',
-                                        currentSectionId: 'incomplete',
-                                        states: {
-                                            incomplete: {
-                                                on: {
-                                                    ANSWER__A: [
-                                                        {
-                                                            target: 'completed',
-                                                            cond: ['==', '$.answers.a.q1', true]
-                                                        },
-                                                        {
-                                                            target: 'incomplete'
-                                                        }
-                                                    ],
-                                                    ANSWER__B: [
-                                                        {
-                                                            target: 'completed',
-                                                            cond: ['==', '$.answers.b.q1', true]
-                                                        },
-                                                        {
-                                                            target: 'incomplete'
-                                                        }
-                                                    ]
-                                                    // ...
-                                                }
-                                            },
-                                            completed: {
-                                                on: {
-                                                    CASCADE__TASK1: 'incomplete'
-                                                }
-                                            }
-                                        }
-                                    }
-                                }
-                            },
-                            attributes: {
-                                q__roles: {}
-                            },
-                            answers: {}
-                        });
-
-                        let section = parallelRouter.current();
-                        expect(section.value['task1__completion-status']).toEqual('incomplete');
-
-                        parallelRouter = createParallelRouter(section.context);
-                        section = parallelRouter.next({q1: true}, 'a', 'ANSWER__A'); // #task2.e
-                        expect(section.id).toBe('e');
-                        expect(section.value['task1__completion-status']).toEqual('completed');
-
-                        parallelRouter = createParallelRouter(section.context);
-                        section = parallelRouter.next({q1: false}, 'a', 'ANSWER__A'); // b.
-                        expect(section.id).toBe('b');
-                        expect(section.value['task1__completion-status']).toEqual('incomplete');
-                    });
-                });
                 describe('state target is machine id', () => {
                     it('should update the completion status to "complete" then "incomplete"', () => {
                         let parallelRouter = createParallelRouter({
@@ -2975,7 +2756,7 @@ describe('Parallel Router', () => {
                                             a: {
                                                 // mirrors residency and nationality questions.
                                                 on: {
-                                                    ANSWER__A: [
+                                                    ANSWER: [
                                                         {
                                                             target: 'b',
                                                             cond: ['==', '$.answers.a.q1', false]
@@ -2988,7 +2769,7 @@ describe('Parallel Router', () => {
                                             },
                                             b: {
                                                 on: {
-                                                    ANSWER__B: [
+                                                    ANSWER: [
                                                         {
                                                             target: 'c',
                                                             cond: ['==', '$.answers.b.q1', false]
@@ -3001,7 +2782,7 @@ describe('Parallel Router', () => {
                                             },
                                             c: {
                                                 on: {
-                                                    ANSWER__C: [
+                                                    ANSWER: [
                                                         {
                                                             target: 'd',
                                                             cond: ['==', '$.answers.c.q1', false]
@@ -3014,7 +2795,7 @@ describe('Parallel Router', () => {
                                             },
                                             d: {
                                                 on: {
-                                                    ANSWER__D: [
+                                                    ANSWER: [
                                                         {
                                                             target: '#task2'
                                                         }
@@ -3066,12 +2847,12 @@ describe('Parallel Router', () => {
                         expect(section.value['task1__completion-status']).toEqual('incomplete');
 
                         parallelRouter = createParallelRouter(section.context);
-                        section = parallelRouter.next({q1: true}, 'a', 'ANSWER__A'); // #task2.e
+                        section = parallelRouter.next({q1: true}, 'a', 'ANSWER'); // #task2.e
                         expect(section.id).toBe('e');
                         expect(section.value['task1__completion-status']).toEqual('completed');
 
                         parallelRouter = createParallelRouter(section.context);
-                        section = parallelRouter.next({q1: false}, 'a', 'ANSWER__A'); // b.
+                        section = parallelRouter.next({q1: false}, 'a', 'ANSWER'); // b.
                         expect(section.id).toBe('b');
                         expect(section.value['task1__completion-status']).toEqual('incomplete');
                     });
@@ -3093,7 +2874,7 @@ describe('Parallel Router', () => {
                                 states: {
                                     a: {
                                         on: {
-                                            ANSWER__A: [
+                                            ANSWER: [
                                                 {
                                                     target: 'b',
                                                     cond: ['==', '$.answers.a.q1', 'foo']
@@ -3107,7 +2888,7 @@ describe('Parallel Router', () => {
                                     },
                                     b: {
                                         on: {
-                                            ANSWER__B: [
+                                            ANSWER: [
                                                 {
                                                     target: 'd'
                                                 }
@@ -3116,7 +2897,7 @@ describe('Parallel Router', () => {
                                     },
                                     c: {
                                         on: {
-                                            ANSWER__C: [
+                                            ANSWER: [
                                                 {
                                                     target: 'd'
                                                 }
@@ -3125,7 +2906,7 @@ describe('Parallel Router', () => {
                                     },
                                     d: {
                                         on: {
-                                            ANSWER__D: [
+                                            ANSWER: [
                                                 {
                                                     target: '#task2'
                                                 }
@@ -3141,7 +2922,7 @@ describe('Parallel Router', () => {
                                 states: {
                                     e: {
                                         on: {
-                                            ANSWER__E: [
+                                            ANSWER: [
                                                 {
                                                     target: 'f'
                                                 }
@@ -3150,7 +2931,7 @@ describe('Parallel Router', () => {
                                     },
                                     f: {
                                         on: {
-                                            ANSWER__F: [
+                                            ANSWER: [
                                                 {
                                                     target: 'g',
                                                     cond: ['==', '$.answers.b.q1', 1]
@@ -3164,7 +2945,7 @@ describe('Parallel Router', () => {
                                     },
                                     g: {
                                         on: {
-                                            ANSWER__G: [
+                                            ANSWER: [
                                                 {
                                                     target: 'h'
                                                 }
@@ -3191,7 +2972,7 @@ describe('Parallel Router', () => {
                                 states: {
                                     notApplicable: {
                                         on: {
-                                            ANSWER__A: [
+                                            UPDATE__STATUS: [
                                                 {
                                                     target: 'applicable',
                                                     cond: ['|role.all', 'role1']
@@ -3237,32 +3018,32 @@ describe('Parallel Router', () => {
                 expect(section.context.routes.states.task1.progress).toEqual(['a']);
 
                 parallelRouter = createParallelRouter(section.context);
-                section = parallelRouter.next({q1: 'foo'}, 'a', 'ANSWER__A'); // b.
+                section = parallelRouter.next({q1: 'foo'}, 'a', 'ANSWER'); // b.
                 expect(section.value['task2__applicability-status']).toEqual('applicable');
 
                 parallelRouter = createParallelRouter(section.context);
-                section = parallelRouter.next({q1: 1}, 'b', 'ANSWER__B'); // d.
+                section = parallelRouter.next({q1: 1}, 'b', 'ANSWER'); // d.
                 expect(section.context.routes.states.task1.progress).toEqual(['a', 'b', 'd']);
 
                 parallelRouter = createParallelRouter(section.context);
-                section = parallelRouter.next({}, 'd', 'ANSWER__D'); // #task2.e
+                section = parallelRouter.next({}, 'd', 'ANSWER'); // #task2.e
                 expect(section.context.routes.states.task2.progress).toEqual(['e']);
 
                 parallelRouter = createParallelRouter(section.context);
-                section = parallelRouter.next({}, 'e', 'ANSWER__E'); // f.
+                section = parallelRouter.next({}, 'e', 'ANSWER'); // f.
                 expect(section.id).toEqual('f');
 
                 parallelRouter = createParallelRouter(section.context);
-                section = parallelRouter.next({}, 'f', 'ANSWER__F'); // g. has routing dependency on b
+                section = parallelRouter.next({}, 'f', 'ANSWER'); // g. has routing dependency on b
                 expect(section.id).toEqual('g');
 
                 parallelRouter = createParallelRouter(section.context);
-                section = parallelRouter.next({}, 'g', 'ANSWER__G'); // h.
+                section = parallelRouter.next({}, 'g', 'ANSWER'); // h.
                 expect(section.id).toEqual('h');
 
                 // re-answer the first question in task1. this answer makes role1 irrelevant.
                 parallelRouter = createParallelRouter(section.context);
-                section = parallelRouter.next({q1: 'bar'}, 'a', 'ANSWER__A');
+                section = parallelRouter.next({q1: 'bar'}, 'a', 'ANSWER');
                 expect(section.id).toEqual('c');
                 expect(section.context.routes.states.task1.progress).toEqual(['a', 'c']);
                 expect(section.context.routes.states.task2.progress).toEqual(['e']);
