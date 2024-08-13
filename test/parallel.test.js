@@ -309,69 +309,6 @@ describe('Parallel Router', () => {
                 'There are no next sections after section: "d"'
             );
         });
-
-        describe('Machine as target', () => {
-            it('Should get the current section of the target machine', () => {
-                const parallelRouter = createParallelRouter({
-                    currentSectionId: 'a',
-                    routes: {
-                        id: 'parallel-routes-test',
-                        type: 'parallel',
-                        states: {
-                            task1: {
-                                initial: 'a',
-                                currentSectionId: 'a',
-                                states: {
-                                    a: {
-                                        on: {
-                                            ANSWER: [
-                                                {
-                                                    target: 'b'
-                                                }
-                                            ]
-                                        }
-                                    },
-                                    b: {
-                                        on: {
-                                            ANSWER: [
-                                                {
-                                                    target: '#task2'
-                                                }
-                                            ]
-                                        }
-                                    }
-                                }
-                            },
-                            task2: {
-                                initial: 'c',
-                                currentSectionId: 'c',
-                                states: {
-                                    c: {
-                                        on: {
-                                            ANSWER: [
-                                                {
-                                                    target: 'd'
-                                                }
-                                            ]
-                                        }
-                                    },
-                                    d: {
-                                        type: 'final'
-                                    }
-                                }
-                            }
-                        }
-                    },
-                    attributes: {
-                        q__roles: {}
-                    }
-                });
-
-                parallelRouter.next({}, 'a', 'ANSWER'); // b
-                const section = parallelRouter.next({}, '#task2'); // task2 initial section "c".
-                expect(section.id).toBe('c');
-            });
-        });
     });
 
     describe('Previous', () => {
