@@ -2571,7 +2571,7 @@ describe('Parallel Router', () => {
                 section = parallelRouter.next({q1: 'bar'}, 'a', 'ANSWER');
                 expect(section.id).toEqual('c');
                 expect(section.context.routes.states.task1.progress).toEqual(['a', 'c']);
-                expect(section.context.routes.states.task2.progress).toEqual(['e']);
+                expect(section.context.routes.states.task2.progress).toEqual(['e', 'f']);
                 expect(section.value['task2__applicability-status']).toEqual('notApplicable');
             });
         });
@@ -2983,8 +2983,954 @@ describe('Parallel Router', () => {
                 section = parallelRouter.next({q1: 'bar'}, 'a', 'ANSWER');
                 expect(section.id).toEqual('c');
                 expect(section.context.routes.states.task1.progress).toEqual(['a', 'c']);
-                expect(section.context.routes.states.task2.progress).toEqual(['e']);
+                expect(section.context.routes.states.task2.progress).toEqual(['e', 'f']);
                 expect(section.value['task2__applicability-status']).toEqual('notApplicable');
+            });
+            describe('First question relies on itself', () => {
+                describe('role routing rule', () => {
+                    it('should cause the second task to become "incomplete"', () => {
+                        let parallelRouter = createParallelRouter({
+                            currentSectionId: 'p-applicant-who-are-you-applying-for',
+                            routes: {
+                                id: 'parallel-routes-test',
+                                type: 'parallel',
+                                states: {
+                                    't-about-application': {
+                                        id: 't-about-application',
+                                        initial: 'p-applicant-who-are-you-applying-for',
+                                        currentSectionId: 'p-applicant-who-are-you-applying-for',
+                                        progress: ['p-applicant-who-are-you-applying-for'],
+                                        states: {
+                                            'p-applicant-who-are-you-applying-for': {
+                                                on: {
+                                                    ANSWER: [
+                                                        {
+                                                            target: 'p-applicant-are-you-18-or-over'
+                                                        }
+                                                        // {
+                                                        //     target:
+                                                        //         'p-applicant-are-you-18-or-over',
+                                                        //     cond: ['|role.all', 'proxy']
+                                                        // },
+                                                        // {
+                                                        //     target:
+                                                        //         'p-applicant-are-you-18-or-over',
+                                                        //     cond: ['|role.all', 'myself']
+                                                        // }
+                                                    ]
+                                                }
+                                            },
+                                            'p-applicant-are-you-18-or-over': {
+                                                on: {
+                                                    ANSWER: [
+                                                        {
+                                                            target:
+                                                                'p--was-the-crime-reported-to-police',
+                                                            cond: [
+                                                                'or',
+                                                                ['|role.all', 'proxy'],
+                                                                ['|role.all', 'adult', 'capable']
+                                                            ]
+                                                        },
+                                                        {
+                                                            target: 'p-applicant-under-18'
+                                                        }
+                                                    ]
+                                                }
+                                            },
+                                            'p--was-the-crime-reported-to-police': {
+                                                on: {
+                                                    ANSWER: [
+                                                        {
+                                                            target:
+                                                                'p-applicant-you-cannot-get-compensation',
+                                                            cond: [
+                                                                '==',
+                                                                '$.answers.p--was-the-crime-reported-to-police.q--was-the-crime-reported-to-police',
+                                                                false
+                                                            ]
+                                                        },
+                                                        {
+                                                            target: 'p--context-crime-ref-no',
+                                                            cond: [
+                                                                '==',
+                                                                '$.answers.p--was-the-crime-reported-to-police.q--was-the-crime-reported-to-police',
+                                                                true
+                                                            ]
+                                                        }
+                                                    ]
+                                                }
+                                            },
+                                            'p-applicant-under-18': {
+                                                on: {
+                                                    ANSWER: [
+                                                        {
+                                                            target:
+                                                                'p--transition-someone-18-or-over-to-apply',
+                                                            cond: [
+                                                                '==',
+                                                                '$.answers.p-applicant-under-18.q-applicant-under-18',
+                                                                false
+                                                            ]
+                                                        },
+                                                        {
+                                                            target:
+                                                                'p-applicant-what-do-you-want-to-do'
+                                                        }
+                                                    ]
+                                                }
+                                            },
+                                            'p-applicant-you-cannot-get-compensation': {
+                                                on: {
+                                                    ANSWER: [
+                                                        {
+                                                            target: 'p-applicant-fatal-claim'
+                                                        }
+                                                    ]
+                                                }
+                                            },
+                                            'p--context-crime-ref-no': {
+                                                on: {
+                                                    ANSWER: [
+                                                        {
+                                                            target: 'p-applicant-fatal-claim'
+                                                        }
+                                                    ]
+                                                }
+                                            },
+                                            'p--transition-someone-18-or-over-to-apply': {
+                                                type: 'final'
+                                            },
+                                            'p-applicant-what-do-you-want-to-do': {
+                                                on: {
+                                                    ANSWER: [
+                                                        {
+                                                            target: 'p--transition-apply-when-18',
+                                                            cond: [
+                                                                '==',
+                                                                '$.answers.p-applicant-what-do-you-want-to-do.q-applicant-what-do-you-want-to-do',
+                                                                'close'
+                                                            ]
+                                                        },
+                                                        {
+                                                            target:
+                                                                'p--transition-request-a-call-back',
+                                                            cond: [
+                                                                '==',
+                                                                '$.answers.p-applicant-what-do-you-want-to-do.q-applicant-what-do-you-want-to-do',
+                                                                'call-back'
+                                                            ]
+                                                        },
+                                                        {
+                                                            target: 'p--transition-contact-us',
+                                                            cond: [
+                                                                '==',
+                                                                '$.answers.p-applicant-what-do-you-want-to-do.q-applicant-what-do-you-want-to-do',
+                                                                'call-us'
+                                                            ]
+                                                        }
+                                                    ]
+                                                }
+                                            },
+                                            'p--transition-apply-when-18': {
+                                                type: 'final'
+                                            },
+                                            'p--transition-request-a-call-back': {
+                                                type: 'final'
+                                            },
+                                            'p--transition-contact-us': {
+                                                type: 'final'
+                                            },
+                                            'p-applicant-fatal-claim': {
+                                                on: {
+                                                    ANSWER: [
+                                                        {
+                                                            target: 'p-applicant-claim-type',
+                                                            cond: ['|role.all', 'deceased']
+                                                        },
+                                                        {
+                                                            target:
+                                                                'p-applicant-applied-before-for-this-crime'
+                                                        }
+                                                    ]
+                                                }
+                                            },
+                                            'p-applicant-claim-type': {
+                                                on: {
+                                                    ANSWER: [
+                                                        {
+                                                            target: '#task-list'
+                                                        }
+                                                    ]
+                                                }
+                                            },
+                                            'p-applicant-someone-else-applied-before-for-this-crime': {
+                                                on: {
+                                                    ANSWER: [
+                                                        {
+                                                            target:
+                                                                'p--context-you-should-not-apply-again',
+                                                            cond: [
+                                                                '==',
+                                                                '$.answers.p-applicant-someone-else-applied-before-for-this-crime.q-applicant-someone-else-applied-before-for-this-crime',
+                                                                'yes'
+                                                            ]
+                                                        },
+                                                        {
+                                                            target: '#task-list'
+                                                        }
+                                                    ]
+                                                }
+                                            },
+                                            'p-applicant-applied-before-for-this-crime': {
+                                                on: {
+                                                    ANSWER: [
+                                                        {
+                                                            target:
+                                                                'p--context-you-should-not-apply-again',
+                                                            cond: [
+                                                                '==',
+                                                                '$.answers.p-applicant-applied-before-for-this-crime.q-applicant-applied-before-for-this-crime',
+                                                                true
+                                                            ]
+                                                        },
+                                                        {
+                                                            target:
+                                                                'p-applicant-someone-else-applied-before-for-this-crime',
+                                                            cond: [
+                                                                'and',
+                                                                [
+                                                                    '==',
+                                                                    '$.answers.p-applicant-applied-before-for-this-crime.q-applicant-applied-before-for-this-crime',
+                                                                    false
+                                                                ],
+                                                                ['|role.all', 'myself']
+                                                            ]
+                                                        },
+                                                        {
+                                                            target:
+                                                                'p-proxy-someone-else-applied-before-for-this-crime',
+                                                            cond: [
+                                                                'and',
+                                                                [
+                                                                    '==',
+                                                                    '$.answers.p-applicant-applied-before-for-this-crime.q-applicant-applied-before-for-this-crime',
+                                                                    false
+                                                                ],
+                                                                ['|role.all', 'proxy']
+                                                            ]
+                                                        }
+                                                    ]
+                                                }
+                                            },
+                                            'p-proxy-someone-else-applied-before-for-this-crime': {
+                                                on: {
+                                                    ANSWER: [
+                                                        {
+                                                            target:
+                                                                'p--context-you-should-not-apply-again',
+                                                            cond: [
+                                                                '==',
+                                                                '$.answers.p-proxy-someone-else-applied-before-for-this-crime.q-proxy-someone-else-applied-before-for-this-crime',
+                                                                true
+                                                            ]
+                                                        },
+                                                        {
+                                                            target: '#task-list'
+                                                        }
+                                                    ]
+                                                }
+                                            },
+                                            'p--context-you-should-not-apply-again': {
+                                                on: {
+                                                    ANSWER: [
+                                                        {
+                                                            target: '#task-list'
+                                                        }
+                                                    ]
+                                                }
+                                            }
+                                        }
+                                    },
+                                    't_applicant_personal-details': {
+                                        id: 't_applicant_personal-details',
+                                        referrer: '#task-list',
+                                        initial: 'p--context-applicant-details',
+                                        currentSectionId: 'p--context-applicant-details',
+                                        progress: ['p--context-applicant-details'],
+                                        states: {
+                                            'p--context-applicant-details': {
+                                                on: {
+                                                    ANSWER: [
+                                                        {
+                                                            target: 'p-applicant-enter-your-name',
+                                                            cond: ['|role.all', 'proxy']
+                                                        },
+                                                        {
+                                                            target:
+                                                                'p-applicant-confirmation-method'
+                                                        }
+                                                    ]
+                                                }
+                                            },
+                                            'p-applicant-enter-your-name': {
+                                                on: {
+                                                    ANSWER: [
+                                                        {
+                                                            target:
+                                                                'p-applicant-have-you-been-known-by-any-other-names'
+                                                        }
+                                                    ]
+                                                }
+                                            },
+                                            'p-applicant-confirmation-method': {
+                                                on: {
+                                                    ANSWER: [
+                                                        {
+                                                            target: 'p-applicant-enter-your-name'
+                                                        }
+                                                    ]
+                                                }
+                                            },
+                                            'p-applicant-have-you-been-known-by-any-other-names': {
+                                                on: {
+                                                    ANSWER: [
+                                                        {
+                                                            target:
+                                                                'p-applicant-enter-your-date-of-birth'
+                                                        }
+                                                    ]
+                                                }
+                                            },
+                                            'p-applicant-enter-your-date-of-birth': {
+                                                on: {
+                                                    ANSWER: [
+                                                        {
+                                                            target:
+                                                                'p-applicant-can-handle-affairs',
+                                                            cond: [
+                                                                'and',
+                                                                [
+                                                                    'dateCompare',
+                                                                    '$.answers.p-applicant-enter-your-date-of-birth.q-applicant-enter-your-date-of-birth',
+                                                                    '>=',
+                                                                    '-18',
+                                                                    'years'
+                                                                ],
+                                                                ['|role.all', 'proxy']
+                                                            ]
+                                                        },
+                                                        {
+                                                            target: 'p-applicant-enter-your-address'
+                                                        }
+                                                    ]
+                                                }
+                                            },
+                                            'p-applicant-can-handle-affairs': {
+                                                on: {
+                                                    ANSWER: [
+                                                        {
+                                                            target: 'p-applicant-enter-your-address'
+                                                        }
+                                                    ]
+                                                }
+                                            },
+                                            'p-applicant-enter-your-address': {
+                                                on: {
+                                                    ANSWER: [
+                                                        {
+                                                            target:
+                                                                'p-applicant-enter-your-telephone-number',
+                                                            cond: [
+                                                                'or',
+                                                                [
+                                                                    '==',
+                                                                    '$.answers.p-applicant-confirmation-method.q-applicant-confirmation-method',
+                                                                    'email'
+                                                                ],
+                                                                [
+                                                                    'and',
+                                                                    [
+                                                                        'dateCompare',
+                                                                        '$.answers.p-applicant-enter-your-date-of-birth.q-applicant-enter-your-date-of-birth',
+                                                                        '>=',
+                                                                        '-18',
+                                                                        'years'
+                                                                    ],
+                                                                    [
+                                                                        '==',
+                                                                        '$.answers.p-applicant-can-handle-affairs.q-applicant-capable',
+                                                                        true
+                                                                    ]
+                                                                ]
+                                                            ]
+                                                        },
+                                                        {
+                                                            target:
+                                                                'p-applicant-enter-your-email-address',
+                                                            cond: [
+                                                                '==',
+                                                                '$.answers.p-applicant-confirmation-method.q-applicant-confirmation-method',
+                                                                'text'
+                                                            ]
+                                                        },
+                                                        {
+                                                            target: '#task-list'
+                                                        }
+                                                    ]
+                                                }
+                                            },
+                                            'p-applicant-enter-your-telephone-number': {
+                                                on: {
+                                                    ANSWER: [
+                                                        {
+                                                            target: '#task-list'
+                                                        }
+                                                    ]
+                                                }
+                                            },
+                                            'p-applicant-enter-your-email-address': {
+                                                on: {
+                                                    ANSWER: [
+                                                        {
+                                                            target: '#task-list'
+                                                        }
+                                                    ]
+                                                }
+                                            }
+                                        }
+                                    },
+                                    't-about-application__completion-status': {
+                                        id: 't-about-application__completion-status',
+                                        initial: 'incomplete',
+                                        currentSectionId: 'incomplete',
+                                        progress: ['incomplete'],
+                                        states: {
+                                            incomplete: {
+                                                on: {
+                                                    'COMPLETE__T-ABOUT-APPLICATION': [
+                                                        {
+                                                            target: 'completed'
+                                                        }
+                                                    ]
+                                                }
+                                            },
+                                            completed: {
+                                                on: {
+                                                    'CASCADE__T-ABOUT-APPLICATION': [
+                                                        {
+                                                            target: 'incomplete'
+                                                        }
+                                                    ]
+                                                }
+                                            }
+                                        }
+                                    },
+                                    't-about-application__applicability-status': {
+                                        id: 't-about-application__applicability-status',
+                                        initial: 'applicable',
+                                        currentSectionId: 'applicable',
+                                        progress: ['applicable'],
+                                        states: {
+                                            applicable: {}
+                                        }
+                                    },
+                                    't_applicant_personal-details__completion-status': {
+                                        id: 't_applicant_personal-details__completion-status',
+                                        initial: 'incomplete',
+                                        currentSectionId: 'incomplete',
+                                        progress: ['incomplete'],
+                                        states: {
+                                            incomplete: {
+                                                on: {
+                                                    'COMPLETE__T_APPLICANT_PERSONAL-DETAILS': [
+                                                        {
+                                                            target: 'completed'
+                                                        }
+                                                    ]
+                                                }
+                                            },
+                                            completed: {
+                                                on: {
+                                                    'CASCADE__T_APPLICANT_PERSONAL-DETAILS': [
+                                                        {
+                                                            target: 'incomplete'
+                                                        }
+                                                    ]
+                                                }
+                                            }
+                                        }
+                                    },
+                                    't_applicant_personal-details__applicability-status': {
+                                        id: 't_applicant_personal-details__applicability-status',
+                                        initial: 'applicable',
+                                        currentSectionId: 'applicable',
+                                        progress: ['applicable'],
+                                        states: {
+                                            applicable: {}
+                                        }
+                                    },
+                                    'task-list': {
+                                        id: 'task-list',
+                                        initial: 'p-task-list',
+                                        currentSectionId: 'p-task-list',
+                                        progress: ['p-task-list'],
+                                        states: {
+                                            'p-task-list': {
+                                                type: 'final'
+                                            }
+                                        }
+                                    }
+                                }
+                            },
+                            attributes: {
+                                q__roles: {
+                                    proxy: {
+                                        schema: {
+                                            $schema: 'http://json-schema.org/draft-07/schema#',
+                                            title:
+                                                'A type of proxy for the applicant e.g. mainapplicant, rep',
+                                            type: 'boolean',
+                                            const: [
+                                                '==',
+                                                '$.answers.p-applicant-who-are-you-applying-for.q-applicant-who-are-you-applying-for',
+                                                'someone-else'
+                                            ]
+                                        }
+                                    },
+                                    myself: {
+                                        schema: {
+                                            $schema: 'http://json-schema.org/draft-07/schema#',
+                                            title: 'Myself journey role',
+                                            type: 'boolean',
+                                            const: [
+                                                '==',
+                                                '$.answers.p-applicant-who-are-you-applying-for.q-applicant-who-are-you-applying-for',
+                                                'myself'
+                                            ]
+                                        }
+                                    },
+                                    child: {
+                                        schema: {
+                                            $schema: 'http://json-schema.org/draft-07/schema#',
+                                            title: 'Child applicant role',
+                                            type: 'boolean',
+                                            const: [
+                                                '==',
+                                                '$.answers.p-applicant-are-you-18-or-over.q-applicant-are-you-18-or-over',
+                                                false
+                                            ]
+                                        }
+                                    },
+                                    adult: {
+                                        schema: {
+                                            $schema: 'http://json-schema.org/draft-07/schema#',
+                                            title: 'Adult applicant role',
+                                            type: 'boolean',
+                                            const: [
+                                                '==',
+                                                '$.answers.p-applicant-are-you-18-or-over.q-applicant-are-you-18-or-over',
+                                                true
+                                            ]
+                                        }
+                                    },
+                                    mainapplicant: {
+                                        schema: {
+                                            $schema: 'http://json-schema.org/draft-07/schema#',
+                                            title: 'Main Applicant role',
+                                            type: 'boolean',
+                                            const: [
+                                                'or',
+                                                [
+                                                    '==',
+                                                    '$.answers.p-mainapplicant-parent.q-mainapplicant-parent',
+                                                    true
+                                                ],
+                                                [
+                                                    '==',
+                                                    '$.answers.p--has-legal-authority.q--has-legal-authority',
+                                                    true
+                                                ]
+                                            ]
+                                        }
+                                    },
+                                    rep: {
+                                        schema: {
+                                            $schema: 'http://json-schema.org/draft-07/schema#',
+                                            title: 'Rep role',
+                                            type: 'boolean',
+                                            const: [
+                                                'or',
+                                                [
+                                                    'and',
+                                                    [
+                                                        '==',
+                                                        '$.answers.p-applicant-who-are-you-applying-for.q-applicant-who-are-you-applying-for',
+                                                        'someone-else'
+                                                    ],
+                                                    [
+                                                        '==',
+                                                        '$.answers.p-applicant-are-you-18-or-over.q-applicant-are-you-18-or-over',
+                                                        false
+                                                    ],
+                                                    [
+                                                        '==',
+                                                        '$.answers.p-mainapplicant-parent.q-mainapplicant-parent',
+                                                        false
+                                                    ],
+                                                    [
+                                                        '==',
+                                                        '$.answers.p--has-legal-authority.q--has-legal-authority',
+                                                        false
+                                                    ]
+                                                ],
+                                                [
+                                                    'and',
+                                                    [
+                                                        '==',
+                                                        '$.answers.p-applicant-who-are-you-applying-for.q-applicant-who-are-you-applying-for',
+                                                        'someone-else'
+                                                    ],
+                                                    [
+                                                        '==',
+                                                        '$.answers.p-applicant-are-you-18-or-over.q-applicant-are-you-18-or-over',
+                                                        true
+                                                    ],
+                                                    [
+                                                        '==',
+                                                        '$.answers.p--has-legal-authority.q--has-legal-authority',
+                                                        false
+                                                    ],
+                                                    [
+                                                        '==',
+                                                        '$.answers.p--represents-legal-authority.q--represents-legal-authority',
+                                                        true
+                                                    ]
+                                                ],
+                                                [
+                                                    'and',
+                                                    [
+                                                        '==',
+                                                        '$.answers.p-applicant-who-are-you-applying-for.q-applicant-who-are-you-applying-for',
+                                                        'someone-else'
+                                                    ],
+                                                    [
+                                                        '==',
+                                                        '$.answers.p-applicant-are-you-18-or-over.q-applicant-are-you-18-or-over',
+                                                        true
+                                                    ],
+                                                    [
+                                                        '==',
+                                                        '$.answers.p--has-legal-authority.q--has-legal-authority',
+                                                        false
+                                                    ],
+                                                    [
+                                                        '==',
+                                                        '$.answers.p--represents-legal-authority.q--represents-legal-authority',
+                                                        false
+                                                    ]
+                                                ],
+                                                [
+                                                    'and',
+                                                    [
+                                                        '==',
+                                                        '$.answers.p-applicant-who-are-you-applying-for.q-applicant-who-are-you-applying-for',
+                                                        'someone-else'
+                                                    ],
+                                                    [
+                                                        '==',
+                                                        '$.answers.p-applicant-are-you-18-or-over.q-applicant-are-you-18-or-over',
+                                                        true
+                                                    ],
+                                                    [
+                                                        '==',
+                                                        '$.answers.p-applicant-can-handle-affairs.q-applicant-capable',
+                                                        true
+                                                    ]
+                                                ]
+                                            ]
+                                        }
+                                    },
+                                    noauthority: {
+                                        schema: {
+                                            $schema: 'http://json-schema.org/draft-07/schema#',
+                                            title: 'no authority role',
+                                            type: 'boolean',
+                                            const: [
+                                                'and',
+                                                [
+                                                    '==',
+                                                    '$.answers.p-applicant-are-you-18-or-over.q-applicant-are-you-18-or-over',
+                                                    true
+                                                ],
+                                                [
+                                                    '==',
+                                                    '$.answers.p-applicant-can-handle-affairs.q-applicant-capable',
+                                                    false
+                                                ],
+                                                [
+                                                    '==',
+                                                    '$.answers.p--has-legal-authority.q--has-legal-authority',
+                                                    false
+                                                ],
+                                                [
+                                                    '==',
+                                                    '$.answers.p--represents-legal-authority.q--represents-legal-authority',
+                                                    false
+                                                ]
+                                            ]
+                                        }
+                                    },
+                                    incapable: {
+                                        schema: {
+                                            $schema: 'http://json-schema.org/draft-07/schema#',
+                                            title: 'incapable role',
+                                            type: 'boolean',
+                                            const: [
+                                                '==',
+                                                '$.answers.p-applicant-can-handle-affairs.q-applicant-capable',
+                                                false
+                                            ]
+                                        }
+                                    },
+                                    capable: {
+                                        schema: {
+                                            $schema: 'http://json-schema.org/draft-07/schema#',
+                                            title: 'capable role',
+                                            type: 'boolean',
+                                            const: [
+                                                'or',
+                                                [
+                                                    '==',
+                                                    '$.answers.p-applicant-can-handle-affairs.q-applicant-capable',
+                                                    true
+                                                ],
+                                                [
+                                                    '==',
+                                                    '$.answers.p-applicant-who-are-you-applying-for.q-applicant-who-are-you-applying-for',
+                                                    'myself'
+                                                ]
+                                            ]
+                                        }
+                                    },
+                                    authority: {
+                                        schema: {
+                                            $schema: 'http://json-schema.org/draft-07/schema#',
+                                            title: 'Legal authority role',
+                                            type: 'boolean',
+                                            const: [
+                                                'or',
+                                                [
+                                                    '==',
+                                                    '$.answers.p--has-legal-authority.q--has-legal-authority',
+                                                    true
+                                                ],
+                                                [
+                                                    '==',
+                                                    '$.answers.p--represents-legal-authority.q--represents-legal-authority',
+                                                    true
+                                                ]
+                                            ]
+                                        }
+                                    },
+                                    deceased: {
+                                        schema: {
+                                            $schema: 'http://json-schema.org/draft-07/schema#',
+                                            title: 'Deceased role',
+                                            type: 'boolean',
+                                            const: [
+                                                '==',
+                                                '$.answers.p-applicant-fatal-claim.q-applicant-fatal-claim',
+                                                true
+                                            ]
+                                        }
+                                    },
+                                    nonDeceased: {
+                                        schema: {
+                                            $schema: 'http://json-schema.org/draft-07/schema#',
+                                            title: 'Non Deceased journey role',
+                                            type: 'boolean',
+                                            const: [
+                                                '==',
+                                                '$.answers.p-applicant-fatal-claim.q-applicant-fatal-claim',
+                                                false
+                                            ]
+                                        }
+                                    },
+                                    childUnder12: {
+                                        schema: {
+                                            $schema: 'http://json-schema.org/draft-07/schema#',
+                                            title: 'child under the age of 12',
+                                            type: 'boolean',
+                                            const: [
+                                                'dateCompare',
+                                                '$.answers.p-applicant-enter-your-date-of-birth.q-applicant-enter-your-date-of-birth',
+                                                '<',
+                                                '-12',
+                                                'years'
+                                            ]
+                                        }
+                                    },
+                                    childOver12: {
+                                        schema: {
+                                            $schema: 'http://json-schema.org/draft-07/schema#',
+                                            title: 'child over the age of 12',
+                                            type: 'boolean',
+                                            const: [
+                                                'dateCompare',
+                                                '$.answers.p-applicant-enter-your-date-of-birth.q-applicant-enter-your-date-of-birth',
+                                                '>=',
+                                                '-12',
+                                                'years'
+                                            ]
+                                        }
+                                    },
+                                    noContactMethod: {
+                                        schema: {
+                                            $schema: 'http://json-schema.org/draft-07/schema#',
+                                            title: 'has no email or text contact method',
+                                            type: 'boolean',
+                                            const: [
+                                                'or',
+                                                [
+                                                    '==',
+                                                    '$.answers.p-applicant-confirmation-method.q-applicant-confirmation-method',
+                                                    'none'
+                                                ],
+                                                [
+                                                    '==',
+                                                    '$.answers.p-mainapplicant-confirmation-method.q-mainapplicant-confirmation-method',
+                                                    'none'
+                                                ],
+                                                [
+                                                    '==',
+                                                    '$.answers.p-rep-confirmation-method.q-rep-confirmation-method',
+                                                    'none'
+                                                ]
+                                            ]
+                                        }
+                                    }
+                                }
+                            },
+                            answers: {}
+                        });
+
+                        /* eslint-disable prettier/prettier */
+                        let section = parallelRouter.current();
+                        expect(section.value['t-about-application__completion-status']).toEqual('incomplete');
+                        expect(section.value['t_applicant_personal-details__completion-status']).toEqual('incomplete');
+                        expect(section.context.routes.states['t-about-application'].progress).toEqual(['p-applicant-who-are-you-applying-for']);
+
+                        parallelRouter = createParallelRouter(section.context);
+                        section = parallelRouter.next({'q-applicant-who-are-you-applying-for': 'myself'}, 'p-applicant-who-are-you-applying-for', 'ANSWER');
+
+                        parallelRouter = createParallelRouter(section.context);
+                        section = parallelRouter.next({'q-applicant-are-you-18-or-over': true}, 'p-applicant-are-you-18-or-over', 'ANSWER');
+
+                        parallelRouter = createParallelRouter(section.context);
+                        section = parallelRouter.next({'q--was-the-crime-reported-to-police': false}, 'p--was-the-crime-reported-to-police', 'ANSWER');
+
+                        parallelRouter = createParallelRouter(section.context);
+                        section = parallelRouter.next({}, 'p-applicant-you-cannot-get-compensation', 'ANSWER');
+
+                        parallelRouter = createParallelRouter(section.context);
+                        section = parallelRouter.next({'q-applicant-fatal-claim': false}, 'p-applicant-fatal-claim', 'ANSWER');
+
+                        parallelRouter = createParallelRouter(section.context);
+                        section = parallelRouter.next({'q-applicant-applied-before-for-this-crime': false}, 'p-applicant-applied-before-for-this-crime', 'ANSWER');
+
+                        parallelRouter = createParallelRouter(section.context);
+                        section = parallelRouter.next({'q-applicant-someone-else-applied-before-for-this-crime': false}, 'p-applicant-someone-else-applied-before-for-this-crime', 'ANSWER');
+                        expect(section.value['t-about-application__completion-status']).toEqual('completed');
+                        expect(section.value['t_applicant_personal-details__completion-status']).toEqual('incomplete');
+                        expect(section.context.currentSectionId).toEqual('p-task-list');
+
+                        // enter the second task.
+                        section = parallelRouter.current('p--context-applicant-details');
+                        expect(section.value['t-about-application__completion-status']).toEqual('completed');
+                        expect(section.value['t_applicant_personal-details__completion-status']).toEqual('incomplete');
+                        expect(section.context.routes.states['t_applicant_personal-details'].progress).toEqual(['p--context-applicant-details']);
+
+
+                        section = parallelRouter.next({}, 'p--context-applicant-details', 'ANSWER');
+
+                        parallelRouter = createParallelRouter(section.context);
+                        section = parallelRouter.next({
+                            'q-applicant-confirmation-method': 'email',
+                            'q-applicant-enter-your-email-address': 'foo@bar.com'
+                        }, 'p-applicant-confirmation-method', 'ANSWER');
+
+                        parallelRouter = createParallelRouter(section.context);
+                        section = parallelRouter.next({
+                            'q-applicant-title': 'Mr',
+                            'q-applicant-first-name': 'Foo',
+                            'q-applicant-last-name': 'Bar'
+                        }, 'p-applicant-enter-your-name', 'ANSWER');
+
+                        parallelRouter = createParallelRouter(section.context);
+                        section = parallelRouter.next({
+                            'q-applicant-have-you-been-known-by-any-other-names': false
+                        }, 'p-applicant-have-you-been-known-by-any-other-names', 'ANSWER');
+
+                        parallelRouter = createParallelRouter(section.context);
+                        section = parallelRouter.next({
+                            'q-applicant-enter-your-date-of-birth': '1970-01-01T00:00:00.000Z'
+                        }, 'p-applicant-enter-your-date-of-birth', 'ANSWER');
+
+                        // parallelRouter = createParallelRouter(section.context);
+                        // section = parallelRouter.next({
+                        //     'q-applicant-can-handle-affairs': false
+                        // }, 'p-applicant-can-handle-affairs', 'ANSWER');
+
+                        parallelRouter = createParallelRouter(section.context);
+                        section = parallelRouter.next({
+                            'q-applicant-building-and-street': '1 Foo Lane',
+                            'q-applicant-building-and-street-2': 'Flat 2/3',
+                            'q-applicant-building-and-street-3': 'FooLocality',
+                            'q-applicant-town-or-city': 'FooCity',
+                            'q-applicant-postcode': 'G1 1XX'
+                        }, 'p-applicant-enter-your-address', 'ANSWER');
+
+
+                        parallelRouter = createParallelRouter(section.context);
+                        section = parallelRouter.next({}, 'p-applicant-enter-your-telephone-number', 'ANSWER');
+                        expect(section.value['t-about-application__completion-status']).toEqual('completed');
+                        expect(section.value['t_applicant_personal-details__completion-status']).toEqual('completed');
+                        expect(section.context.currentSectionId).toEqual('p-task-list');
+
+                        // go back to first task
+                        parallelRouter = createParallelRouter(section.context);
+                        section = parallelRouter.current('p-applicant-who-are-you-applying-for');
+
+                        parallelRouter = createParallelRouter(section.context);
+                        section = parallelRouter.next({'q-applicant-who-are-you-applying-for': 'someone-else'}, 'p-applicant-who-are-you-applying-for', 'ANSWER');
+                        expect(section.value['t-about-application__completion-status']).toEqual('incomplete');
+                        expect(section.value['t_applicant_personal-details__completion-status']).toEqual('incomplete');
+
+                        parallelRouter = createParallelRouter(section.context);
+                        section = parallelRouter.next({'q-applicant-are-you-18-or-over': true}, 'p-applicant-are-you-18-or-over', 'ANSWER');
+
+                        parallelRouter = createParallelRouter(section.context);
+                        section = parallelRouter.next({'q--was-the-crime-reported-to-police': false}, 'p--was-the-crime-reported-to-police', 'ANSWER');
+
+                        parallelRouter = createParallelRouter(section.context);
+                        section = parallelRouter.next({}, 'p-applicant-you-cannot-get-compensation', 'ANSWER');
+
+                        parallelRouter = createParallelRouter(section.context);
+                        section = parallelRouter.next({'q-applicant-fatal-claim': false}, 'p-applicant-fatal-claim', 'ANSWER');
+
+                        parallelRouter = createParallelRouter(section.context);
+                        section = parallelRouter.next({'q-applicant-applied-before-for-this-crime': false}, 'p-applicant-applied-before-for-this-crime', 'ANSWER');
+
+                        parallelRouter = createParallelRouter(section.context);
+                        section = parallelRouter.next({'q-proxy-someone-else-applied-before-for-this-crime': false}, 'p-proxy-someone-else-applied-before-for-this-crime', 'ANSWER');
+
+                        expect(section.value['t-about-application__completion-status']).toEqual('completed');
+                        expect(section.value['t_applicant_personal-details__completion-status']).toEqual('incomplete');
+                        expect(section.context.currentSectionId).toEqual('p-task-list');
+                        /* eslint-enable prettier/prettier */
+                    });
+                });
             });
         });
     });

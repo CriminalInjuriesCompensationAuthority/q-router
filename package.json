@@ -27,8 +27,8 @@
     },
     "scripts": {
         "prepublishOnly": "nsp check",
-        "pretest": "npm run lint",
         "test": "jest",
+        "pretest": "npm run lint",
         "coverage": "jest --coverage",
         "lint": "eslint ."
     },
