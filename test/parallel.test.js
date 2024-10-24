@@ -551,6 +551,67 @@ describe('Parallel Router', () => {
 
                 expect(section.id).toEqual('a'); // #task1 machine.
             });
+
+            it('should retain the progress of the machine is routed from', () => {
+                const parallelRouter = createParallelRouter({
+                    currentSectionId: 'a',
+                    routes: {
+                        id: 'parallel-routes-test',
+                        type: 'parallel',
+                        states: {
+                            task1: {
+                                initial: 'a',
+                                currentSectionId: 'a',
+                                states: {
+                                    a: {
+                                        on: {
+                                            ANSWER: [
+                                                {
+                                                    target: 'b'
+                                                }
+                                            ]
+                                        }
+                                    },
+                                    b: {
+                                        type: 'final'
+                                    }
+                                }
+                            },
+                            task2: {
+                                referrer: '#task1',
+                                initial: 'c',
+                                currentSectionId: 'c',
+                                states: {
+                                    c: {
+                                        on: {
+                                            ANSWER: [
+                                                {
+                                                    target: 'd'
+                                                }
+                                            ]
+                                        }
+                                    },
+                                    d: {
+                                        type: 'final'
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    attributes: {
+                        q__roles: {}
+                    }
+                });
+
+                parallelRouter.next({}, 'c', 'ANSWER'); // d
+                parallelRouter.previous('d'); // c
+                parallelRouter.previous('c'); // #referrer
+
+                const section = parallelRouter.current();
+
+                expect(section.id).toEqual('a'); // #task1 machine.
+                expect(section.context.routes.states.task2.progress).toEqual(['c', 'd']);
+            });
         });
     });
 
