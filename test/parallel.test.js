@@ -1410,6 +1410,7 @@ describe('Parallel Router', () => {
                             id: 'task1',
                             initial: 'a',
                             currentSectionId: 'a',
+                            progress: ['a'],
                             states: {
                                 a: {
                                     on: {
@@ -1435,6 +1436,7 @@ describe('Parallel Router', () => {
                             id: 'task2',
                             initial: 'c',
                             currentSectionId: 'c',
+                            progress: ['c'],
                             states: {
                                 c: {
                                     on: {
@@ -1453,6 +1455,7 @@ describe('Parallel Router', () => {
                         'task1__applicability-status': {
                             initial: 'applicable',
                             currentSectionId: 'applicable',
+                            progress: ['applicable'],
                             states: {
                                 applicable: {}
                             }
@@ -1460,6 +1463,7 @@ describe('Parallel Router', () => {
                         'task2__applicability-status': {
                             initial: 'notApplicable',
                             currentSectionId: 'notApplicable',
+                            progress: ['notApplicable'],
                             states: {
                                 notApplicable: {
                                     on: {
@@ -1499,6 +1503,7 @@ describe('Parallel Router', () => {
                     states: {
                         task1: {
                             initial: 'a',
+                            progress: ['a'],
                             currentSectionId: 'a',
                             states: {
                                 a: {
@@ -1524,6 +1529,7 @@ describe('Parallel Router', () => {
                         task2: {
                             initial: 'c',
                             currentSectionId: 'c',
+                            progress: ['c'],
                             states: {
                                 c: {
                                     on: {
@@ -1542,6 +1548,7 @@ describe('Parallel Router', () => {
                         'task1__applicability-status': {
                             initial: 'applicable',
                             currentSectionId: 'applicable',
+                            progress: ['applicable'],
                             states: {
                                 applicable: {}
                             }
@@ -1549,6 +1556,7 @@ describe('Parallel Router', () => {
                         'task2__applicability-status': {
                             initial: 'notApplicable',
                             currentSectionId: 'notApplicable',
+                            progress: ['notApplicable'],
                             states: {
                                 notApplicable: {
                                     on: {
@@ -1615,6 +1623,7 @@ describe('Parallel Router', () => {
                             id: 'task1',
                             initial: 'a',
                             currentSectionId: 'a',
+                            progress: ['a'],
                             states: {
                                 a: {
                                     on: {
@@ -1663,6 +1672,7 @@ describe('Parallel Router', () => {
                         task2: {
                             initial: 'e',
                             currentSectionId: 'e',
+                            progress: ['e'],
                             states: {
                                 e: {
                                     on: {
@@ -1681,6 +1691,7 @@ describe('Parallel Router', () => {
                         'task1__applicability-status': {
                             initial: 'applicable',
                             currentSectionId: 'applicable',
+                            progress: ['applicable'],
                             states: {
                                 applicable: {}
                             }
@@ -1688,6 +1699,7 @@ describe('Parallel Router', () => {
                         'task2__applicability-status': {
                             initial: 'notApplicable',
                             currentSectionId: 'notApplicable',
+                            progress: ['notApplicable'],
                             states: {
                                 notApplicable: {
                                     on: {
@@ -1764,6 +1776,7 @@ describe('Parallel Router', () => {
                         task1: {
                             initial: 'a',
                             currentSectionId: 'a',
+                            progress: ['a'],
                             states: {
                                 a: {
                                     on: {
@@ -1815,6 +1828,7 @@ describe('Parallel Router', () => {
                         task2: {
                             initial: 'e',
                             currentSectionId: 'e',
+                            progress: ['e'],
                             states: {
                                 e: {
                                     on: {
@@ -1833,6 +1847,7 @@ describe('Parallel Router', () => {
                         task3: {
                             initial: 'g',
                             currentSectionId: 'g',
+                            progress: ['g'],
                             states: {
                                 g: {
                                     on: {
@@ -1851,6 +1866,7 @@ describe('Parallel Router', () => {
                         'task1__applicability-status': {
                             initial: 'applicable',
                             currentSectionId: 'applicable',
+                            progress: ['applicable'],
                             states: {
                                 applicable: {}
                             }
@@ -1858,6 +1874,7 @@ describe('Parallel Router', () => {
                         'task2__applicability-status': {
                             initial: 'notApplicable',
                             currentSectionId: 'notApplicable',
+                            progress: ['notApplicable'],
                             states: {
                                 notApplicable: {
                                     on: {
@@ -1878,6 +1895,7 @@ describe('Parallel Router', () => {
                         'task3__applicability-status': {
                             initial: 'applicable',
                             currentSectionId: 'applicable',
+                            progress: ['applicable'],
                             states: {
                                 applicable: {}
                             }
@@ -2457,6 +2475,7 @@ describe('Parallel Router', () => {
                                 id: 'task1',
                                 initial: 'a',
                                 currentSectionId: 'a',
+                                progress: ['a'],
                                 states: {
                                     a: {
                                         on: {
@@ -2505,6 +2524,7 @@ describe('Parallel Router', () => {
                                 id: 'task2',
                                 initial: 'e',
                                 currentSectionId: 'e',
+                                progress: ['e'],
                                 states: {
                                     e: {
                                         on: {
@@ -2547,6 +2567,7 @@ describe('Parallel Router', () => {
                                 id: 'task1__applicability-status',
                                 initial: 'applicable',
                                 currentSectionId: 'applicable',
+                                progress: ['applicable'],
                                 states: {
                                     applicable: {}
                                 }
@@ -2555,6 +2576,7 @@ describe('Parallel Router', () => {
                                 id: 'task2__applicability-status',
                                 initial: 'notApplicable',
                                 currentSectionId: 'notApplicable',
+                                progress: ['notApplicable'],
                                 states: {
                                     notApplicable: {
                                         on: {
@@ -2620,7 +2642,7 @@ describe('Parallel Router', () => {
                 expect(section.id).toEqual('f');
 
                 parallelRouter = createParallelRouter(section.context);
-                section = parallelRouter.next({}, 'f', 'ANSWER'); // g. has routing dependency on b
+                section = parallelRouter.next({q2: 1}, 'f', 'ANSWER'); // g. has routing dependency on b
                 expect(section.id).toEqual('g');
 
                 parallelRouter = createParallelRouter(section.context);
@@ -2630,9 +2652,12 @@ describe('Parallel Router', () => {
                 // re-answer the first question in task1. this answer makes role1 irrelevant.
                 parallelRouter = createParallelRouter(section.context);
                 section = parallelRouter.next({q1: 'bar'}, 'a', 'ANSWER');
+                parallelRouter = createParallelRouter(section.context);
+
                 expect(section.id).toEqual('c');
                 expect(section.context.routes.states.task1.progress).toEqual(['a', 'c']);
-                expect(section.context.routes.states.task2.progress).toEqual(['e', 'f']);
+                expect(section.context.routes.states.task2.progress).toEqual(['e']);
+                expect(section.context.answers.f).toBe(undefined);
                 expect(section.value['task2__applicability-status']).toEqual('notApplicable');
             });
         });
@@ -2869,6 +2894,7 @@ describe('Parallel Router', () => {
                                 id: 'task1',
                                 initial: 'a',
                                 currentSectionId: 'a',
+                                progress: ['a'],
                                 states: {
                                     a: {
                                         on: {
@@ -2917,6 +2943,7 @@ describe('Parallel Router', () => {
                                 id: 'task2',
                                 initial: 'e',
                                 currentSectionId: 'e',
+                                progress: ['e'],
                                 states: {
                                     e: {
                                         on: {
@@ -2959,6 +2986,7 @@ describe('Parallel Router', () => {
                                 id: 'task1__applicability-status',
                                 initial: 'applicable',
                                 currentSectionId: 'applicable',
+                                progress: ['applicable'],
                                 states: {
                                     applicable: {}
                                 }
@@ -2967,6 +2995,7 @@ describe('Parallel Router', () => {
                                 id: 'task2__applicability-status',
                                 initial: 'notApplicable',
                                 currentSectionId: 'notApplicable',
+                                progress: ['notApplicable'],
                                 states: {
                                     notApplicable: {
                                         on: {
@@ -3878,65 +3907,124 @@ describe('Parallel Router', () => {
 
                         /* eslint-disable prettier/prettier */
                         let section = parallelRouter.current();
-                        expect(section.value['t-about-application__completion-status']).toEqual('incomplete');
-                        expect(section.value['t_applicant_personal-details__completion-status']).toEqual('incomplete');
-                        expect(section.context.routes.states['t-about-application'].progress).toEqual(['p-applicant-who-are-you-applying-for']);
+                        expect(section.value['t-about-application__completion-status']).toEqual(
+                            'incomplete'
+                        );
+                        expect(
+                            section.value['t_applicant_personal-details__completion-status']
+                        ).toEqual('incomplete');
+                        expect(
+                            section.context.routes.states['t-about-application'].progress
+                        ).toEqual(['p-applicant-who-are-you-applying-for']);
 
                         parallelRouter = createParallelRouter(section.context);
-                        section = parallelRouter.next({'q-applicant-who-are-you-applying-for': 'myself'}, 'p-applicant-who-are-you-applying-for', 'ANSWER');
+                        section = parallelRouter.next(
+                            {'q-applicant-who-are-you-applying-for': 'myself'},
+                            'p-applicant-who-are-you-applying-for',
+                            'ANSWER'
+                        );
 
                         parallelRouter = createParallelRouter(section.context);
-                        section = parallelRouter.next({'q-applicant-are-you-18-or-over': true}, 'p-applicant-are-you-18-or-over', 'ANSWER');
+                        section = parallelRouter.next(
+                            {'q-applicant-are-you-18-or-over': true},
+                            'p-applicant-are-you-18-or-over',
+                            'ANSWER'
+                        );
 
                         parallelRouter = createParallelRouter(section.context);
-                        section = parallelRouter.next({'q--was-the-crime-reported-to-police': false}, 'p--was-the-crime-reported-to-police', 'ANSWER');
+                        section = parallelRouter.next(
+                            {'q--was-the-crime-reported-to-police': false},
+                            'p--was-the-crime-reported-to-police',
+                            'ANSWER'
+                        );
 
                         parallelRouter = createParallelRouter(section.context);
-                        section = parallelRouter.next({}, 'p-applicant-you-cannot-get-compensation', 'ANSWER');
+                        section = parallelRouter.next(
+                            {},
+                            'p-applicant-you-cannot-get-compensation',
+                            'ANSWER'
+                        );
 
                         parallelRouter = createParallelRouter(section.context);
-                        section = parallelRouter.next({'q-applicant-fatal-claim': false}, 'p-applicant-fatal-claim', 'ANSWER');
+                        section = parallelRouter.next(
+                            {'q-applicant-fatal-claim': false},
+                            'p-applicant-fatal-claim',
+                            'ANSWER'
+                        );
 
                         parallelRouter = createParallelRouter(section.context);
-                        section = parallelRouter.next({'q-applicant-applied-before-for-this-crime': false}, 'p-applicant-applied-before-for-this-crime', 'ANSWER');
+                        section = parallelRouter.next(
+                            {'q-applicant-applied-before-for-this-crime': false},
+                            'p-applicant-applied-before-for-this-crime',
+                            'ANSWER'
+                        );
 
                         parallelRouter = createParallelRouter(section.context);
-                        section = parallelRouter.next({'q-applicant-someone-else-applied-before-for-this-crime': false}, 'p-applicant-someone-else-applied-before-for-this-crime', 'ANSWER');
-                        expect(section.value['t-about-application__completion-status']).toEqual('completed');
-                        expect(section.value['t_applicant_personal-details__completion-status']).toEqual('incomplete');
+                        section = parallelRouter.next(
+                            {'q-applicant-someone-else-applied-before-for-this-crime': false},
+                            'p-applicant-someone-else-applied-before-for-this-crime',
+                            'ANSWER'
+                        );
+                        expect(section.value['t-about-application__completion-status']).toEqual(
+                            'completed'
+                        );
+                        expect(
+                            section.value['t_applicant_personal-details__completion-status']
+                        ).toEqual('incomplete');
                         expect(section.context.currentSectionId).toEqual('p-task-list');
 
                         // enter the second task.
                         section = parallelRouter.current('p--context-applicant-details');
-                        expect(section.value['t-about-application__completion-status']).toEqual('completed');
-                        expect(section.value['t_applicant_personal-details__completion-status']).toEqual('incomplete');
-                        expect(section.context.routes.states['t_applicant_personal-details'].progress).toEqual(['p--context-applicant-details']);
-
+                        expect(section.value['t-about-application__completion-status']).toEqual(
+                            'completed'
+                        );
+                        expect(
+                            section.value['t_applicant_personal-details__completion-status']
+                        ).toEqual('incomplete');
+                        expect(
+                            section.context.routes.states['t_applicant_personal-details'].progress
+                        ).toEqual(['p--context-applicant-details']);
 
                         section = parallelRouter.next({}, 'p--context-applicant-details', 'ANSWER');
 
                         parallelRouter = createParallelRouter(section.context);
-                        section = parallelRouter.next({
-                            'q-applicant-confirmation-method': 'email',
-                            'q-applicant-enter-your-email-address': 'foo@bar.com'
-                        }, 'p-applicant-confirmation-method', 'ANSWER');
+                        section = parallelRouter.next(
+                            {
+                                'q-applicant-confirmation-method': 'email',
+                                'q-applicant-enter-your-email-address': 'foo@bar.com'
+                            },
+                            'p-applicant-confirmation-method',
+                            'ANSWER'
+                        );
 
                         parallelRouter = createParallelRouter(section.context);
-                        section = parallelRouter.next({
-                            'q-applicant-title': 'Mr',
-                            'q-applicant-first-name': 'Foo',
-                            'q-applicant-last-name': 'Bar'
-                        }, 'p-applicant-enter-your-name', 'ANSWER');
+                        section = parallelRouter.next(
+                            {
+                                'q-applicant-title': 'Mr',
+                                'q-applicant-first-name': 'Foo',
+                                'q-applicant-last-name': 'Bar'
+                            },
+                            'p-applicant-enter-your-name',
+                            'ANSWER'
+                        );
 
                         parallelRouter = createParallelRouter(section.context);
-                        section = parallelRouter.next({
-                            'q-applicant-have-you-been-known-by-any-other-names': false
-                        }, 'p-applicant-have-you-been-known-by-any-other-names', 'ANSWER');
+                        section = parallelRouter.next(
+                            {
+                                'q-applicant-have-you-been-known-by-any-other-names': false
+                            },
+                            'p-applicant-have-you-been-known-by-any-other-names',
+                            'ANSWER'
+                        );
 
                         parallelRouter = createParallelRouter(section.context);
-                        section = parallelRouter.next({
-                            'q-applicant-enter-your-date-of-birth': '1970-01-01T00:00:00.000Z'
-                        }, 'p-applicant-enter-your-date-of-birth', 'ANSWER');
+                        section = parallelRouter.next(
+                            {
+                                'q-applicant-enter-your-date-of-birth': '1970-01-01T00:00:00.000Z'
+                            },
+                            'p-applicant-enter-your-date-of-birth',
+                            'ANSWER'
+                        );
 
                         // parallelRouter = createParallelRouter(section.context);
                         // section = parallelRouter.next({
@@ -3944,19 +4032,30 @@ describe('Parallel Router', () => {
                         // }, 'p-applicant-can-handle-affairs', 'ANSWER');
 
                         parallelRouter = createParallelRouter(section.context);
-                        section = parallelRouter.next({
-                            'q-applicant-building-and-street': '1 Foo Lane',
-                            'q-applicant-building-and-street-2': 'Flat 2/3',
-                            'q-applicant-building-and-street-3': 'FooLocality',
-                            'q-applicant-town-or-city': 'FooCity',
-                            'q-applicant-postcode': 'G1 1XX'
-                        }, 'p-applicant-enter-your-address', 'ANSWER');
-
+                        section = parallelRouter.next(
+                            {
+                                'q-applicant-building-and-street': '1 Foo Lane',
+                                'q-applicant-building-and-street-2': 'Flat 2/3',
+                                'q-applicant-building-and-street-3': 'FooLocality',
+                                'q-applicant-town-or-city': 'FooCity',
+                                'q-applicant-postcode': 'G1 1XX'
+                            },
+                            'p-applicant-enter-your-address',
+                            'ANSWER'
+                        );
 
                         parallelRouter = createParallelRouter(section.context);
-                        section = parallelRouter.next({}, 'p-applicant-enter-your-telephone-number', 'ANSWER');
-                        expect(section.value['t-about-application__completion-status']).toEqual('completed');
-                        expect(section.value['t_applicant_personal-details__completion-status']).toEqual('completed');
+                        section = parallelRouter.next(
+                            {},
+                            'p-applicant-enter-your-telephone-number',
+                            'ANSWER'
+                        );
+                        expect(section.value['t-about-application__completion-status']).toEqual(
+                            'completed'
+                        );
+                        expect(
+                            section.value['t_applicant_personal-details__completion-status']
+                        ).toEqual('completed');
                         expect(section.context.currentSectionId).toEqual('p-task-list');
 
                         // go back to first task
@@ -3964,30 +4063,66 @@ describe('Parallel Router', () => {
                         section = parallelRouter.current('p-applicant-who-are-you-applying-for');
 
                         parallelRouter = createParallelRouter(section.context);
-                        section = parallelRouter.next({'q-applicant-who-are-you-applying-for': 'someone-else'}, 'p-applicant-who-are-you-applying-for', 'ANSWER');
-                        expect(section.value['t-about-application__completion-status']).toEqual('incomplete');
-                        expect(section.value['t_applicant_personal-details__completion-status']).toEqual('incomplete');
+                        section = parallelRouter.next(
+                            {'q-applicant-who-are-you-applying-for': 'someone-else'},
+                            'p-applicant-who-are-you-applying-for',
+                            'ANSWER'
+                        );
+                        expect(section.value['t-about-application__completion-status']).toEqual(
+                            'incomplete'
+                        );
+                        expect(
+                            section.value['t_applicant_personal-details__completion-status']
+                        ).toEqual('incomplete');
 
                         parallelRouter = createParallelRouter(section.context);
-                        section = parallelRouter.next({'q-applicant-are-you-18-or-over': true}, 'p-applicant-are-you-18-or-over', 'ANSWER');
+                        section = parallelRouter.next(
+                            {'q-applicant-are-you-18-or-over': true},
+                            'p-applicant-are-you-18-or-over',
+                            'ANSWER'
+                        );
 
                         parallelRouter = createParallelRouter(section.context);
-                        section = parallelRouter.next({'q--was-the-crime-reported-to-police': false}, 'p--was-the-crime-reported-to-police', 'ANSWER');
+                        section = parallelRouter.next(
+                            {'q--was-the-crime-reported-to-police': false},
+                            'p--was-the-crime-reported-to-police',
+                            'ANSWER'
+                        );
 
                         parallelRouter = createParallelRouter(section.context);
-                        section = parallelRouter.next({}, 'p-applicant-you-cannot-get-compensation', 'ANSWER');
+                        section = parallelRouter.next(
+                            {},
+                            'p-applicant-you-cannot-get-compensation',
+                            'ANSWER'
+                        );
 
                         parallelRouter = createParallelRouter(section.context);
-                        section = parallelRouter.next({'q-applicant-fatal-claim': false}, 'p-applicant-fatal-claim', 'ANSWER');
+                        section = parallelRouter.next(
+                            {'q-applicant-fatal-claim': false},
+                            'p-applicant-fatal-claim',
+                            'ANSWER'
+                        );
 
                         parallelRouter = createParallelRouter(section.context);
-                        section = parallelRouter.next({'q-applicant-applied-before-for-this-crime': false}, 'p-applicant-applied-before-for-this-crime', 'ANSWER');
+                        section = parallelRouter.next(
+                            {'q-applicant-applied-before-for-this-crime': false},
+                            'p-applicant-applied-before-for-this-crime',
+                            'ANSWER'
+                        );
 
                         parallelRouter = createParallelRouter(section.context);
-                        section = parallelRouter.next({'q-proxy-someone-else-applied-before-for-this-crime': false}, 'p-proxy-someone-else-applied-before-for-this-crime', 'ANSWER');
+                        section = parallelRouter.next(
+                            {'q-proxy-someone-else-applied-before-for-this-crime': false},
+                            'p-proxy-someone-else-applied-before-for-this-crime',
+                            'ANSWER'
+                        );
 
-                        expect(section.value['t-about-application__completion-status']).toEqual('completed');
-                        expect(section.value['t_applicant_personal-details__completion-status']).toEqual('incomplete');
+                        expect(section.value['t-about-application__completion-status']).toEqual(
+                            'completed'
+                        );
+                        expect(
+                            section.value['t_applicant_personal-details__completion-status']
+                        ).toEqual('incomplete');
                         expect(section.context.currentSectionId).toEqual('p-task-list');
                         /* eslint-enable prettier/prettier */
                     });
