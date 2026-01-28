@@ -3073,7 +3073,8 @@ describe('Parallel Router', () => {
                 section = parallelRouter.next({q1: 'bar'}, 'a', 'ANSWER');
                 expect(section.id).toEqual('c');
                 expect(section.context.routes.states.task1.progress).toEqual(['a', 'c']);
-                expect(section.context.routes.states.task2.progress).toEqual(['e', 'f']);
+                expect(section.context.routes.states.task2.progress).toEqual(['e']);
+                expect(section.context.retractedAnswers).toEqual({b: {q1: 1}, d: {}, f: {}, g: {}});
                 expect(section.value['task2__applicability-status']).toEqual('notApplicable');
             });
             describe('First question relies on itself', () => {
